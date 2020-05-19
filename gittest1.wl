@@ -5,7 +5,6 @@
 
 
 (* ::Input::Initialization:: *)
-
 CloudDeploy[EvaluationNotebook[]] (*Saves to the wolfram cloud instead of locally. *)
 ParallelEvaluate[$ProcessorCount] (*Open a kernel on all available cores.  Cuchulainn: 8   Kneller06: 4 *)
 (*
@@ -264,8 +263,6 @@ rtabr=rs[[180;;250]];
 
 
 (* ::Input:: *)
-(**)
-(**)
 (*(**)
 (*(*Calculate Data Section*)*)
 (*indss={12,13,29};*)
@@ -413,7 +410,6 @@ rtabr=rs[[180;;250]];
 
 
 (* ::Input:: *)
-(**)
 (*scanfilenames=FileNames["rscan_adapt*.m"];*)
 (*potfilenames=FileNames["rpot*.m"];*)
 (*(*gdfilenames=FileNames["rgd*.m"];*)*)
@@ -539,7 +535,6 @@ rtabr=rs[[180;;250]];
 
 
 (* ::Input:: *)
-(**)
 (*fSpace[min_,max_,steps_,f_: Log]:=InverseFunction[ConditionalExpression[f[#],min<#<max]&]/@Range[f@min,f@max,(f@max-f@min)/(steps-1)]*)
 (*kadapt[ind_]:=Table[Join[fSpace[ktarget[ind][[i]] 10^-1,ktarget[ind][[i]] 10^1,50],-fSpace[ktarget[ind][[i]] 10^-1,ktarget[ind][[i]] 10^1,20]],{i,1,71}];*)
 (**)
