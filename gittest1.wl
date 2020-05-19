@@ -47,16 +47,17 @@ SetDirectory[] (*sets working directory back to local default*)
 
 (* ::Input::Initialization:: *)
 (*some constants*)
-c=2.998 10^10; (* cm/s*)
-h=6.626 10^-27; (*erg s*)
-Gf=1.166 10^-5; 
-everg=1.6 10^-12; (* convert eV to ergs*)
-ergev=6.2 10^11; (*convert ergs to eV*)
+c=2.99792458 10^10; (* cm/s*)
+h=6.6260755 10^-27; (*erg s*)
+hbar = h/2 Pi; (*erg s*)
+Gf=1.1663787 10^-5; (*GeV^-2*)
+everg=1.60218 10^-12; (* convert eV to ergs*)
+Geverg = everg*10^9 (* convert GeV to ergs *)
+ergev=1.0/everg; (*convert ergs to eV*)
 cmkm=10^-5; (*convert cm to km*)
-ergmev=6.2 10^5; (*convert erg to MeV*)
-mp=1.67 10^-24; (*Proton mass in g*)
-munits=Sqrt[2] (1.16 10^-5  )/(10^9 everg)^2 (h/(2 Pi) c)^3;
- (*Sqrt[2] Gf in correct units*)
+ergmev=ergev/10^6; (*convert erg to MeV*)
+mp=1.6726219 10^-24; (*Proton mass in g*)
+munits=Sqrt[2] Gf/Geverg^2 (hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
 
 buildInitials[n_]:=( 
 name11="ee";
