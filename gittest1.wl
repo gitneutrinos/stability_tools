@@ -352,7 +352,7 @@ rtabr=rs[[180;;250]];
 (**)*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*k adaptive automated calculations*)
 
 
@@ -361,7 +361,8 @@ rtabr=rs[[180;;250]];
 
 
 (* ::Input:: *)
-(*indss={2,31,36,37,4,5,6,7,8,3,9,23};*)
+(*(*indss={31,36,37,4,5,6,7,8,9,23}; Actual list*)
+(*31 fails due to no filenames (run the matrix recorder)*)*)
 (*SetDirectory[];*)
 (*fSpace[min_,max_,steps_,f_: Log]:=InverseFunction[ConditionalExpression[f[#],min<#<max]&]/@Range[f@min,f@max,(f@max-f@min)/(steps-1)]*)
 (*kadapt[ind_]:=Table[Join[fSpace[ktarget[ind][[i]] 10^-1,ktarget[ind][[i]] 10^1,50],-fSpace[ktarget[ind][[i]] 10^-1,ktarget[ind][[i]] 10^1,20]],{i,1,71}];*)
@@ -374,17 +375,19 @@ rtabr=rs[[180;;250]];
 (*Sow[kx/.Solve[testm[[1,2,2,1,1,1,1]]==0,kx][[1]]]*)
 (*,{i,1,Length[matfilenames]}]*)
 (*][[2,1]];*)
+(*If[Length[ktarget[indss[[m]]]]!= 71,Print[ToString[m]<> " Aborted @ ktarget"];Abort[]];*)
 (*Export["ktarget"<>ToString[indss[[m]]]<>".m",ktarget[indss[[m]]]];*)
 (*Export["kadapt"<>ToString[indss[[m]]]<>".m",kadapt[indss[[m]]]];*)
 (*,{m,1,Length[indss]}*)
 (*];*)
-(**)
+(**)*)
 (*SetDirectory[];*)
 (**)
 (*Do[*)
 (*CreateDirectory["rscan_targeted_adapt"<> ToString[indss[[m]]]];*)
 (*SetDirectory["C:\\Users\\Sam\\rscan_targeted_adapt"<>ToString[indss[[m]]]];*)
 (*Do[*)
+(*kadapt[indss[[m]]]=Import["C:\\Users\\Sam\\rscan"<>ToString[indss[[m]]]<>"\\kadapt"<>ToString[indss[[m]]]<>".m"];*)
 (*scantab=Table[SCalclotsScale[179+i,179+i,20 10^6,indss[[m]],kadapt[indss[[m]]][[i,j]],-1],{j,1,Length[kadapt[indss[[m]]][[1]]]}];*)
 (*Export["rscan_adapt"<>ToString[indss[[m]]]<>"r"<> ToString[i+179]<>".m",scantab];*)
 (*,{i,1,Length[rtabr]}*)
@@ -401,8 +404,6 @@ rtabr=rs[[180;;250]];
 (*Export["rscan_adapt"<>ToString[indss[[m]]]<>".m",rfile];*)
 (*,{m,1,Length[indss]}*)
 (*];*)
-(**)
-(**)
 
 
 (* ::Section::Closed:: *)
