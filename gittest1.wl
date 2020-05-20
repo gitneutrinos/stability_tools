@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Preamble Loading*)
 
 
@@ -17,12 +17,6 @@ SetDirectory[] (*Sets working directory to local default*)
 
 
 
-(*Import the radial grid, and ellipse fit parameter grid from the cloud.  Radial grid is the only thing used here. *)
-rs = CloudImport["rgrid.m"];
-paragrid=CloudImport["paragrid.m"];
-paragridnoSR=CloudImport["paras_noSR.m"];
-
-
 (*Import from lots 'o data*)
 
 pathlots="G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata";
@@ -36,11 +30,12 @@ freqmid=ParallelTable[Import[StringJoin[pathlots,"\\",ToString[filenames[[i]]]],
 muss=ParallelTable[Import[StringJoin[pathlots,"\\",ToString[filenames[[i]]]],{"Datasets", "distribution_costheta_grid(lab)"}],{i,1,Length[filenames]}]; (*Cos\[Theta] grid*)
 mids=ParallelTable[Import[StringJoin[pathlots,"\\",ToString[filenames[[i]]]],{"Datasets", "distribution_costheta_mid(lab)"}],{i,1,Length[filenames]}]; (*Cos\[Theta] bin midpoints*)
 SetDirectory[] (*sets working directory back to local default*)
+rs=Import[StringJoin[pathlots,"\\",ToString[filenames[[1]]]],{"Datasets","r(cm)"}]
 
 
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Constants, Stability Modules, Scaling Modules, SCalc modules, and GD Modules*)
 
 
@@ -380,7 +375,7 @@ rtabr=rs[[180;;250]];
 (*Export["kadapt"<>ToString[indss[[m]]]<>".m",kadapt[indss[[m]]]];*)
 (*,{m,1,Length[indss]}*)
 (*];*)
-(**)*)
+(**)
 (*SetDirectory[];*)
 (**)
 (*Do[*)
@@ -406,7 +401,7 @@ rtabr=rs[[180;;250]];
 (*];*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*File collection and collating routines*)
 
 
@@ -471,7 +466,7 @@ rtabr=rs[[180;;250]];
 (**)*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Auto Plotting*)
 
 
