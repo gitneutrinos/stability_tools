@@ -4,11 +4,10 @@
 (*Import data from a SINGLE file and a SINGLE radial bin - will be used inside of lists later, so everything is specific to one radius*)
 
 
-inpath=ChoiceDialog["It's dangerous to go alone! Who are you?"{"Sam"-> "G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata", "Sherwood"->"/mnt/data/SamFlynn/lotsadata/"}]
 filename = "112Msun_100ms_DO";
-infile = "/mnt/data/SamFlynn/lotsadata/"<>filename<>".h5";
-out_path = "/mnt/data/SamFlynn/stability_data/"<>filename;
-ri = 1;
+infile = "/mnt/data/SamFlynn/lotsadata/"<>filename<>".h5"
+out_path = "/mnt/data/SamFlynn/stability_data/"<>filename
+ri = 1
 
 
 lotsodo=Import[infile,{"Datasets","distribution(erg|ccm,lab)"}][[ri]] (*distribution functions*)
@@ -18,6 +17,3 @@ freqs=Import[infile,{"Datasets", "distribution_frequency_grid(Hz,lab)"}]; (*freq
 freqmid=Import[infile,{"Datasets", "distribution_frequency_mid(Hz,lab)"}]; (*freq mid points*)
 muss=Import[infile,{"Datasets", "distribution_costheta_grid(lab)"}]; (*Cos\[Theta] grid*)
 mids=Import[infile,{"Datasets", "distribution_costheta_mid(lab)"}]; (*Cos\[Theta] bin midpoints*)
-
-
-
