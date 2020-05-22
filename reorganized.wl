@@ -41,6 +41,9 @@ ImportData[infile_,ri_]:=Association[
 (* ::Text:: *)
 (*Set the following just so as not to immediately break Sam's code on merge*)
 (*Thanks!*)
+
+
+(*
 ImportedData = ImportData[infile,ri];
 lotsodo=ImportedData[["lotsodo"]];
 matters=ImportedData[["matters"]];
@@ -49,6 +52,7 @@ freqs=ImportedData[["freqs"]];
 freqmid=ImportedData[["freqmid"]];
 muss=ImportedData[["muss"]];
 mids=ImportedData[["mids"]];
+*)
 
 
 (*Constants*)
@@ -72,11 +76,18 @@ Return[A.B-B.A]
 ];
 
 
-buildHamiltonians[n_,\[Theta]_,\[Omega]_,Ve_,hi_]:=Module[{name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,nv,nvb},(
+buildHamiltonians[infile_,ri_,\[Omega]_,Ve_,hi_]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,data,nudensity,nubardensity},(
+
+data=ImportData[infile,ri];
+
 name11="ee";
 name12="ex";
 name21="xe";
 name22="xx";
+
+n=Length[data["mids"]];
+\[Theta]=ArcCos[data["mids"]];
+
 Do[
 \[Rho][i]={{ToExpression[StringJoin["\[Rho]",name11,ToString[i]]],ToExpression[StringJoin["\[Rho]",name12,ToString[i]]]},{ToExpression[StringJoin["\[Rho]",name21,ToString[i]]],ToExpression[StringJoin["\[Rho]",name22,ToString[i]]]}};
 \[Rho]b[i]={{ToExpression[StringJoin["\[Rho]b",name11,ToString[i]]],ToExpression[StringJoin["\[Rho]b",name12,ToString[i]]]},{ToExpression[StringJoin["\[Rho]b",name21,ToString[i]]],ToExpression[StringJoin["\[Rho]b",name22,ToString[i]]]}};
@@ -84,10 +95,16 @@ A[i]={{0,ToExpression[StringJoin["A",name12,ToString[i]]]},{ToExpression[StringJ
 Ab[i]={{0,ToExpression[StringJoin["Ab",name12,ToString[i]]]},{ToExpression[StringJoin["Ab",name21,ToString[i]]],0}};
 ,{i,1,n}];
 
+
+nudensity[dt_]:= Sum[Sum[data["lotsodo"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
+nubardensity[dt_]:= Sum[Sum[data["lotsodo"][[2,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
+
 Hm={{Ve,0.},{0.,0.}};
 Hvac=hi{{-\[Omega]/2,0.},{0.,\[Omega]/2}};
-\[Mu]=munits Table[nv[i],{i,1,n},{j,1,n}];
-\[Mu]b=munits Table[nvb[i],{i,1,n},{j,1,n}];
+\[Mu]=munits Table[nudensity[i](data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
+\[Mu]b=munits Table[nubardensity[i](data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
+
+
 Do[
 Hsi[j]=Sum[\[Mu][[k,j]]\[Rho][k](2Pi)(1-Cos[\[Theta][[j]]]Cos[\[Theta][[k]]]),{k,1,n}]+Sum[-\[Mu]b[[k,j]]\[Rho]b[k](2Pi)(1-Cos[\[Theta][[j]]]Cos[\[Theta][[k]]]),{k,1,n}];
 ,{j,1,n}];
@@ -103,8 +120,11 @@ Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb}]
 ];
 
 
-getEquations[n_,\[Theta]_,\[Omega]_,Ve_,hi_,k_]:=Module[{eqn,eqnb,hs},( 
-hs=buildHamiltonians[n,\[Theta],\[Omega],Ve,hi];
+getEquations[infile_,ri_,\[Omega]_,Ve_,hi_,k_]:=Module[{n,\[Theta],eqn,eqnb,hs,data},( 
+hs=buildHamiltonians[infile,ri,\[Omega],Ve,hi];
+data=ImportData[infile,ri];
+n=Length[data["mids"]];
+\[Theta]=ArcCos[data["mids"]];
 (*This could be replaced with a mapthread or with associations, but one step at time*)
 With[{H=hs[[1]],Hb=hs[[2]],\[Rho]=hs[[3]],\[Rho]b=hs[[4]],A=hs[[5]],Ab=hs[[6]],\[Delta]H=hs[[7]],\[Delta]Hb=hs[[8]]}, 
 
@@ -137,9 +157,12 @@ Return[rrules];
 );
 ];
 
-stabilityMatrix[n_,\[Theta]_,\[Omega]_,Ve_,hi_,k_]:=Module[{S1,S2,S3,S4,S,hs,ea}, 
-ea=getEquations[n,\[Theta],\[Omega],Ve,hi,k];
-hs=buildHamiltonians[n,\[Theta],\[Omega],Ve,hi];
+stabilityMatrix[infile_,ri_,\[Omega]_,Ve_,hi_,k_]:=Module[{S1,S2,S3,S4,S,hs,ea,n,data}, 
+ea=getEquations[infile,ri,\[Omega],Ve,hi,k];
+hs=buildHamiltonians[infile,ri,\[Omega],Ve,hi];
+data=ImportData[infile,ri];
+n=Length[data["mids"]];
+
 With[{eqn=ea[[1]],eqnb=ea[[2]],A=hs[[5]],Ab=hs[[6]]},
 
 S1=ParallelTable[Coefficient[eqn[l],A[m][[1,2]]],{l,1,n},{m,1,n}];
@@ -151,18 +174,19 @@ Return[S];
 ]
 ];
 
-(*Everything seems to be working up through this point (5/21/2020) except that the nv andf nvb tables have no values.*)
 
+(*
 build2bMatrix[wt_,kx_]:=Block[{S2ba,S2b},
 S2ba=stabilityMatrix[2,{0.,Pi},wt,kx,0.,-1.];
 S2b={{S2ba[[1,1]],S2ba[[1,4]]},{S2ba[[4,1]],S2ba[[4,4]]}};
 Return[S2b]
 ];
+*)
 
 \[Omega]Eev[En_]:=\[Omega]Eev[En]=(7 10^-5)/(2 En) everg;
 
 
-stabilityMatrix[2,{0,Pi},0.1,0,-1,0]//MatrixForm (*This should yelid a ridiculous looking matrix, but that's fine. Looks to be working well.*)
+stabilityMatrix[infile,ri,0.1,0,-1,0]//MatrixForm (*yay*)
 
 
 evscale[A_,kx0_]:=Block[{\[Epsilon],As,kx0s},
