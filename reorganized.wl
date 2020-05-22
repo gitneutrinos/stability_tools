@@ -61,11 +61,13 @@ h=6.6260755 10^-27; (*erg s*)
 hbar = h/2 Pi; (*erg s*)
 Gf=1.1663787 10^-5; (*GeV^-2*)
 everg=1.60218 10^-12; (* convert eV to ergs*)
-Geverg = everg*10^9 (* convert GeV to ergs *)
+Geverg = everg*10^9; (* convert GeV to ergs *)
 ergev=1.0/everg; (*convert ergs to eV*)
 ergmev=ergev/10^6; (*convert erg to MeV*)
 mp=1.6726219 10^-24; (*Proton mass in g*)
 munits=Sqrt[2] Gf/Geverg^2 (hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
+\[CapitalDelta]m12sq=7.59 10^-5;
+
 
 
 
@@ -159,7 +161,6 @@ Return[rrules];
 
 stabilityMatrix[infile_,ri_,\[Omega]_,Ve_,hi_,k_]:=Module[{S1,S2,S3,S4,S,hs,ea,n,data}, 
 ea=getEquations[infile,ri,\[Omega],Ve,hi,k];
-
 data=ImportData[infile,ri];
 n=Length[data["mids"]];
 
@@ -183,7 +184,7 @@ Return[S2b]
 ];
 *)
 
-\[Omega]Eev[En_]:=\[Omega]Eev[En]=(7 10^-5)/(2 En) everg;
+\[Omega]Eev[En_]:=\[Omega]Eev[En]=(\[CapitalDelta]m12sq)/(2 En) everg;
 
 
 stabilityMatrix[infile,ri,0.1,0,-1,0]//MatrixForm (*yay*)
