@@ -159,11 +159,11 @@ Return[rrules];
 
 stabilityMatrix[infile_,ri_,\[Omega]_,Ve_,hi_,k_]:=Module[{S1,S2,S3,S4,S,hs,ea,n,data}, 
 ea=getEquations[infile,ri,\[Omega],Ve,hi,k];
-hs=buildHamiltonians[infile,ri,\[Omega],Ve,hi];
+
 data=ImportData[infile,ri];
 n=Length[data["mids"]];
 
-With[{eqn=ea[[1]],eqnb=ea[[2]],A=hs[[5]],Ab=hs[[6]]},
+With[{eqn=ea[[1]],eqnb=ea[[2]],A=ea[[3]],Ab=ea[[4]]},
 
 S1=ParallelTable[Coefficient[eqn[l],A[m][[1,2]]],{l,1,n},{m,1,n}];
 S2=ParallelTable[Coefficient[eqn[l],Ab[m][[1,2]]],{l,1,n},{m,1,n}];
