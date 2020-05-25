@@ -34,7 +34,8 @@ ImportData[infile_,ri_]:=Association[
 "freqs"->Import[infile,{"Datasets", "distribution_frequency_grid(Hz,lab)"}], (*freq grid in hz*)
 "freqmid"->Import[infile,{"Datasets", "distribution_frequency_mid(Hz,lab)"}], (*freq mid points*)
 "muss"->Import[infile,{"Datasets", "distribution_costheta_grid(lab)"}], (*Cos\[Theta] grid*)
-"mids"->Import[infile,{"Datasets", "distribution_costheta_mid(lab)"}] (*Cos\[Theta] bin midpoints*)
+"mids"->Import[infile,{"Datasets", "distribution_costheta_mid(lab)"}], (*Cos\[Theta] bin midpoints*)
+"radius"-> Import[infile,{"Datasets","r(cm)"}][[ri]]
 ]
 
 
@@ -67,6 +68,7 @@ ergmev=ergev/10^6; (*convert erg to MeV*)
 mp=1.6726219 10^-24; (*Proton mass in g*)
 munits=Sqrt[2] Gf/Geverg^2 (hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
 \[CapitalDelta]m12sq=7.59 10^-5;
+\[Omega]EGev[En_]:=\[Omega]Eev[En]=(\[CapitalDelta]m12sq)/(2 En) everg/10^9;
 
 
 
@@ -78,9 +80,12 @@ Return[A.B-B.A]
 ];
 
 
-buildHamiltonians[infile_,ri_,\[Omega]_,Ve_,hi_]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,data,nudensity,nubardensity},(
+buildHamiltonians[infile_,ri_,testE_,hi_]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,data,nudensity,nubardensity,Ve,\[Omega],HsiRad},(
 
 data=ImportData[infile,ri];
+
+Ve=munits/mp *data["Yes"]  *data["matters"];
+\[Omega]=\[Omega]EGev[testE];
 
 name11="ee";
 name12="ex";
@@ -117,13 +122,15 @@ Hb[i]=Hvac-Hm-Hsi[i];
 \[Delta]Hb[i]=Sum[((D[Hb[i][[1,2]],\[Rho][j][[1,2]]])A[j])+((D[Hb[i][[1,2]],\[Rho]b[j][[1,2]]])Ab[j]),{j,1,n}];
 ,{i,1,n}];
 
-Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb}]
+HsiRad=Hsi[n][[1,1]];
+
+Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb,HsiRad}]
 )
 ];
 
 
-getEquations[infile_,ri_,\[Omega]_,Ve_,hi_,k_]:=Module[{n,\[Theta],eqn,eqnb,hs,data},( 
-hs=buildHamiltonians[infile,ri,\[Omega],Ve,hi];
+getEquations[infile_,ri_,testE_,hi_,k_]:=Module[{n,\[Theta],eqn,eqnb,hs,data},( 
+hs=buildHamiltonians[infile,ri,testE,hi];
 data=ImportData[infile,ri];
 n=Length[data["mids"]];
 \[Theta]=ArcCos[data["mids"]];
@@ -135,8 +142,8 @@ eqn[j]=Com[H[j],A[j]][[1,2]]+ Com[\[Delta]H[j],\[Rho][j]][[1,2]]+(k Cos[\[Theta]
 eqnb[j]=-Com[Hb[j],Ab[j]][[1,2]]- Com[\[Delta]Hb[j],\[Rho]b[j]][[1,2]]+(k Cos[\[Theta][[j]]] Ab[j][[1,2]]);
 ,{j,1,n}];
 
-Return[{eqn,eqnb,A,Ab}]
-]; (*Close with*)
+Return[{eqn,eqnb,A,Ab,hs[[9]]}]
+](*Close with*)
 )
 ];
 
@@ -159,8 +166,8 @@ Return[rrules];
 );
 ];
 
-stabilityMatrix[infile_,ri_,\[Omega]_,Ve_,hi_,k_]:=Module[{S1,S2,S3,S4,S,hs,ea,n,data}, 
-ea=getEquations[infile,ri,\[Omega],Ve,hi,k];
+stabilityMatrix[infile_,ri_,testE_,hi_,k_]:=Module[{S1,S2,S3,S4,S,hs,ea,n,data,HsiRad}, 
+ea=getEquations[infile,ri,testE,hi,k];
 data=ImportData[infile,ri];
 n=Length[data["mids"]];
 
@@ -171,7 +178,8 @@ S2=ParallelTable[Coefficient[eqn[l],Ab[m][[1,2]]],{l,1,n},{m,1,n}];
 S3=ParallelTable[Coefficient[eqnb[l],A[m][[1,2]]],{l,1,n},{m,1,n}];
 S4=ParallelTable[Coefficient[eqnb[l],Ab[m][[1,2]]],{l,1,n},{m,1,n}];
 S=ArrayFlatten[{{S1,S2},{S3,S4}}]/.rules[n];
-Return[S];
+HsiRad=ea[[5]]/.rules[n];
+Return[{S,HsiRad}];
 ]
 ];
 
@@ -184,67 +192,70 @@ Return[S2b]
 ];
 *)
 
-\[Omega]Eev[En_]:=\[Omega]Eev[En]=(\[CapitalDelta]m12sq)/(2 En) everg;
 
 
-stabilityMatrix[infile,ri,0.1,0,-1,0]//MatrixForm (*yay*)
 
-
-evscale[A_,kx0_]:=Block[{\[Epsilon],As,kx0s},
-\[Epsilon]=$MachineEpsilon;
-As=Expand[(A/\[Epsilon])/.kx->\[Epsilon] kxs];
-kx0s=kx0/\[Epsilon];
-as=\[Epsilon] Eigenvalues[As/.kxs->kx0s];
-(*bs=\[Epsilon] Eigenvalues[As]/.kxs\[Rule]kx0s;*)
-Return[as]
-];
-evscale2[A_,kx0_]:=Block[{\[Epsilon],As,kx0s},
+evscale[infile_,ri_,testE_,hi_,ktest_]:=Module[{\[Epsilon],A,As,kx0s,as,kx,kxs},
 \[Epsilon]=$MachineEpsilon/2;
+A=stabilityMatrix[infile,ri,testE,hi,kx][[1]];
 As=Expand[(A/\[Epsilon])/.kx->\[Epsilon] kxs];
-kx0s=kx0/\[Epsilon];
-as=\[Epsilon] Eigenvalues[As/.kxs->kx0s];
+kx0s=ktest/\[Epsilon];
+as=\[Epsilon] Eigenvalues[N[As]/.kxs->kx0s];
 (*bs=\[Epsilon] Eigenvalues[As]/.kxs\[Rule]kx0s;*)
 Return[as]
 ];
 
-SCalclotsScale[rsrt_,rend_,testE_,ind_,ktest_,hi_]:=(
-(*Saves output for particular set of inputs to avoid repeated computation*)
-(*Piece of mind that absuing global variables isn't causing hold over values.*)
-Clear[k,bangles,angles,nv,nvb,evalsl];
-(*Create list of eigenvalues of S. Instability freqs*)
-evalsl=Reap[ (* open reap *)
-Do[ (* open do over radial bins*)
-Do[ (* Open do over angluar bins*)
-(* Populate matrix of neutrino numbers in each angular bin scaled by munits.  Used in SI part of Hamiltonian*)
-nv[i]= Abs[dolots[ind,r,i](muss[[ind,i+1]]-muss[[ind,i]])];
-nvb[i]= Abs[adolots[ind,r,i](muss[[ind,i+1]]-muss[[ind,i]])];
-,{i,1,Length[mids[[ind]]]}]; (* Close angular bin do *)
-(*Calls stabiltyMatrix for the current inputs.  Assigns a global value for the S matrix*)
-Sow[Sort[Im[evscale[N[stabilityMatrix[Length[mids[[ind]]],ArcCos[mids[[ind]]],\[Omega]Eev[testE],kx,munits/mp *Yes[[ind,r]] *matters[[ind,r]],hi]],ktest]],Greater],eigen]; (* Calculates the numerical eignevalues of S, takes the imaginary parts, ranks them according to absolute value, then sows them with the tag "eigen"*)
-Sow[Hsi[Length[mids[[ind]]]][[1,1]]/.rrules,pots] ;
-(*Caculates the self interaction along the radial direction for the current nv/nvb and sows with tag pots*)
-,{r,rsrt,rend}](*Close r do loop*)
-,{eigen,pots}];(*Close reap and reap the tags eigen and pots*)
-Return[evalsl]; 
-);
 
-SCalclotsScaleMat[rsrt_,rend_,testE_,ind_,ktest_,hi_]:=(
-(*Saves output for particular set of inputs to avoid repeated computation*)
-(*Piece of mind that absuing global variables isn't causing hold over values.*)
-Clear[k,bangles,angles,nv,nvb,evalsl];
+
+evscale[infile,ri,20,-1,10^-17]
+
+
+SCalcScale[infile_,ri_,testE_,ktest_,hi_]:=SCalclotsScale[infile,ri,testE,ktest,hi]=Module[{evalsl,pot,mat,kt,ktarget},(
+(*stabilityMatrix[infile_,ri_,testE,hi_,k_]*)
 (*Create list of eigenvalues of S. Instability freqs*)
-evalsl=Reap[ (* open reap *)
-Do[ (* open do over radial bins*)
-Do[ (* Open do over angluar bins*)
-(* Populate matrix of neutrino numbers in each angular bin scaled by munits.  Used in SI part of Hamiltonian*)
-nv[i]= Abs[dolots[ind,r,i](muss[[ind,i+1]]-muss[[ind,i]])];
-nvb[i]= Abs[adolots[ind,r,i](muss[[ind,i+1]]-muss[[ind,i]])];
-,{i,1,Length[mids[[ind]]]}]; (* Close angular bin do *)
-(*Calls stabiltyMatrix for the current inputs.  Assigns a global value for the S matrix*)
-Sow[Sort[Im[evscale2[N[stabilityMatrix[Length[mids[[ind]]],ArcCos[mids[[ind]]],\[Omega]Eev[testE],kx,munits/mp *Yes[[ind,r]] *matters[[ind,r]],hi]],ktest]],Greater],eigen]; (* Calculates the numerical eignevalues of S, takes the imaginary parts, ranks them according to absolute value, then sows them with the tag "eigen"*)
-Sow[stabilityMatrix[Length[mids[[ind]]],ArcCos[mids[[ind]]],\[Omega]Eev[testE],ktest,munits/mp *Yes[[ind,r]] *matters[[ind,r]],hi],pots] ;
-(*Caculates the self interaction along the radial direction for the current nv/nvb and sows with tag pots*)
-,{r,rsrt,rend}](*Close r do loop*)
-,{eigen,pots}];(*Close reap and reap the tags eigen and pots*)
-Return[evalsl]; 
+evalsl=Sort[Im[evscale[infile,ri,testE,hi,ktest]],Greater]; 
+pot=stabilityMatrix[infile,ri,testE,hi,ktest][[2]];
+mat=stabilityMatrix[infile,ri,testE,hi,ktest][[1]];
+ktarget=kvar/.Solve[stabilityMatrix[infile,ri,testE,hi,kvar][[1]][[1,1]]==0,kvar][[1]];
+Return[{evalsl,pot,mat,ktarget}]; 
 );
+];
+
+
+SCalcScale[infile,ri,20,-1,10][[4]]
+
+
+
+buildkGrid[infile_,ri_,testE_,hi_,nstep_]:=Module[{ktarget,kgrid,kvar,fspace},
+fSpace[min_,max_,steps_,f_: Log]:=InverseFunction[ConditionalExpression[f[#],min<#<max]&]/@Range[f@min,f@max,(f@max-f@min)/(steps-1)];
+ktarget=SCalcScale[infile,ri,testE,hi,0.][[4]];
+kgrid=fSpace[ktarget*10^-2,ktarget*10^2,nstep];
+Return[kgrid];
+];
+
+
+buildkGrid[infile,ri,20,-1,50]
+
+
+(*Exports *)
+kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_]:= kAdapt[infile,rstr,rend,testE,hi]=Module[{kl,evs1r,evout},
+evout=Reap[Do[
+kl=buildkGrid[infile,rx,testE,hi,nstep];
+Sow[
+evs1r=Reap[
+Do[
+Sow[{ImportData[infile,rx]["radius"],kl[[kx]],SCalcScale[infile,rx,testE,kl[[kx]],hi][[1]][[1]],SCalcScale[infile,rx,testE,kl[[kx]],hi][[2]]}]; 
+,{kx,1,Length[kl]}
+] (*close do over ktargets*)
+][[2,1]] (*close reap over k*)
+](*Close sow over r *)
+,{rx,rstr,rend}
+] (*close do over r*)
+][[2,1]] (*Close reap over r*)
+]; (*close module*)
+
+
+(*Runs ok up to this point, stillr requires cross checks.  Seems slower.*)
+
+
+kAdapt[infile,80,81,20,-1,50]
