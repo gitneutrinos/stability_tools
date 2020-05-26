@@ -71,7 +71,7 @@ Returns 9 arguments with index,
 2,4,6,8 = Hb,\[Rho]b,Ab,\[Delta]Hb
 9=HsiRadial
 *)
-buildHamiltonians[infile_,ri_,testE_,hi_]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,data,nudensity,nubardensity,Ve,\[Omega],HsiRad},(
+buildHamiltonians[infile_,ri_,testE_,hi_]:=buildHamiltonians[infile,ri,testE,hi]=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,data,nudensity,nubardensity,Ve,\[Omega],HsiRad},(
 
 data=ImportData[infile,ri];
 
@@ -126,7 +126,7 @@ Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb,HsiRad}]
  2,4 = Antineutrino equations of motion, Ab
  5=HsiRadial
  *)
-getEquations[infile_,ri_,testE_,hi_,k_]:=Module[{n,\[Theta],eqn,eqnb,hs,data},( 
+getEquations[infile_,ri_,testE_,hi_,k_]:=getEquations[infile,ri,testE,hi,k]=Module[{n,\[Theta],eqn,eqnb,hs,data},( 
 hs=buildHamiltonians[infile,ri,testE,hi];
 data=ImportData[infile,ri];
 n=Length[data["mids"]];
@@ -170,7 +170,7 @@ Returns 2 arguments,
 1=Stability Matrix
 2=HsiRadial
 *)
-stabilityMatrix[infile_,ri_,testE_,hi_,k_]:=Module[{S1,S2,S3,S4,S,hs,ea,n,data,HsiRad}, 
+stabilityMatrix[infile_,ri_,testE_,hi_,k_]:=stabilityMatrix[infile,ri,testE,hi,k]=Module[{S1,S2,S3,S4,S,hs,ea,n,data,HsiRad}, 
 ea=getEquations[infile,ri,testE,hi,k];
 data=ImportData[infile,ri];
 n=Length[data["mids"]];
@@ -200,7 +200,7 @@ Return[S2b]
 
 
 (*This scales the stability matrix up to a more managable scale based on the machine prescision, Solves for the eigenvalues, and then scales backs.  Returns a list of eigenvalues*)
-evscale[infile_,ri_,testE_,hi_,ktest_]:=Module[{\[Epsilon],A,As,kx0s,as,kx,kxs},
+evscale[infile_,ri_,testE_,hi_,ktest_]:=evscale[infile,ri,testE,hi,ktest]=Module[{\[Epsilon],A,As,kx0s,as,kx,kxs},
 \[Epsilon]=$MachineEpsilon/2;
 A=stabilityMatrix[infile,ri,testE,hi,kx][[1]];
 As=Expand[(A/\[Epsilon])/.kx->\[Epsilon] kxs];
@@ -232,7 +232,7 @@ Return[{evalsl,pot,mat,ktarget}];
 
 
 (*Constructs a nstep sized log spaced k grid based on the target k associated with the infile at radial bin r.  Currently the limits are 2 orders of magnitude above and below the target value, ignoring negatives for the moment *)
-buildkGrid[infile_,ri_,testE_,hi_,nstep_]:=Module[{ktarget,kgrid,kvar,fspace},
+buildkGrid[infile_,ri_,testE_,hi_,nstep_]:=buildkGrid[infile,ri,testE,hi,nstep]=Module[{ktarget,kgrid,kvar,fspace},
 fSpace[min_,max_,steps_,f_: Log]:=InverseFunction[ConditionalExpression[f[#],min<#<max]&]/@Range[f@min,f@max,(f@max-f@min)/(steps-1)];
 ktarget=SCalcScale[infile,ri,testE,hi,0.][[4]];
 kgrid=fSpace[ktarget*10^-2,ktarget*10^2,nstep];
