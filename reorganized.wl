@@ -68,7 +68,7 @@ ergmev=ergev/10^6; (*convert erg to MeV*)
 mp=1.6726219 10^-24; (*Proton mass in g*)
 munits=Sqrt[2] Gf/Geverg^2 (hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
 \[CapitalDelta]m12sq=7.59 10^-5;
-\[Omega]EGev[En_]:=\[Omega]Eev[En]=(\[CapitalDelta]m12sq)/(2 En) everg/10^9;
+\[Omega]EGev[En_]:=\[Omega]Eev[En]=(\[CapitalDelta]m12sq)/(2 En) ergmev;
 
 
 
