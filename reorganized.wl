@@ -18,7 +18,7 @@ id=ChoiceDialog[
  outpath="/mnt/data/SamFlynn/stability_data/";
  ];
  (*Want to implements toggle grid here to pick between the mass models and time slices.  It's easy, but definitely not a priority*)
-filename = "112Msun_100ms_DO";
+filename = "15Msun_50ms_DO";
 
 infile = inpath<>filename<>".h5";
 outfolder = outpath<>filename;
@@ -207,10 +207,7 @@ Return[as]
 
 
 
-evscale[infile,ri,20,-1,10^-17]
-
-
-SCalcScale[infile_,ri_,testE_,ktest_,hi_]:=SCalclotsScale[infile,ri,testE,ktest,hi]=Module[{evalsl,pot,mat,kt,ktarget},(
+SCalcScale[infile_,ri_,testE_,ktest_,hi_]:=SCalcScale[infile,ri,testE,ktest,hi]=Module[{evalsl,pot,mat,kt,ktarget},(
 (*stabilityMatrix[infile_,ri_,testE,hi_,k_]*)
 (*Create list of eigenvalues of S. Instability freqs*)
 evalsl=Sort[Im[evscale[infile,ri,testE,hi,ktest]],Greater]; 
@@ -222,9 +219,6 @@ Return[{evalsl,pot,mat,ktarget}];
 ];
 
 
-SCalcScale[infile,ri,20,-1,10][[4]]
-
-
 
 buildkGrid[infile_,ri_,testE_,hi_,nstep_]:=Module[{ktarget,kgrid,kvar,fspace},
 fSpace[min_,max_,steps_,f_: Log]:=InverseFunction[ConditionalExpression[f[#],min<#<max]&]/@Range[f@min,f@max,(f@max-f@min)/(steps-1)];
@@ -232,9 +226,6 @@ ktarget=SCalcScale[infile,ri,testE,hi,0.][[4]];
 kgrid=fSpace[ktarget*10^-2,ktarget*10^2,nstep];
 Return[kgrid];
 ];
-
-
-buildkGrid[infile,ri,20,-1,50]
 
 
 (*Exports *)
@@ -258,4 +249,4 @@ Sow[{ImportData[infile,rx]["radius"],kl[[kx]],SCalcScale[infile,rx,testE,kl[[kx]
 (*Runs ok up to this point, stillr requires cross checks.  Seems slower.*)
 
 
-kAdapt[infile,80,81,20,-1,50]
+firsttest=kAdapt[infile,180,250,20,-1,50];
