@@ -6,7 +6,7 @@
 
 (*Dialog prompt to fix in/out paths.  Can be replaced with direct path input later*)
 id=ChoiceDialog[
-"It's dangerous to go alone! Who are you and your computer companion?",{"Sam & Cuchulainn"-> "Sam", "Sherwood & Ganon"->"Sherwood"}];
+"It's dangerous to go alone! Who are you and your computer companion?",{"Sam & Cuchulain"-> "Sam", "Sherwood & Ganon"->"Sherwood","Someone new"->"Other"}];
 (*Sets the paths based on the machine pick.  The paths are global*)
  Which[id=="Sam",
  inpath="G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\";
@@ -16,6 +16,10 @@ id=ChoiceDialog[
  id=="Sherwood",
  inpath="/mnt/data/SamFlynn/lotsadata/";
  outpath="/mnt/data/SamFlynn/stability_data/";
+ ,
+ id=="Other",
+ inpath = SystemDialogInput["Directory",WindowTitle-> "Choose the folder containing the data set"];
+ outpath = inpath<>"out\\";
  ];
  (*Want to implements toggle grid here to pick between the mass models and time slices.  It's easy, but definitely not a priority*)
 filename = "15Msun_50ms_DO";
@@ -27,7 +31,10 @@ outfolder = outpath<>filename;
 ri = 1; (*Radial bin test case*)
 
 
-ImportData[infile_,ri_]:=Association[
+(*This function imports file with path name "infile" at radial bin ri, and creates associations for parts of the data.
+Format to call: dataname=ImportData[infile,1]["keyword"][[index]]
+*)
+ImportData[infile_,ri_]:=ImportData[infile,ri]=Association[
 "lotsodo"->Import[infile,{"Datasets","distribution(erg|ccm,lab)"}][[ri]] (*distribution functions*),
 "matters"->Import[infile,{"Datasets","rho(g|ccm,com)"}][[ri]], (*densities*)
 "Yes"->Import[infile,{"Datasets","Ye"}][[ri]], (*electron fractions *)
@@ -37,23 +44,6 @@ ImportData[infile_,ri_]:=Association[
 "mids"->Import[infile,{"Datasets", "distribution_costheta_mid(lab)"}], (*Cos\[Theta] bin midpoints*)
 "radius"-> Import[infile,{"Datasets","r(cm)"}][[ri]]
 ]
-
-
-(* ::Text:: *)
-(*Set the following just so as not to immediately break Sam's code on merge*)
-(*Thanks!*)
-
-
-(*
-ImportedData = ImportData[infile,ri];
-lotsodo=ImportedData[["lotsodo"]];
-matters=ImportedData[["matters"]];
-Yes=ImportedData[["Yes"]];
-freqs=ImportedData[["freqs"]];
-freqmid=ImportedData[["freqmid"]];
-muss=ImportedData[["muss"]];
-mids=ImportedData[["mids"]];
-*)
 
 
 (*Constants*)
@@ -68,24 +58,25 @@ ergmev=ergev/10^6; (*convert erg to MeV*)
 mp=1.6726219 10^-24; (*Proton mass in g*)
 munits=Sqrt[2] Gf/Geverg^2 (hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
 \[CapitalDelta]m12sq=7.59 10^-5;
-\[Omega]EGev[En_]:=\[Omega]Eev[En]=(\[CapitalDelta]m12sq)/(2 En) ergmev;
-
-
-
-
-(*Stability Matrix Construction*)
-
+\[Omega]EMev[En_]:=\[Omega]Eev[En]=(\[CapitalDelta]m12sq)/(2 En) ergmev;
 Com[A_,B_]:=Module[{a=A,b=B},
 Return[A.B-B.A]
 ];
 
 
+
+(*This function creates the hamiltonians based on the data set, and returns them in a "general" way that is readable.  
+Returns 9 arguments with index,
+1,3,5,7 = H,\[Rho],A,\[Delta]H
+2,4,6,8 = Hb,\[Rho]b,Ab,\[Delta]Hb
+9=HsiRadial
+*)
 buildHamiltonians[infile_,ri_,testE_,hi_]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,data,nudensity,nubardensity,Ve,\[Omega],HsiRad},(
 
 data=ImportData[infile,ri];
 
 Ve=munits/mp *data["Yes"]  *data["matters"];
-\[Omega]=\[Omega]EGev[testE];
+\[Omega]=\[Omega]EMev[testE];
 
 name11="ee";
 name12="ex";
@@ -129,6 +120,12 @@ Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb,HsiRad}]
 ];
 
 
+(*Calculates the equations of motion by computing the relvant commutators. 
+ Returns 5 arguments with index,
+ 1,3= neutrino equations of motion, A
+ 2,4 = Antineutrino equations of motion, Ab
+ 5=HsiRadial
+ *)
 getEquations[infile_,ri_,testE_,hi_,k_]:=Module[{n,\[Theta],eqn,eqnb,hs,data},( 
 hs=buildHamiltonians[infile,ri,testE,hi];
 data=ImportData[infile,ri];
@@ -150,6 +147,8 @@ Return[{eqn,eqnb,A,Ab,hs[[9]]}]
 
 
 
+(*Substitution rules to change "named" density matrix components with initial flavor state*)
+
 rules[n_]:=Module[{r1,r2,r3,r4,rb1,rb2,rb3,rb4,rrules},( 
 r1=Table[ToExpression["\[Rho]ee"<>ToString[i]]-> 1.,{i,1,n}];
 r2=Table[ToExpression["\[Rho]ex"<>ToString[i]] -> 0.,{i,1,n}];
@@ -166,6 +165,11 @@ Return[rrules];
 );
 ];
 
+(*Generates the stability matrix for file infile, radial bin ri, vacuum energy scale testE, mass ordering hi=1 (NO) or -1 (IO), and wavenumber k.
+Returns 2 arguments,
+1=Stability Matrix
+2=HsiRadial
+*)
 stabilityMatrix[infile_,ri_,testE_,hi_,k_]:=Module[{S1,S2,S3,S4,S,hs,ea,n,data,HsiRad}, 
 ea=getEquations[infile,ri,testE,hi,k];
 data=ImportData[infile,ri];
@@ -184,7 +188,7 @@ Return[{S,HsiRad}];
 ];
 
 
-(*
+(* this is the 2x2 matrix case
 build2bMatrix[wt_,kx_]:=Block[{S2ba,S2b},
 S2ba=stabilityMatrix[2,{0.,Pi},wt,kx,0.,-1.];
 S2b={{S2ba[[1,1]],S2ba[[1,4]]},{S2ba[[4,1]],S2ba[[4,4]]}};
@@ -195,6 +199,7 @@ Return[S2b]
 
 
 
+(*This scales the stability matrix up to a more managable scale based on the machine prescision, Solves for the eigenvalues, and then scales backs.  Returns a list of eigenvalues*)
 evscale[infile_,ri_,testE_,hi_,ktest_]:=Module[{\[Epsilon],A,As,kx0s,as,kx,kxs},
 \[Epsilon]=$MachineEpsilon/2;
 A=stabilityMatrix[infile,ri,testE,hi,kx][[1]];
@@ -207,6 +212,12 @@ Return[as]
 
 
 
+(*The heavy lifter, computes several items for a single radial bin. This function returns 4 arguments,
+1 = ordered list of imaginary parts of the eigenvalues of the stab. matrix, from greatest to least
+2 = The radial component of the self interaction potential
+3 = The stability matrix S
+4 = The "target" k value for this stability matrix.  Solve for the k value that makes S[[1,1]]\[Equal]0
+*)
 SCalcScale[infile_,ri_,testE_,ktest_,hi_]:=SCalcScale[infile,ri,testE,ktest,hi]=Module[{evalsl,pot,mat,kt,ktarget},(
 (*stabilityMatrix[infile_,ri_,testE,hi_,k_]*)
 (*Create list of eigenvalues of S. Instability freqs*)
@@ -220,6 +231,7 @@ Return[{evalsl,pot,mat,ktarget}];
 
 
 
+(*Constructs a nstep sized log spaced k grid based on the target k associated with the infile at radial bin r.  Currently the limits are 2 orders of magnitude above and below the target value, ignoring negatives for the moment *)
 buildkGrid[infile_,ri_,testE_,hi_,nstep_]:=Module[{ktarget,kgrid,kvar,fspace},
 fSpace[min_,max_,steps_,f_: Log]:=InverseFunction[ConditionalExpression[f[#],min<#<max]&]/@Range[f@min,f@max,(f@max-f@min)/(steps-1)];
 ktarget=SCalcScale[infile,ri,testE,hi,0.][[4]];
@@ -228,7 +240,7 @@ Return[kgrid];
 ];
 
 
-(*Exports *)
+(*Run buildkGrid and SCalcScale for several radial bins.*)
 kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_]:= kAdapt[infile,rstr,rend,testE,hi]=Module[{kl,evs1r,evout},
 evout=Reap[Do[
 kl=buildkGrid[infile,rx,testE,hi,nstep];
