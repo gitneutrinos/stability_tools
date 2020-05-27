@@ -31,6 +31,11 @@ outfolder = outpath<>filename;
 ri = 1; (*Radial bin test case*)
 
 
+Import[infile,{"Datasets","distribution(erg|ccm,lab)"}]//AbsoluteTiming
+Import[infile,{"Data","distribution(erg|ccm,lab)"}]//AbsoluteTiming
+Import[infile,{"RawData","distribution(erg|ccm,lab)"}]//AbsoluteTiming
+
+
 (*This function imports file with path name "infile" at radial bin ri, and creates associations for parts of the data.
 Format to call: dataname=ImportData[infile,1]["keyword"][[index]]
 *)
@@ -46,6 +51,10 @@ ImportData[infile_,ri_]:=ImportData[infile,ri]=Association[
 ]
 
 
+ImportData[infile,1]//AbsoluteTiming
+Do[ImportData[infile,i],{i,180,250}]//AbsoluteTiming
+
+
 (*Constants*)
 c=2.99792458 10^10; (* cm/s*)
 h=6.6260755 10^-27; (*erg s*)
@@ -55,7 +64,7 @@ everg=1.60218 10^-12; (* convert eV to ergs*)
 Geverg = everg*10^9; (* convert GeV to ergs *)
 ergev=1.0/everg; (*convert ergs to eV*)
 ergmev=ergev/10^6; (*convert erg to MeV*)
-mp=1.6726219 10^-24; (*Proton mass in g*)
+mp=1.6726219 10^-24; (*Proton mass in g*) 
 munits=Sqrt[2] Gf/Geverg^2 (hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
 \[CapitalDelta]m12sq=7.59 10^-5;
 \[Omega]EMev[En_]:=\[Omega]Eev[En]=(\[CapitalDelta]m12sq)/(2 En) ergmev;
@@ -177,10 +186,10 @@ n=Length[data["mids"]];
 
 With[{eqn=ea[[1]],eqnb=ea[[2]],A=ea[[3]],Ab=ea[[4]]},
 
-S1=ParallelTable[Coefficient[eqn[l],A[m][[1,2]]],{l,1,n},{m,1,n}];
-S2=ParallelTable[Coefficient[eqn[l],Ab[m][[1,2]]],{l,1,n},{m,1,n}];
-S3=ParallelTable[Coefficient[eqnb[l],A[m][[1,2]]],{l,1,n},{m,1,n}];
-S4=ParallelTable[Coefficient[eqnb[l],Ab[m][[1,2]]],{l,1,n},{m,1,n}];
+S1=Table[Coefficient[eqn[l],A[m][[1,2]]],{l,1,n},{m,1,n}];
+S2=Table[Coefficient[eqn[l],Ab[m][[1,2]]],{l,1,n},{m,1,n}];
+S3=Table[Coefficient[eqnb[l],A[m][[1,2]]],{l,1,n},{m,1,n}];
+S4=Table[Coefficient[eqnb[l],Ab[m][[1,2]]],{l,1,n},{m,1,n}];
 S=ArrayFlatten[{{S1,S2},{S3,S4}}]/.rules[n];
 HsiRad=ea[[5]]/.rules[n];
 Return[{S,HsiRad}];
@@ -242,7 +251,7 @@ Return[kgrid];
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
 kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_]:= kAdapt[infile,rstr,rend,testE,hi]=Module[{kl,evs1r,evout},
-evout=Reap[Do[
+evout=Reap[ParallelDo[
 kl=buildkGrid[infile,rx,testE,hi,nstep];
 Sow[
 evs1r=Reap[
@@ -261,4 +270,28 @@ Sow[{ImportData[infile,rx]["radius"],kl[[kx]],SCalcScale[infile,rx,testE,kl[[kx]
 (*Runs ok up to this point, stillr requires cross checks.  Seems slower.*)
 
 
-firsttest=kAdapt[infile,180,250,20,-1,50];
+AbsoluteTiming[ImportData[infile,180]]
+
+
+AbsoluteTiming[SCalcScale[infile,180,20,10^-17,-1]]
+
+
+AbsoluteTiming[stabilityMatrix[infile,180,20,-1,10^-17]]
+
+
+AbsoluteTiming[SCalcScale[infile,180,20,10^-17,-1]]
+
+
+AbsoluteTiming[buildkGrid[infile,180,20,-1,50]]
+
+
+AbsoluteTiming[buildkGrid[infile,180,20,-1,20]]
+
+
+AbsoluteTiming[kAdapt[infile,180,220,20,-1,20]]
+
+
+
+
+
+
