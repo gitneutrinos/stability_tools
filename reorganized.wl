@@ -31,6 +31,13 @@ outfolder = outpath<>filename;
 ri = 1; (*Radial bin test case*)
 
 
+testdata=Import[infile,"Data"]//AbsoluteTiming
+testdata=Import[infile,"Datasets"]//AbsoluteTiming
+
+
+testdata["/rho(g|ccm,com)"]
+
+
 Import[infile,{"Datasets","distribution(erg|ccm,lab)"}]//AbsoluteTiming
 Import[infile,{"Data","distribution(erg|ccm,lab)"}]//AbsoluteTiming
 Import[infile,{"RawData","distribution(erg|ccm,lab)"}]//AbsoluteTiming
