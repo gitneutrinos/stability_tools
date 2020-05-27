@@ -31,35 +31,29 @@ outfolder = outpath<>filename;
 ri = 1; (*Radial bin test case*)
 
 
-testdata=Import[infile,"Data"]//AbsoluteTiming
-testdata=Import[infile,"Datasets"]//AbsoluteTiming
-
-
-testdata["/rho(g|ccm,com)"]
-
-
-Import[infile,{"Datasets","distribution(erg|ccm,lab)"}]//AbsoluteTiming
-Import[infile,{"Data","distribution(erg|ccm,lab)"}]//AbsoluteTiming
-Import[infile,{"RawData","distribution(erg|ccm,lab)"}]//AbsoluteTiming
-
-
 (*This function imports file with path name "infile" at radial bin ri, and creates associations for parts of the data.
 Format to call: dataname=ImportData[infile,1]["keyword"][[index]]
 *)
-ImportData[infile_,ri_]:=ImportData[infile,ri]=Association[
-"lotsodo"->Import[infile,{"Datasets","distribution(erg|ccm,lab)"}][[ri]] (*distribution functions*),
-"matters"->Import[infile,{"Datasets","rho(g|ccm,com)"}][[ri]], (*densities*)
-"Yes"->Import[infile,{"Datasets","Ye"}][[ri]], (*electron fractions *)
+ImportData[infile_]:=ImportData[infile]=Association[
+"lotsodo"->Import[infile,{"Datasets","distribution(erg|ccm,lab)"}] (*distribution functions*),
+"matters"->Import[infile,{"Datasets","rho(g|ccm,com)"}], (*densities*)
+"Yes"->Import[infile,{"Datasets","Ye"}], (*electron fractions *)
 "freqs"->Import[infile,{"Datasets", "distribution_frequency_grid(Hz,lab)"}], (*freq grid in hz*)
 "freqmid"->Import[infile,{"Datasets", "distribution_frequency_mid(Hz,lab)"}], (*freq mid points*)
 "muss"->Import[infile,{"Datasets", "distribution_costheta_grid(lab)"}], (*Cos\[Theta] grid*)
 "mids"->Import[infile,{"Datasets", "distribution_costheta_mid(lab)"}], (*Cos\[Theta] bin midpoints*)
-"radius"-> Import[infile,{"Datasets","r(cm)"}][[ri]]
+"radius"-> Import[infile,{"Datasets","r(cm)"}]
 ]
-
-
-ImportData[infile,1]//AbsoluteTiming
-Do[ImportData[infile,i],{i,180,250}]//AbsoluteTiming
+SelectRadius[data_,ri_]:=SelectRadius[data,ri]=Association[
+"lotsodo"->data["lotsodo"][[ri]] (*distribution functions*),
+"matters"->data["matters"][[ri]], (*densities*)
+"Yes"->data["Yes"][[ri]], (*electron fractions *)
+"freqs"->data["freqs"], (*freq grid in hz*)
+"freqmid"->data["freqmid"], (*freq mid points*)
+"muss"->data["muss"], (*Cos\[Theta] grid*)
+"mids"->data["mids"], (*Cos\[Theta] bin midpoints*)
+"radius"->data["radius"][[ri]]
+]
 
 
 (*Constants*)
@@ -87,9 +81,7 @@ Returns 9 arguments with index,
 2,4,6,8 = Hb,\[Rho]b,Ab,\[Delta]Hb
 9=HsiRadial
 *)
-buildHamiltonians[infile_,ri_,testE_,hi_]:=buildHamiltonians[infile,ri,testE,hi]=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,data,nudensity,nubardensity,Ve,\[Omega],HsiRad},(
-
-data=ImportData[infile,ri];
+buildHamiltonians[data_,ri_,testE_,hi_]:=buildHamiltonians[data,ri,testE,hi]=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,nudensity,nubardensity,Ve,\[Omega],HsiRad},(
 
 Ve=munits/mp *data["Yes"]  *data["matters"];
 \[Omega]=\[Omega]EMev[testE];
@@ -142,9 +134,8 @@ Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb,HsiRad}]
  2,4 = Antineutrino equations of motion, Ab
  5=HsiRadial
  *)
-getEquations[infile_,ri_,testE_,hi_,k_]:=getEquations[infile,ri,testE,hi,k]=Module[{n,\[Theta],eqn,eqnb,hs,data},( 
-hs=buildHamiltonians[infile,ri,testE,hi];
-data=ImportData[infile,ri];
+getEquations[data_,ri_,testE_,hi_,k_]:=getEquations[data,ri,testE,hi,k]=Module[{n,\[Theta],eqn,eqnb,hs},( 
+hs=buildHamiltonians[data,ri,testE,hi];
 n=Length[data["mids"]];
 \[Theta]=ArcCos[data["mids"]];
 (*This could be replaced with a mapthread or with associations, but one step at time*)
@@ -186,9 +177,8 @@ Returns 2 arguments,
 1=Stability Matrix
 2=HsiRadial
 *)
-stabilityMatrix[infile_,ri_,testE_,hi_,k_]:=stabilityMatrix[infile,ri,testE,hi,k]=Module[{S1,S2,S3,S4,S,hs,ea,n,data,HsiRad}, 
-ea=getEquations[infile,ri,testE,hi,k];
-data=ImportData[infile,ri];
+stabilityMatrix[data_,ri_,testE_,hi_,k_]:=stabilityMatrix[data,ri,testE,hi,k]=Module[{S1,S2,S3,S4,S,hs,ea,n,HsiRad}, 
+ea=getEquations[data,ri,testE,hi,k];
 n=Length[data["mids"]];
 
 With[{eqn=ea[[1]],eqnb=ea[[2]],A=ea[[3]],Ab=ea[[4]]},
@@ -216,9 +206,9 @@ Return[S2b]
 
 
 (*This scales the stability matrix up to a more managable scale based on the machine prescision, Solves for the eigenvalues, and then scales backs.  Returns a list of eigenvalues*)
-evscale[infile_,ri_,testE_,hi_,ktest_]:=evscale[infile,ri,testE,hi,ktest]=Module[{\[Epsilon],A,As,kx0s,as,kx,kxs},
+evscale[data_,ri_,testE_,hi_,ktest_]:=evscale[data,ri,testE,hi,ktest]=Module[{\[Epsilon],A,As,kx0s,as,kx,kxs},
 \[Epsilon]=$MachineEpsilon/2;
-A=stabilityMatrix[infile,ri,testE,hi,kx][[1]];
+A=stabilityMatrix[data,ri,testE,hi,kx][[1]];
 As=Expand[(A/\[Epsilon])/.kx->\[Epsilon] kxs];
 kx0s=ktest/\[Epsilon];
 as=\[Epsilon] Eigenvalues[N[As]/.kxs->kx0s];
@@ -234,13 +224,13 @@ Return[as]
 3 = The stability matrix S
 4 = The "target" k value for this stability matrix.  Solve for the k value that makes S[[1,1]]\[Equal]0
 *)
-SCalcScale[infile_,ri_,testE_,ktest_,hi_]:=SCalcScale[infile,ri,testE,ktest,hi]=Module[{evalsl,pot,mat,kt,ktarget},(
+SCalcScale[data_,ri_,testE_,ktest_,hi_]:=SCalcScale[data,ri,testE,ktest,hi]=Module[{evalsl,pot,mat,kt,ktarget},(
 (*stabilityMatrix[infile_,ri_,testE,hi_,k_]*)
 (*Create list of eigenvalues of S. Instability freqs*)
-evalsl=Sort[Im[evscale[infile,ri,testE,hi,ktest]],Greater]; 
-pot=stabilityMatrix[infile,ri,testE,hi,ktest][[2]];
-mat=stabilityMatrix[infile,ri,testE,hi,ktest][[1]];
-ktarget=kvar/.Solve[stabilityMatrix[infile,ri,testE,hi,kvar][[1]][[1,1]]==0,kvar][[1]];
+evalsl=Sort[Im[evscale[data,ri,testE,hi,ktest]],Greater]; 
+pot=stabilityMatrix[data,ri,testE,hi,ktest][[2]];
+mat=stabilityMatrix[data,ri,testE,hi,ktest][[1]];
+ktarget=kvar/.Solve[stabilityMatrix[data,ri,testE,hi,kvar][[1]][[1,1]]==0,kvar][[1]];
 Return[{evalsl,pot,mat,ktarget}]; 
 );
 ];
@@ -248,22 +238,25 @@ Return[{evalsl,pot,mat,ktarget}];
 
 
 (*Constructs a nstep sized log spaced k grid based on the target k associated with the infile at radial bin r.  Currently the limits are 2 orders of magnitude above and below the target value, ignoring negatives for the moment *)
-buildkGrid[infile_,ri_,testE_,hi_,nstep_]:=buildkGrid[infile,ri,testE,hi,nstep]=Module[{ktarget,kgrid,kvar,fspace},
+buildkGrid[data_,ri_,testE_,hi_,nstep_]:=buildkGrid[data,ri,testE,hi,nstep]=Module[{ktarget,kgrid,kvar,fspace},
 fSpace[min_,max_,steps_,f_: Log]:=InverseFunction[ConditionalExpression[f[#],min<#<max]&]/@Range[f@min,f@max,(f@max-f@min)/(steps-1)];
-ktarget=SCalcScale[infile,ri,testE,hi,0.][[4]];
+ktarget=SCalcScale[data,ri,testE,hi,0.][[4]];
 kgrid=fSpace[ktarget*10^-2,ktarget*10^2,nstep];
 Return[kgrid];
 ];
 
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
-kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_]:= kAdapt[infile,rstr,rend,testE,hi]=Module[{kl,evs1r,evout},
+kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_]:= kAdapt[infile,rstr,rend,testE,hi]=Module[{kl,evs1r,evout,alldata,data},
+alldata=ImportData[infile];
 evout=Reap[ParallelDo[
-kl=buildkGrid[infile,rx,testE,hi,nstep];
+data=SelectRadius[alldata,rx];
+kl=buildkGrid[data,rx,testE,hi,nstep];
 Sow[
 evs1r=Reap[
 Do[
-Sow[{ImportData[infile,rx]["radius"],kl[[kx]],SCalcScale[infile,rx,testE,kl[[kx]],hi][[1]][[1]],SCalcScale[infile,rx,testE,kl[[kx]],hi][[2]]}]; 
+(*Print["Working on "<>ToString[kx]<>","<>ToString[rx]]*)
+Sow[{data["radius"],kl[[kx]],SCalcScale[data,rx,testE,kl[[kx]],hi][[1]][[1]],SCalcScale[data,rx,testE,kl[[kx]],hi][[2]]}]; 
 ,{kx,1,Length[kl]}
 ] (*close do over ktargets*)
 ][[2,1]] (*close reap over k*)
@@ -277,28 +270,24 @@ Sow[{ImportData[infile,rx]["radius"],kl[[kx]],SCalcScale[infile,rx,testE,kl[[kx]
 (*Runs ok up to this point, stillr requires cross checks.  Seems slower.*)
 
 
-AbsoluteTiming[ImportData[infile,180]]
+AbsoluteTiming[alldata = ImportData[infile]]
+data = SelectRadius[alldata,ri]
+data["lotsodo"]
 
 
-AbsoluteTiming[SCalcScale[infile,180,20,10^-17,-1]]
+(*AbsoluteTiming[SCalcScale[data,180,20,10^-17,-1]]*)
 
 
-AbsoluteTiming[stabilityMatrix[infile,180,20,-1,10^-17]]
+(*AbsoluteTiming[stabilityMatrix[data,180,20,-1,10^-17]]*)
 
 
-AbsoluteTiming[SCalcScale[infile,180,20,10^-17,-1]]
+(*AbsoluteTiming[SCalcScale[data,180,20,10^-17,-1]]*)
 
 
-AbsoluteTiming[buildkGrid[infile,180,20,-1,50]]
+(*AbsoluteTiming[buildkGrid[data,180,20,-1,50]]
 
 
-AbsoluteTiming[buildkGrid[infile,180,20,-1,20]]
+(*AbsoluteTiming[buildkGrid[data,180,20,-1,20]]
 
 
 AbsoluteTiming[kAdapt[infile,180,220,20,-1,20]]
-
-
-
-
-
-
