@@ -163,8 +163,8 @@ Returns 2 arguments,
 1=Stability Matrix
 2=HsiRadial
 *)
-stabilityMatrix[data_,testE_,hi_,k_]:=Module[{S1,S2,S3,S4,S,hs,ea,n,HsiRad}, 
-ea=getEquations[data,testE,hi,k];
+stabilityMatrix[data_,ea_]:=Module[{S1,S2,S3,S4,S,hs,n,HsiRad}, 
+
 n=Length[data["mids"]];
 
 With[{eqn=ea[[1]],eqnb=ea[[2]],A=ea[[3]],Ab=ea[[4]]},
@@ -174,16 +174,17 @@ S2=Table[Coefficient[eqn[l],Ab[m][[1,2]]],{l,1,n},{m,1,n}];
 S3=Table[Coefficient[eqnb[l],A[m][[1,2]]],{l,1,n},{m,1,n}];
 S4=Table[Coefficient[eqnb[l],Ab[m][[1,2]]],{l,1,n},{m,1,n}];
 S=ArrayFlatten[{{S1,S2},{S3,S4}}]/.rules[n];
-HsiRad=ea[[5]]/.rules[n];
-Return[{S,HsiRad}];
+Return[S];
 ]
 ];
+
+potential[data_,ea_]:=ea[[5]]/.rules[Length[data["mids"]]]
 
 
 (*This scales the stability matrix up to a more managable scale based on the machine prescision, Solves for the eigenvalues, and then scales backs.  Returns a list of eigenvalues*)
 evscale[ktest_,S_,kx_]:=Module[{\[Epsilon],A,As,kx0s,as,kxs},
 \[Epsilon]=$MachineEpsilon/2;
-A=S[[1]];
+A=S;
 As=Expand[(A/\[Epsilon])/.kx->\[Epsilon] kxs];
 kx0s=ktest/\[Epsilon];
 as=\[Epsilon] Eigenvalues[N[As]/.kxs->kx0s];
@@ -198,13 +199,14 @@ Return[as]
 3 = The stability matrix S
 4 = The "target" k value for this stability matrix.  Solve for the k value that makes S[[1,1]]\[Equal]0
 *)
-SCalcScale[data_,testE_,hi_,ktest_]:=Module[{evalsl,pot,mat,kt,S},(
+SCalcScale[data_,testE_,hi_,ktest_]:=Module[{evalsl,pot,mat,kt,S,ea},(
 (*stabilityMatrix[infile_,ri_,testE,hi_,k_]*)
 (*Create list of eigenvalues of S. Instability freqs*)
-S=stabilityMatrix[data,testE,hi,kvar];
+ea=getEquations[data,testE,hi,kvar];
+S=stabilityMatrix[data,ea];
 evalsl=Sort[Im[evscale[ktest,S,kvar]],Greater];
-pot=S[[2]]/.kvar->ktest;
-mat=S[[1]]/.kvar->ktest;
+pot=potential[data,ea]/.kvar->ktest;
+mat=S/.kvar->ktest;
 Return[{evalsl,pot,mat}]; 
 );
 ];
