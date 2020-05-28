@@ -38,7 +38,6 @@ munits=Sqrt[2] (Gf/Geverg^2 )(hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
 \[CapitalDelta]m12sq=(7.59 10^-5) everg^2;
 \[Omega]EMev[En_]:=(\[CapitalDelta]m12sq)/(2 (En Meverg));
 Com[A_,B_]:=Module[{a=A,b=B},Return[A.B-B.A]];
-
 (*This function imports file with path name "infile" at radial bin ri, and creates associations for parts of the data.
 Format to call: dataname=ImportData[infile,1]["keyword"][[index]]
 *)
@@ -60,7 +59,7 @@ Returns 9 arguments with index,
 2,4,6,8 = Hb,\[Rho]b,Ab,\[Delta]Hb
 9=HsiRadial
 *)
-buildHamiltonians[data_,ri_,testE_,hi_]:=buildHamiltonians[data,ri,testE,hi]=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,nudensity,nubardensity,Ve,\[Omega],HsiRad},(
+buildHamiltonians[data_,ri_,testE_,hi_]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,nudensity,nubardensity,Ve,\[Omega],HsiRad},(
 
 Ve=munits/mp *data["Yes"][[ri]]  *data["matters"][[ri]];
 \[Omega]=\[Omega]EMev[testE];
@@ -113,7 +112,7 @@ Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb,HsiRad}]
  2,4 = Antineutrino equations of motion, Ab
  5=HsiRadial
  *)
-getEquations[data_,ri_,testE_,hi_,k_]:=getEquations[data,ri,testE,hi,k]=Module[{n,\[Theta],eqn,eqnb,hs},( 
+getEquations[data_,ri_,testE_,hi_,k_]:=Module[{n,\[Theta],eqn,eqnb,hs},( 
 hs=buildHamiltonians[data,ri,testE,hi];
 n=Length[data["mids"]];
 \[Theta]=ArcCos[data["mids"]];
