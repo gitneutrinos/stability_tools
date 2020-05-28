@@ -57,12 +57,13 @@ hbar = h/(2 Pi); (*erg s*)
 Gf=1.1663787 10^-5; (*GeV^-2*)
 everg=1.60218 10^-12; (* convert eV to ergs*)
 Geverg = everg*10^9; (* convert GeV to ergs *)
+Meverg = everg*10^6; (*convert Mev to erg*) 
 ergev=1.0/everg; (*convert ergs to eV*)
 ergmev=ergev/10^6; (*convert erg to MeV*)
 mp=1.6726219 10^-24; (*Proton mass in g*) 
 munits=Sqrt[2] (Gf/Geverg^2 )(hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
-\[CapitalDelta]m12sq=7.59 10^-5;
-\[Omega]EMev[En_]:=\[Omega]Eev[En]=(\[CapitalDelta]m12sq)/(2 En) ergmev;
+\[CapitalDelta]m12sq=(7.59 10^-5) everg^2;
+\[Omega]EMev[En_]:=(\[CapitalDelta]m12sq)/(2 (En Meverg));
 Com[A_,B_]:=Module[{a=A,b=B},
 Return[A.B-B.A]
 ];
@@ -183,7 +184,7 @@ S3=Table[Coefficient[eqnb[l],A[m][[1,2]]],{l,1,n},{m,1,n}];
 S4=Table[Coefficient[eqnb[l],Ab[m][[1,2]]],{l,1,n},{m,1,n}];
 S=ArrayFlatten[{{S1,S2},{S3,S4}}]/.rules[n];
 HsiRad=ea[[5]]/.rules[n];
-Return[{S,HsiRad}];
+Return[{S,HsiRad,S1}];
 ]
 ];
 
@@ -259,6 +260,12 @@ Return[evout] (*Close reap over r*)
 ]; (*close module*)
 
 
+Block[{data,ri=200,E=20,hi=-1,k=0},
+data=ImportData[inpath<>"1D_withV_withPairBrems_DO"<>".h5"];
+stabilityMatrix[data,200,20,-1,0][[1]]//MatrixForm
+]
+
+
 M1510=kAdapt["15Msun_50ms_DO",180,250,20,-1,40];
 
 
@@ -266,3 +273,19 @@ Weird=kAdapt["1D_withV_withPairBrems_DO",180,250,20,-1,40];
 
 
 WeirdMC=kAdapt["1D_withV_withPairBrems_MC",180,250,20,-1,40];
+
+
+Clear[stabilityMatrix]
+
+
+Block[{data,ri=200,E=20,hi=-1,k=0},
+data=ImportData[inpath<>"1D_withV_withPairBrems_DO"<>".h5"];
+stabilityMatrix[data,200,20,-1,0][[1]]//MatrixForm
+]
+
+
+
+oldMat=Import["C:\\Users\\Sam\\rscan22\\scanmat22r200.m"]
+
+
+oldMat[[2,2,2,1,1]]//MatrixForm
