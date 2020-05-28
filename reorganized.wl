@@ -259,3 +259,19 @@ Reap[
 ][[2,1]];
 Return[evout] (*Close reap over r*)
 ]; (*close module*)
+
+
+kdebug=Block[{data,ri=200,testE=20,hi=-1,k=0,kvar},
+file="1D_withV_withPairBrems_DO";
+(*SCalcScale[ImportData[inpath<>file<>".h5"],ri,testE,hi,0][[3]]//MatrixForm*)
+(*buildkGrid[ImportData[inpath<>file<>".h5"],ri,testE,hi,40]*)
+kAdapt[file,ri,ri,testE,hi,40]
+]
+
+
+ListLogPlot[{Transpose@{kdebug[[All,2]],kdebug[[All,3]]},Transpose@{oldkgrid,oldpoints}},ImageSize-> Scaled[0.65]]
+
+
+oldpoints=Import["C:\\Users\\Sam\\rscan_targeted_adapt22\\rscan_adapt22r200.m"][[All,2,1,1,1,1]];
+oldkgrid=Import["C:\\Users\\Sam\\rscan22\\kadapt22.m"][[20,All]];
+ListPlot[Transpose@{oldkgrid,oldpoints}]
