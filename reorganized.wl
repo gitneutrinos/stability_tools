@@ -117,7 +117,7 @@ Hb[i]=Hvac-Hm-Hsi[i];
 
 HsiRad=(Tr[\[Mu]]+Tr[\[Mu]b]);
 
-Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb,HsiRad,\[Mu],\[Mu]b}]
+Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb,HsiRad}]
 )
 ];
 
@@ -236,7 +236,7 @@ Return[{evalsl,pot,mat,ktarget}];
 buildkGrid[data_,ri_,testE_,hi_,nstep_]:=buildkGrid[data,ri,testE,hi,nstep]=Module[{ktarget,kgrid,kvar,fspace},
 fSpace[min_,max_,steps_,f_: Log]:=InverseFunction[ConditionalExpression[f[#],min<#<max]&]/@Range[f@min,f@max,(f@max-f@min)/(steps-1)];
 ktarget=SCalcScale[data,ri,testE,hi,0.][[4]];
-kgrid=Join[fSpace[ktarget*10^-1,ktarget*10^1,nstep],fSpace[-ktarget*10^-1,-ktarget*10^1,nstep/2]];
+kgrid=Join[fSpace[ktarget*10^-1,ktarget*10^1,nstep],-fSpace[ktarget*10^-1,ktarget*10^1,nstep/2]];
 Return[kgrid];
 ];
 
@@ -260,6 +260,10 @@ Return[evout] (*Close reap over r*)
 ]; (*close module*)
 
 
-M1510=kAdapt["15Msun_50ms_DO",100,250,20,-1,40];
-Weird=kAdapt["1D_withV_withPairBrems_DO",100,250,20,-1,40];
-WeirdMC=kAdapt["1D_withV_withPairBrems_MC",100,250,20,-1,40];
+M1510=kAdapt["15Msun_50ms_DO",180,250,20,-1,40];
+
+
+Weird=kAdapt["1D_withV_withPairBrems_DO",180,250,20,-1,40];
+
+
+WeirdMC=kAdapt["1D_withV_withPairBrems_MC",180,250,20,-1,40];
