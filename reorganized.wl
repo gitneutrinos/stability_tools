@@ -22,38 +22,32 @@ id=ChoiceDialog[
  outpath = inpath<>"out\\";
  ];
  (*Want to implements toggle grid here to pick between the mass models and time slices.  It's easy, but definitely not a priority*)
+(*
 filename = "15Msun_50ms_DO";
-
 infile = inpath<>filename<>".h5";
 outfolder = outpath<>filename;
+*)
 (*Note: this used to contain a variable called "out_path". Be careful with the underscores; in Mathematica they are either function inputs or patterns.  If the font turn green, that's why.*)
 
-ri = 1; (*Radial bin test case*)
 
 
 (*This function imports file with path name "infile" at radial bin ri, and creates associations for parts of the data.
 Format to call: dataname=ImportData[infile,1]["keyword"][[index]]
 *)
-ImportData[infile_]:=ImportData[infile]=Association[
-"lotsodo"->Import[infile,{"Datasets","distribution(erg|ccm,lab)"}] (*distribution functions*),
-"matters"->Import[infile,{"Datasets","rho(g|ccm,com)"}], (*densities*)
-"Yes"->Import[infile,{"Datasets","Ye"}], (*electron fractions *)
-"freqs"->Import[infile,{"Datasets", "distribution_frequency_grid(Hz,lab)"}], (*freq grid in hz*)
-"freqmid"->Import[infile,{"Datasets", "distribution_frequency_mid(Hz,lab)"}], (*freq mid points*)
-"muss"->Import[infile,{"Datasets", "distribution_costheta_grid(lab)"}], (*Cos\[Theta] grid*)
-"mids"->Import[infile,{"Datasets", "distribution_costheta_mid(lab)"}], (*Cos\[Theta] bin midpoints*)
-"radius"-> Import[infile,{"Datasets","r(cm)"}]
-]
-SelectRadius[data_,ri_]:=SelectRadius[data,ri]=Association[
-"lotsodo"->data["lotsodo"][[ri]] (*distribution functions*),
-"matters"->data["matters"][[ri]], (*densities*)
-"Yes"->data["Yes"][[ri]], (*electron fractions *)
-"freqs"->data["freqs"], (*freq grid in hz*)
-"freqmid"->data["freqmid"], (*freq mid points*)
-"muss"->data["muss"], (*Cos\[Theta] grid*)
-"mids"->data["mids"], (*Cos\[Theta] bin midpoints*)
-"radius"->data["radius"][[ri]]
-]
+ImportData[infile_]:=ImportData[infile]=
+Association[
+"lotsodo"->Import[infile,{"Data","distribution(erg|ccm,lab)"}] (*distribution functions*),
+"matters"->Import[infile,{"Data","rho(g|ccm,com)"}], (*densities*)
+"Yes"->Import[infile,{"Data","Ye"}], (*electron fractions *)
+"freqs"->Import[infile,{"Data", "distribution_frequency_grid(Hz,lab)"}], (*freq grid in hz*)
+"freqmid"->Import[infile,{"Data", "distribution_frequency_mid(Hz,lab)"}], (*freq mid points*)
+"muss"->Import[infile,{"Data", "distribution_costheta_grid(lab)"}], (*Cos\[Theta] grid*)
+"mids"->Import[infile,{"Data", "distribution_costheta_mid(lab)"}], (*Cos\[Theta] bin midpoints*)
+"radius"-> Import[infile,{"Data","r(cm)"}]
+];
+
+
+
 
 
 (*Constants*)
@@ -83,7 +77,7 @@ Returns 9 arguments with index,
 *)
 buildHamiltonians[data_,ri_,testE_,hi_]:=buildHamiltonians[data,ri,testE,hi]=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,nudensity,nubardensity,Ve,\[Omega],HsiRad},(
 
-Ve=munits/mp *data["Yes"]  *data["matters"];
+Ve=munits/mp *data["Yes"][[ri]]  *data["matters"][[ri]];
 \[Omega]=\[Omega]EMev[testE];
 
 name11="ee";
@@ -102,8 +96,8 @@ Ab[i]={{0,ToExpression[StringJoin["Ab",name12,ToString[i]]]},{ToExpression[Strin
 ,{i,1,n}];
 
 
-nudensity[dt_]:= Sum[Sum[data["lotsodo"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
-nubardensity[dt_]:= Sum[Sum[data["lotsodo"][[2,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
+nudensity[dt_]:= Sum[Sum[data["lotsodo"][[ri,1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
+nubardensity[dt_]:= Sum[Sum[data["lotsodo"][[ri,2,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
 
 Hm={{Ve,0.},{0.,0.}};
 Hvac=hi{{-\[Omega]/2,0.},{0.,\[Omega]/2}};
@@ -121,7 +115,7 @@ Hb[i]=Hvac-Hm-Hsi[i];
 \[Delta]Hb[i]=Sum[((D[Hb[i][[1,2]],\[Rho][j][[1,2]]])A[j])+((D[Hb[i][[1,2]],\[Rho]b[j][[1,2]]])Ab[j]),{j,1,n}];
 ,{i,1,n}];
 
-HsiRad=Hsi[n][[1,1]];
+HsiRad=munits*(Tr[\[Mu]]+Tr[\[Mu]b]);
 
 Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb,HsiRad}]
 )
@@ -247,47 +241,24 @@ Return[kgrid];
 
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
-kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_]:= kAdapt[infile,rstr,rend,testE,hi]=Module[{kl,evs1r,evout,alldata,data},
-alldata=ImportData[infile];
-evout=Reap[ParallelDo[
-data=SelectRadius[alldata,rx];
-kl=buildkGrid[data,rx,testE,hi,nstep];
-Sow[
-evs1r=Reap[
-Do[
-(*Print["Working on "<>ToString[kx]<>","<>ToString[rx]]*)
-Sow[{data["radius"],kl[[kx]],SCalcScale[data,rx,testE,kl[[kx]],hi][[1]][[1]],SCalcScale[data,rx,testE,kl[[kx]],hi][[2]]}]; 
-,{kx,1,Length[kl]}
-] (*close do over ktargets*)
-][[2,1]] (*close reap over k*)
-](*Close sow over r *)
-,{rx,rstr,rend}
-] (*close do over r*)
-][[2,1]] (*Close reap over r*)
+kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_]:= kAdapt[infile,rstr,rend,testE,hi]=Module[{kl,evs1r,evout,data},
+data=ImportData[inpath<>infile<>".h5"];
+evout=
+Reap[
+		Do[
+		kl=buildkGrid[data,rx,testE,hi,nstep];
+						Do[
+						(*Print["Working on "<>ToString[kx]<>","<>ToString[rx]]*)
+							Sow[{data["radius"][[rx]],kl[[kx]],SCalcScale[data,rx,testE,kl[[kx]],hi][[1]][[1]],SCalcScale[data,rx,testE,kl[[kx]],hi][[2]]}]; 
+						,{kx,1,Length[kl]}
+						] (*close do over ktargets*)
+	,{rx,rstr,rend}
+	] (*close do over r*)
+][[2,1]];
+Return[evout] (*Close reap over r*)
 ]; (*close module*)
 
 
-(*Runs ok up to this point, stillr requires cross checks.  Seems slower.*)
-
-
-AbsoluteTiming[alldata = ImportData[infile]]
-data = SelectRadius[alldata,ri]
-data["lotsodo"]
-
-
-(*AbsoluteTiming[SCalcScale[data,180,20,10^-17,-1]]*)
-
-
-(*AbsoluteTiming[stabilityMatrix[data,180,20,-1,10^-17]]*)
-
-
-(*AbsoluteTiming[SCalcScale[data,180,20,10^-17,-1]]*)
-
-
-(*AbsoluteTiming[buildkGrid[data,180,20,-1,50]]
-
-
-(*AbsoluteTiming[buildkGrid[data,180,20,-1,20]]
-
-
-AbsoluteTiming[kAdapt[infile,180,220,20,-1,20]]
+M1510=kAdapt["15Msun_50ms_DO",180,250,20,-1,20];
+Weird=kAdapt["1D_withV_withPairBrems_DO",180,250,20,-1,20];
+WeirdMC=kAdapt["1D_withV_withPairBrems_MC",180,250,20,-1,20];
