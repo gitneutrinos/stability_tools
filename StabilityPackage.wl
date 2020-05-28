@@ -199,7 +199,7 @@ Return[as]
 3 = The stability matrix S
 4 = The "target" k value for this stability matrix.  Solve for the k value that makes S[[1,1]]\[Equal]0
 *)
-SCalcScale[data_,testE_,hi_,ktest_]:=Module[{evalsl,pot,mat,kt,S,ea},(
+(*SCalcScale[data_,testE_,hi_,ktest_]:=Module[{evalsl,pot,mat,kt,S,ea},(
 (*stabilityMatrix[infile_,ri_,testE,hi_,k_]*)
 (*Create list of eigenvalues of S. Instability freqs*)
 ea=getEquations[data,testE,hi,kvar];
@@ -208,6 +208,25 @@ evalsl=Sort[Im[evscale[ktest,S,kvar]],Greater];
 pot=potential[data,ea]/.kvar->ktest;
 mat=S/.kvar->ktest;
 Return[{evalsl,pot,mat}]; 
+);
+];*)
+
+CalcEigenvals[data_,testE_,hi_,ktest_]:=Module[{evalsl,S,ea},(
+(*stabilityMatrix[infile_,ri_,testE,hi_,k_]*)
+(*Create list of eigenvalues of S. Instability freqs*)
+ea=getEquations[data,testE,hi,kvar];
+S=stabilityMatrix[data,ea];
+evalsl=Sort[Im[evscale[ktest,S,kvar]],Greater];
+Return[evalsl]; 
+);
+];
+
+CalcPotential[data_,testE_,hi_,ktest_]:=Module[{pot,ea},(
+(*stabilityMatrix[infile_,ri_,testE,hi_,k_]*)
+(*Create list of eigenvalues of S. Instability freqs*)
+ea=getEquations[data,testE,hi,kvar];
+pot=potential[data,ea]/.kvar->ktest;
+Return[pot]; 
 );
 ];
 
@@ -230,8 +249,9 @@ Reap[
 		kl=buildkGrid[singleRadiusData,testE,hi,nstep];
 						Do[
 						Print["Working on "<>ToString[kx]<>","<>ToString[rx]];
-						S = SCalcScale[singleRadiusData,testE,hi,kl[[kx]]];
-							Sow[{data["radius"][[rx]],kl[[kx]],S[[1]][[1]],S[[2]]}]; 
+						evals = CalcEigenvals[singleRadiusData,testE,hi,kl[[kx]]];
+						pot = CalcPotential[singleRadiusData,testE,hi,kl[[kx]]];
+							Sow[{data["radius"][[rx]],kl[[kx]],evals[[1]],pot}]; 
 						,{kx,1,Length[kl]}
 						] (*close do over ktargets*)
 	,{rx,rstr,rend}
