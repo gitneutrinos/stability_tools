@@ -37,8 +37,7 @@ mp=1.6726219 10^-24; (*Proton mass in g*)
 munits=Sqrt[2] (Gf/Geverg^2 )(hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
 \[CapitalDelta]m12sq=(7.59 10^-5) everg^2;
 \[Omega]EMev[En_]:=(\[CapitalDelta]m12sq)/(2 (En Meverg));
-Com[A_,B_]:=Module[{a=A,b=B},
-Return[A.B-B.A]
+Com[A_,B_]:=Module[{a=A,b=B},Return[A.B-B.A]];
 (*This function imports file with path name "infile" at radial bin ri, and creates associations for parts of the data.
 Format to call: dataname=ImportData[infile,1]["keyword"][[index]]
 *)
@@ -211,7 +210,7 @@ Return[kgrid];
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
 kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_]:= Module[{kl,evs1r,evout,data},
-data=ImportData[inpath<>infile<>".h5"];
+data=ImportData[infile];
 evout=
 Reap[
 		Do[
