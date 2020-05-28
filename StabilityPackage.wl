@@ -171,9 +171,9 @@ Return[{S,HsiRad}];
 
 
 (*This scales the stability matrix up to a more managable scale based on the machine prescision, Solves for the eigenvalues, and then scales backs.  Returns a list of eigenvalues*)
-evscale[data_,ri_,testE_,hi_,ktest_]:=Module[{\[Epsilon],A,As,kx0s,as,kx,kxs},
+evscale[ktest_,S_,kx_]:=Module[{\[Epsilon],A,As,kx0s,as,kxs},
 \[Epsilon]=$MachineEpsilon/2;
-A=stabilityMatrix[data,ri,testE,hi,kx][[1]];
+A=S[[1]];
 As=Expand[(A/\[Epsilon])/.kx->\[Epsilon] kxs];
 kx0s=ktest/\[Epsilon];
 as=\[Epsilon] Eigenvalues[N[As]/.kxs->kx0s];
@@ -191,8 +191,8 @@ Return[as]
 SCalcScale[data_,ri_,testE_,hi_,ktest_]:=Module[{evalsl,pot,mat,kt,S},(
 (*stabilityMatrix[infile_,ri_,testE,hi_,k_]*)
 (*Create list of eigenvalues of S. Instability freqs*)
-evalsl=Sort[Im[evscale[data,ri,testE,hi,ktest]],Greater];
 S=stabilityMatrix[data,ri,testE,hi,kvar];
+evalsl=Sort[Im[evscale[ktest,S,kvar]],Greater];
 pot=S[[2]]/.kvar->ktest;
 mat=S[[1]]/.kvar->ktest;
 Return[{evalsl,pot,mat}]; 
