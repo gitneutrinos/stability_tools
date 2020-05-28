@@ -53,15 +53,25 @@ Association[
 "radius"-> Import[infile,{"Data","r(cm)"}]
 ];
 
+SelectSingleRadius[data_,ri_]:=Association[
+"lotsodo"->data["lotsodo"][[ri]] (*distribution functions*),
+"matters"->data["matters"][[ri]], (*densities*)
+"Yes"->data["Yes"][[ri]], (*electron fractions *)
+"freqs"->data["freqs"], (*freq grid in hz*)
+"freqmid"->data["freqmid"], (*freq mid points*)
+"muss"->data["muss"], (*Cos\[Theta] grid*)
+"mids"->data["mids"] (*Cos\[Theta] bin midpoints*)
+]
+
 (*This function creates the hamiltonians based on the data set, and returns them in a "general" way that is readable.  
 Returns 9 arguments with index,
 1,3,5,7 = H,\[Rho],A,\[Delta]H
 2,4,6,8 = Hb,\[Rho]b,Ab,\[Delta]Hb
 9=HsiRadial
 *)
-buildHamiltonians[data_,ri_,testE_,hi_]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,nudensity,nubardensity,Ve,\[Omega],HsiRad},(
+buildHamiltonians[data_,testE_,hi_]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,nudensity,nubardensity,Ve,\[Omega],HsiRad},(
 
-Ve=munits/mp *data["Yes"][[ri]]  *data["matters"][[ri]];
+Ve=munits/mp *data["Yes"]  *data["matters"];
 \[Omega]=\[Omega]EMev[testE];
 
 name11="ee";
@@ -80,8 +90,8 @@ Ab[i]={{0,ToExpression[StringJoin["Ab",name12,ToString[i]]]},{ToExpression[Strin
 ,{i,1,n}];
 
 
-nudensity[dt_]:= Sum[Sum[data["lotsodo"][[ri,1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
-nubardensity[dt_]:= Sum[Sum[data["lotsodo"][[ri,2,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
+nudensity[dt_]:= Sum[Sum[data["lotsodo"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
+nubardensity[dt_]:= Sum[Sum[data["lotsodo"][[2,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
 
 Hm={{Ve,0.},{0.,0.}};
 Hvac=hi{{-\[Omega]/2,0.},{0.,\[Omega]/2}};
@@ -112,8 +122,8 @@ Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb,HsiRad}]
  2,4 = Antineutrino equations of motion, Ab
  5=HsiRadial
  *)
-getEquations[data_,ri_,testE_,hi_,k_]:=Module[{n,\[Theta],eqn,eqnb,hs},( 
-hs=buildHamiltonians[data,ri,testE,hi];
+getEquations[data_,testE_,hi_,k_]:=Module[{n,\[Theta],eqn,eqnb,hs},( 
+hs=buildHamiltonians[data,testE,hi];
 n=Length[data["mids"]];
 \[Theta]=ArcCos[data["mids"]];
 (*This could be replaced with a mapthread or with associations, but one step at time*)
@@ -153,8 +163,8 @@ Returns 2 arguments,
 1=Stability Matrix
 2=HsiRadial
 *)
-stabilityMatrix[data_,ri_,testE_,hi_,k_]:=Module[{S1,S2,S3,S4,S,hs,ea,n,HsiRad}, 
-ea=getEquations[data,ri,testE,hi,k];
+stabilityMatrix[data_,testE_,hi_,k_]:=Module[{S1,S2,S3,S4,S,hs,ea,n,HsiRad}, 
+ea=getEquations[data,testE,hi,k];
 n=Length[data["mids"]];
 
 With[{eqn=ea[[1]],eqnb=ea[[2]],A=ea[[3]],Ab=ea[[4]]},
@@ -188,10 +198,10 @@ Return[as]
 3 = The stability matrix S
 4 = The "target" k value for this stability matrix.  Solve for the k value that makes S[[1,1]]\[Equal]0
 *)
-SCalcScale[data_,ri_,testE_,hi_,ktest_]:=Module[{evalsl,pot,mat,kt,S},(
+SCalcScale[data_,testE_,hi_,ktest_]:=Module[{evalsl,pot,mat,kt,S},(
 (*stabilityMatrix[infile_,ri_,testE,hi_,k_]*)
 (*Create list of eigenvalues of S. Instability freqs*)
-S=stabilityMatrix[data,ri,testE,hi,kvar];
+S=stabilityMatrix[data,testE,hi,kvar];
 evalsl=Sort[Im[evscale[ktest,S,kvar]],Greater];
 pot=S[[2]]/.kvar->ktest;
 mat=S[[1]]/.kvar->ktest;
@@ -200,24 +210,25 @@ Return[{evalsl,pot,mat}];
 ];
 
 (*Constructs a nstep sized log spaced k grid based on the target k associated with the infile at radial bin r.  Currently the limits are 2 orders of magnitude above and below the target value, ignoring negatives for the moment *)
-buildkGrid[data_,ri_,testE_,hi_,nstep_]:=Module[{ktarget,kgrid,fspace,S0},
+buildkGrid[data_,testE_,hi_,nstep_]:=Module[{ktarget,kgrid,fspace,S0},
 fSpace[min_,max_,steps_,f_: Log]:=InverseFunction[ConditionalExpression[f[#],min<#<max]&]/@Range[f@min,f@max,(f@max-f@min)/(steps-1)];
-S0=SCalcScale[data,ri,testE,hi,0.][[3]];
+S0=SCalcScale[data,testE,hi,0.][[3]];
 ktarget=S0[[1,1]];
 kgrid=Join[fSpace[ktarget*10^-1,ktarget*10^1,nstep],-fSpace[ktarget*10^-1,ktarget*10^1,nstep/2]];
 Return[kgrid];
 ];
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
-kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_]:= Module[{kl,evs1r,evout,data},
+kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_]:= Module[{kl,evs1r,evout,data,singleRadiusData},
 data=ImportData[infile];
 evout=
 Reap[
 		Do[
-		kl=buildkGrid[data,rx,testE,hi,nstep];
+		singleRadiusData = SelectSingleRadius[data,rx];
+		kl=buildkGrid[singleRadiusData,testE,hi,nstep];
 						Do[
 						Print["Working on "<>ToString[kx]<>","<>ToString[rx]];
-						S = SCalcScale[data,rx,testE,hi,kl[[kx]]];
+						S = SCalcScale[singleRadiusData,testE,hi,kl[[kx]]];
 							Sow[{data["radius"][[rx]],kl[[kx]],S[[1]][[1]],S[[2]]}]; 
 						,{kx,1,Length[kl]}
 						] (*close do over ktargets*)
