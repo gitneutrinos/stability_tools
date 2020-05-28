@@ -219,13 +219,14 @@ Return[as]
 3 = The stability matrix S
 4 = The "target" k value for this stability matrix.  Solve for the k value that makes S[[1,1]]\[Equal]0
 *)
-SCalcScale[data_,ri_,testE_,ktest_,hi_]:=SCalcScale[data,ri,testE,ktest,hi]=Module[{evalsl,pot,mat,kt,ktarget},(
+SCalcScale[data_,ri_,testE_,ktest_,hi_]:=SCalcScale[data,ri,testE,ktest,hi]=Module[{evalsl,pot,mat,kt,ktarget,S},(
 (*stabilityMatrix[infile_,ri_,testE,hi_,k_]*)
 (*Create list of eigenvalues of S. Instability freqs*)
-evalsl=Sort[Im[evscale[data,ri,testE,hi,ktest]],Greater]; 
-pot=stabilityMatrix[data,ri,testE,hi,ktest][[2]];
-mat=stabilityMatrix[data,ri,testE,hi,ktest][[1]];
-ktarget=kvar/.Solve[stabilityMatrix[data,ri,testE,hi,kvar][[1]][[1,1]]==0,kvar][[1]];
+evalsl=Sort[Im[evscale[data,ri,testE,hi,ktest]],Greater];
+S=stabilityMatrix[data,ri,testE,hi,kvar];
+pot=S[[2]]/.kvar->ktest;
+mat=S[[1]]/.kvar->ktest;
+ktarget=kvar/.Solve[S[[1]][[1,1]]==0,kvar][[1]];
 Return[{evalsl,pot,mat,ktarget}]; 
 );
 ];
