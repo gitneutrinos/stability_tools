@@ -172,7 +172,7 @@ Returns 2 arguments,
 1=Stability Matrix
 2=HsiRadial
 *)
-stabilityMatrix[data_,ri_,testE_,hi_,k_]:=stabilityMatrix[data,ri,testE,hi,k]=Module[{S1,S2,S3,S4,S,hs,ea,n,HsiRad}, 
+stabilityMatrix[data_,ri_,testE_,hi_,k_]:=Module[{S1,S2,S3,S4,S,hs,ea,n,HsiRad}, 
 ea=getEquations[data,ri,testE,hi,k];
 n=Length[data["mids"]];
 
@@ -184,7 +184,7 @@ S3=Table[Coefficient[eqnb[l],A[m][[1,2]]],{l,1,n},{m,1,n}];
 S4=Table[Coefficient[eqnb[l],Ab[m][[1,2]]],{l,1,n},{m,1,n}];
 S=ArrayFlatten[{{S1,S2},{S3,S4}}]/.rules[n];
 HsiRad=ea[[5]]/.rules[n];
-Return[{S,HsiRad,S1}];
+Return[{S,HsiRad}];
 ]
 ];
 
@@ -201,7 +201,7 @@ Return[S2b]
 
 
 (*This scales the stability matrix up to a more managable scale based on the machine prescision, Solves for the eigenvalues, and then scales backs.  Returns a list of eigenvalues*)
-evscale[data_,ri_,testE_,hi_,ktest_]:=evscale[data,ri,testE,hi,ktest]=Module[{\[Epsilon],A,As,kx0s,as,kx,kxs},
+evscale[data_,ri_,testE_,hi_,ktest_]:=Module[{\[Epsilon],A,As,kx0s,as,kx,kxs},
 \[Epsilon]=$MachineEpsilon/2;
 A=stabilityMatrix[data,ri,testE,hi,kx][[1]];
 As=Expand[(A/\[Epsilon])/.kx->\[Epsilon] kxs];
@@ -219,31 +219,31 @@ Return[as]
 3 = The stability matrix S
 4 = The "target" k value for this stability matrix.  Solve for the k value that makes S[[1,1]]\[Equal]0
 *)
-SCalcScale[data_,ri_,testE_,ktest_,hi_]:=SCalcScale[data,ri,testE,ktest,hi]=Module[{evalsl,pot,mat,kt,ktarget,S},(
+SCalcScale[data_,ri_,testE_,hi_,ktest_]:=Module[{evalsl,pot,mat,kt,S},(
 (*stabilityMatrix[infile_,ri_,testE,hi_,k_]*)
 (*Create list of eigenvalues of S. Instability freqs*)
 evalsl=Sort[Im[evscale[data,ri,testE,hi,ktest]],Greater];
 S=stabilityMatrix[data,ri,testE,hi,kvar];
 pot=S[[2]]/.kvar->ktest;
 mat=S[[1]]/.kvar->ktest;
-ktarget=kvar/.Solve[S[[1]][[1,1]]==0,kvar][[1]];
-Return[{evalsl,pot,mat,ktarget}]; 
+Return[{evalsl,pot,mat}]; 
 );
 ];
 
 
 
 (*Constructs a nstep sized log spaced k grid based on the target k associated with the infile at radial bin r.  Currently the limits are 2 orders of magnitude above and below the target value, ignoring negatives for the moment *)
-buildkGrid[data_,ri_,testE_,hi_,nstep_]:=buildkGrid[data,ri,testE,hi,nstep]=Module[{ktarget,kgrid,kvar,fspace},
+buildkGrid[data_,ri_,testE_,hi_,nstep_]:=Module[{ktarget,kgrid,fspace,S0},
 fSpace[min_,max_,steps_,f_: Log]:=InverseFunction[ConditionalExpression[f[#],min<#<max]&]/@Range[f@min,f@max,(f@max-f@min)/(steps-1)];
-ktarget=SCalcScale[data,ri,testE,hi,0.][[4]];
+S0=SCalcScale[data,ri,testE,hi,0.][[3]];
+ktarget=S0[[1,1]];
 kgrid=Join[fSpace[ktarget*10^-1,ktarget*10^1,nstep],-fSpace[ktarget*10^-1,ktarget*10^1,nstep/2]];
 Return[kgrid];
 ];
 
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
-kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_]:= kAdapt[infile,rstr,rend,testE,hi]=Module[{kl,evs1r,evout,data},
+kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_]:= Module[{kl,evs1r,evout,data},
 data=ImportData[inpath<>infile<>".h5"];
 evout=
 Reap[
@@ -251,7 +251,7 @@ Reap[
 		kl=buildkGrid[data,rx,testE,hi,nstep];
 						Do[
 						(*Print["Working on "<>ToString[kx]<>","<>ToString[rx]]*)
-							Sow[{data["radius"][[rx]],kl[[kx]],SCalcScale[data,rx,testE,kl[[kx]],hi][[1]][[1]],SCalcScale[data,rx,testE,kl[[kx]],hi][[2]]}]; 
+							Sow[{data["radius"][[rx]],kl[[kx]],SCalcScale[data,rx,testE,hi,kl[[kx]]][[1]][[1]],SCalcScale[data,rx,testE,hi,kl[[kx]]][[2]]}]; 
 						,{kx,1,Length[kl]}
 						] (*close do over ktargets*)
 	,{rx,rstr,rend}
@@ -259,34 +259,3 @@ Reap[
 ][[2,1]];
 Return[evout] (*Close reap over r*)
 ]; (*close module*)
-
-
-Block[{data,ri=200,E=20,hi=-1,k=0},
-data=ImportData[inpath<>"1D_withV_withPairBrems_DO"<>".h5"];
-stabilityMatrix[data,200,20,-1,0][[1]]//MatrixForm
-]
-
-
-M1510=kAdapt["15Msun_50ms_DO",180,250,20,-1,40];
-
-
-Weird=kAdapt["1D_withV_withPairBrems_DO",180,250,20,-1,40];
-
-
-WeirdMC=kAdapt["1D_withV_withPairBrems_MC",180,250,20,-1,40];
-
-
-Clear[stabilityMatrix]
-
-
-Block[{data,ri=200,E=20,hi=-1,k=0},
-data=ImportData[inpath<>"1D_withV_withPairBrems_DO"<>".h5"];
-stabilityMatrix[data,200,20,-1,0][[1]]//MatrixForm
-]
-
-
-
-oldMat=Import["C:\\Users\\Sam\\rscan22\\scanmat22r200.m"]
-
-
-oldMat[[2,2,2,1,1]]//MatrixForm
