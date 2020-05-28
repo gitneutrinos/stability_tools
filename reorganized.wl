@@ -53,14 +53,14 @@ Association[
 (*Constants*)
 c=2.99792458 10^10; (* cm/s*)
 h=6.6260755 10^-27; (*erg s*)
-hbar = h/2 Pi; (*erg s*)
+hbar = h/(2 Pi); (*erg s*)
 Gf=1.1663787 10^-5; (*GeV^-2*)
 everg=1.60218 10^-12; (* convert eV to ergs*)
 Geverg = everg*10^9; (* convert GeV to ergs *)
 ergev=1.0/everg; (*convert ergs to eV*)
 ergmev=ergev/10^6; (*convert erg to MeV*)
 mp=1.6726219 10^-24; (*Proton mass in g*) 
-munits=Sqrt[2] Gf/Geverg^2 (hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
+munits=Sqrt[2] (Gf/Geverg^2 )(hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
 \[CapitalDelta]m12sq=7.59 10^-5;
 \[Omega]EMev[En_]:=\[Omega]Eev[En]=(\[CapitalDelta]m12sq)/(2 En) ergmev;
 Com[A_,B_]:=Module[{a=A,b=B},
@@ -101,8 +101,8 @@ nubardensity[dt_]:= Sum[Sum[data["lotsodo"][[ri,2,f,dt,dp]]/ (h (data["freqmid"]
 
 Hm={{Ve,0.},{0.,0.}};
 Hvac=hi{{-\[Omega]/2,0.},{0.,\[Omega]/2}};
-\[Mu]=munits Table[nudensity[i](data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
-\[Mu]b=munits Table[nubardensity[i](data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
+\[Mu]=munits Table[nudensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
+\[Mu]b=munits Table[nubardensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
 
 
 Do[
@@ -115,9 +115,9 @@ Hb[i]=Hvac-Hm-Hsi[i];
 \[Delta]Hb[i]=Sum[((D[Hb[i][[1,2]],\[Rho][j][[1,2]]])A[j])+((D[Hb[i][[1,2]],\[Rho]b[j][[1,2]]])Ab[j]),{j,1,n}];
 ,{i,1,n}];
 
-HsiRad=munits*(Tr[\[Mu]]+Tr[\[Mu]b]);
+HsiRad=(Tr[\[Mu]]+Tr[\[Mu]b]);
 
-Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb,HsiRad}]
+Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb,HsiRad,\[Mu],\[Mu]b}]
 )
 ];
 
@@ -235,7 +235,7 @@ Return[{evalsl,pot,mat,ktarget}];
 buildkGrid[data_,ri_,testE_,hi_,nstep_]:=buildkGrid[data,ri,testE,hi,nstep]=Module[{ktarget,kgrid,kvar,fspace},
 fSpace[min_,max_,steps_,f_: Log]:=InverseFunction[ConditionalExpression[f[#],min<#<max]&]/@Range[f@min,f@max,(f@max-f@min)/(steps-1)];
 ktarget=SCalcScale[data,ri,testE,hi,0.][[4]];
-kgrid=fSpace[ktarget*10^-2,ktarget*10^2,nstep];
+kgrid=Join[fSpace[ktarget*10^-1,ktarget*10^1,nstep],fSpace[-ktarget*10^-1,-ktarget*10^1,nstep/2]];
 Return[kgrid];
 ];
 
@@ -259,6 +259,6 @@ Return[evout] (*Close reap over r*)
 ]; (*close module*)
 
 
-M1510=kAdapt["15Msun_50ms_DO",180,250,20,-1,20];
-Weird=kAdapt["1D_withV_withPairBrems_DO",180,250,20,-1,20];
-WeirdMC=kAdapt["1D_withV_withPairBrems_MC",180,250,20,-1,20];
+M1510=kAdapt["15Msun_50ms_DO",100,250,20,-1,40];
+Weird=kAdapt["1D_withV_withPairBrems_DO",100,250,20,-1,40];
+WeirdMC=kAdapt["1D_withV_withPairBrems_MC",100,250,20,-1,40];
