@@ -41,7 +41,7 @@ Com[A_,B_]:=Module[{a=A,b=B},Return[A.B-B.A]];
 (*This function imports file with path name "infile" at radial bin ri, and creates associations for parts of the data.
 Format to call: dataname=ImportData[infile,1]["keyword"][[index]]
 *)
-ImportData[infile_]:=ImportData[infile]=
+ImportData[infile_]:=
 Association[
 "lotsodo"->Import[infile,{"Data","distribution(erg|ccm,lab)"}] (*distribution functions*),
 "matters"->Import[infile,{"Data","rho(g|ccm,com)"}], (*densities*)
@@ -216,8 +216,9 @@ Reap[
 		Do[
 		kl=buildkGrid[data,rx,testE,hi,nstep];
 						Do[
-						(*Print["Working on "<>ToString[kx]<>","<>ToString[rx]]*)
-							Sow[{data["radius"][[rx]],kl[[kx]],SCalcScale[data,rx,testE,hi,kl[[kx]]][[1]][[1]],SCalcScale[data,rx,testE,hi,kl[[kx]]][[2]]}]; 
+						Print["Working on "<>ToString[kx]<>","<>ToString[rx]];
+						S = SCalcScale[data,rx,testE,hi,kl[[kx]]];
+							Sow[{data["radius"][[rx]],kl[[kx]],S[[1]][[1]],S[[2]]}]; 
 						,{kx,1,Length[kl]}
 						] (*close do over ktargets*)
 	,{rx,rstr,rend}
