@@ -163,7 +163,7 @@ Returns 2 arguments,
 1=Stability Matrix
 2=HsiRadial
 *)
-stabilityMatrix[data_,ea_]:=Module[{S1,S2,S3,S4,S,hs,n,HsiRad}, 
+stabilityMatrix[data_,ea_]:=Module[{S1,S2,S3,S4,S,n}, 
 
 n=Length[data["mids"]];
 
@@ -182,10 +182,9 @@ potential[data_,ea_]:=ea[[5]]/.rules[Length[data["mids"]]]
 
 
 (*This scales the stability matrix up to a more managable scale based on the machine prescision, Solves for the eigenvalues, and then scales backs.  Returns a list of eigenvalues*)
-evscale[ktest_,S_,kx_]:=Module[{\[Epsilon],A,As,kx0s,as,kxs},
+evscale[ktest_,S_,kx_]:=Module[{\[Epsilon],As,kx0s,as,kxs},
 \[Epsilon]=$MachineEpsilon/2;
-A=S;
-As=Expand[(A/\[Epsilon])/.kx->\[Epsilon] kxs];
+As=Expand[(S/\[Epsilon])/.kx->\[Epsilon] kxs];
 kx0s=ktest/\[Epsilon];
 as=\[Epsilon] Eigenvalues[N[As]/.kxs->kx0s];
 (*bs=\[Epsilon] Eigenvalues[As]/.kxs\[Rule]kx0s;*)
@@ -201,7 +200,7 @@ Return[kgrid];
 ];
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
-kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_]:= Module[{kl,evs1r,evout,data,singleRadiusData,ea,kvar,evals,pot,ktarget,S},
+kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,evals,pot,ktarget,S},
 data=ImportData[infile];
 evout=
 Reap[
