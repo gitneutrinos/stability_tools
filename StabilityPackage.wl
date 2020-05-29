@@ -213,26 +213,24 @@ Return[{evalsl,pot,mat}];
 
 
 (*Constructs a nstep sized log spaced k grid based on the target k associated with the infile at radial bin r.  Currently the limits are 2 orders of magnitude above and below the target value, ignoring negatives for the moment *)
-buildkGrid[data_,testE_,hi_,nstep_]:=Module[{ktarget,kgrid,fspace,S0},
+buildkGrid[ktarget_,nstep_]:=Module[{kgrid,fspace},
 fSpace[min_,max_,steps_,f_: Log]:=InverseFunction[ConditionalExpression[f[#],min<#<max]&]/@Range[f@min,f@max,(f@max-f@min)/(steps-1)];
-S0=SCalcScale[data,testE,hi,0.][[3]];
-ktarget=S0[[1,1]];
 kgrid=Join[fSpace[ktarget*10^-1,ktarget*10^1,nstep],-fSpace[ktarget*10^-1,ktarget*10^1,nstep/2]];
 Return[kgrid];
 ];
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
-kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_]:= Module[{kl,evs1r,evout,data,singleRadiusData,ea,kvar,evals,pot,S},
+kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_]:= Module[{kl,evs1r,evout,data,singleRadiusData,ea,kvar,evals,pot,ktarget,S},
 data=ImportData[infile];
 evout=
 Reap[
 		Do[
 		singleRadiusData = SelectSingleRadius[data,rx];
-		kl=buildkGrid[singleRadiusData,testE,hi,nstep];
 		ea=getEquations[singleRadiusData,testE,hi,kvar];
 		S=stabilityMatrix[data,ea];
+		ktarget=(S/.kvar->0)[[1,1]];
+		kl=buildkGrid[ktarget,nstep];
 						Do[
-						Print["Working on "<>ToString[kx]<>","<>ToString[rx]];
 						evals=Sort[Im[evscale[kl[[kx]],S,kvar]],Greater];
 						pot=potential[data,ea]/.kvar->kl[[kx]];
 							Sow[{data["radius"][[rx]],kl[[kx]],evals[[1]],pot}]; 
