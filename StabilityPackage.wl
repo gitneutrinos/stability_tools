@@ -199,7 +199,7 @@ Return[as]
 3 = The stability matrix S
 4 = The "target" k value for this stability matrix.  Solve for the k value that makes S[[1,1]]\[Equal]0
 *)
-(*SCalcScale[data_,testE_,hi_,ktest_]:=Module[{evalsl,pot,mat,kt,S,ea},(
+SCalcScale[data_,testE_,hi_,ktest_]:=Module[{evalsl,pot,mat,kt,S,ea},(
 (*stabilityMatrix[infile_,ri_,testE,hi_,k_]*)
 (*Create list of eigenvalues of S. Instability freqs*)
 ea=getEquations[data,testE,hi,kvar];
@@ -209,7 +209,7 @@ pot=potential[data,ea]/.kvar->ktest;
 mat=S/.kvar->ktest;
 Return[{evalsl,pot,mat}]; 
 );
-];*)
+];
 
 
 (*Constructs a nstep sized log spaced k grid based on the target k associated with the infile at radial bin r.  Currently the limits are 2 orders of magnitude above and below the target value, ignoring negatives for the moment *)
@@ -229,10 +229,10 @@ Reap[
 		Do[
 		singleRadiusData = SelectSingleRadius[data,rx];
 		kl=buildkGrid[singleRadiusData,testE,hi,nstep];
+		ea=getEquations[singleRadiusData,testE,hi,kvar];
+		S=stabilityMatrix[data,ea];
 						Do[
 						Print["Working on "<>ToString[kx]<>","<>ToString[rx]];
-						ea=getEquations[singleRadiusData,testE,hi,kvar];
-						S=stabilityMatrix[data,ea];
 						evals=Sort[Im[evscale[kl[[kx]],S,kvar]],Greater];
 						pot=potential[data,ea]/.kvar->kl[[kx]];
 							Sow[{data["radius"][[rx]],kl[[kx]],evals[[1]],pot}]; 
