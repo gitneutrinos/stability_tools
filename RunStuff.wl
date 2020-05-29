@@ -41,6 +41,7 @@ outfolder = outpath<>filename;
 (*For reference:*)
 
 
+<<"StabilityPackage`"
 OldData={{2.61019*10^-17, 1.12835*10^-18}, {2.8674*10^-17, 
   7.11518*10^-19}, {3.14996*10^-17, 1.13532*10^-21}, {3.46036*10^-17, 
   1.12664*10^-21}, {3.80135*10^-17, 1.11669*10^-21}, {4.17594*10^-17, 
@@ -88,6 +89,9 @@ kdebug=Block[{data,ri=200,testE=20,hi=-1,k=0,kvar},
 file=inpath<>"1D_withV_withPairBrems_DO.h5";
 (*SCalcScale[ImportData[inpath<>file<>".h5"],ri,testE,hi,0][[3]]//MatrixForm*)
 (*buildkGrid[ImportData[inpath<>file<>".h5"],ri,testE,hi,40]*)
-kAdapt[file,ri,ri,testE,hi,40]
+kAdapt[file,ri,ri,testE,hi,10]
 ];
 ListLogPlot[{Transpose@{kdebug[[All,2]],kdebug[[All,3]]},OldData},ImageSize-> Scaled[0.65]]
+
+
+
