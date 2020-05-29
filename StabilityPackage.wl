@@ -193,25 +193,6 @@ Return[as]
 ];
 
 
-(*The heavy lifter, computes several items for a single radial bin. This function returns 4 arguments,
-1 = ordered list of imaginary parts of the eigenvalues of the stab. matrix, from greatest to least
-2 = The radial component of the self interaction potential
-3 = The stability matrix S
-4 = The "target" k value for this stability matrix.  Solve for the k value that makes S[[1,1]]\[Equal]0
-*)
-SCalcScale[data_,testE_,hi_,ktest_]:=Module[{evalsl,pot,mat,kt,S,ea},(
-(*stabilityMatrix[infile_,ri_,testE,hi_,k_]*)
-(*Create list of eigenvalues of S. Instability freqs*)
-ea=getEquations[data,testE,hi,kvar];
-S=stabilityMatrix[data,ea];
-evalsl=Sort[Im[evscale[ktest,S,kvar]],Greater];
-pot=potential[data,ea]/.kvar->ktest;
-mat=S/.kvar->ktest;
-Return[{evalsl,pot,mat}]; 
-);
-];
-
-
 (*Constructs a nstep sized log spaced k grid based on the target k associated with the infile at radial bin r.  Currently the limits are 2 orders of magnitude above and below the target value, ignoring negatives for the moment *)
 buildkGrid[ktarget_,nstep_]:=Module[{kgrid,fspace},
 fSpace[min_,max_,steps_,f_: Log]:=InverseFunction[ConditionalExpression[f[#],min<#<max]&]/@Range[f@min,f@max,(f@max-f@min)/(steps-1)];
@@ -224,20 +205,18 @@ kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_]:= Module[{kl,evs1r,evout,data,sing
 data=ImportData[infile];
 evout=
 Reap[
-		Do[
+	Do[
 		singleRadiusData = SelectSingleRadius[data,rx];
 		ea=getEquations[singleRadiusData,testE,hi,kvar];
 		S=stabilityMatrix[data,ea];
 		ktarget=(S/.kvar->0)[[1,1]];
 		kl=buildkGrid[ktarget,nstep];
-						Do[
-						evals=Sort[Im[evscale[kl[[kx]],S,kvar]],Greater];
-						pot=potential[data,ea]/.kvar->kl[[kx]];
-							Sow[{data["radius"][[rx]],kl[[kx]],evals[[1]],pot}]; 
-						,{kx,1,Length[kl]}
-						] (*close do over ktargets*)
-	,{rx,rstr,rend}
-	] (*close do over r*)
+		Do[
+			evals=Sort[Im[evscale[kl[[kx]],S,kvar]],Greater];
+			pot=potential[data,ea]/.kvar->kl[[kx]];
+			Sow[{data["radius"][[rx]],kl[[kx]],evals[[1]],pot}]; 
+		,{kx,1,Length[kl]}] (*close do over ktargets*)
+	,{rx,rstr,rend}] (*close do over r*)
 ][[2,1]];
 Return[evout] (*Close reap over r*)
 ]; (*close module*)
