@@ -20,9 +20,7 @@ buildkGrid::usage=
 	"constructions the adaptive k grid"
 kAdapt::usage=
 	"runs the full routine"
-(*GDValues::usage=
-	"Find the maximum allowed imaginary part of the eigenvalues of a matrix using Gershgorin discs"
-	*)
+
 
 
 Begin["`Private`"]
@@ -45,7 +43,7 @@ Com[A_,B_]:=Module[{a=A,b=B},Return[A.B-B.A]];
 Format to call: dataname=ImportData[infile,1]["keyword"][[index]]
 *)
 
-versionCheck[]:=Print["newest"];
+
 	
 
 ImportData[infile_]:=
