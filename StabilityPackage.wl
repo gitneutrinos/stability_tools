@@ -20,7 +20,10 @@ buildkGrid::usage=
 	"constructions the adaptive k grid"
 kAdapt::usage=
 	"runs the full routine"
-	
+(*GDValues::usage=
+	"Find the maximum allowed imaginary part of the eigenvalues of a matrix using Gershgorin discs"
+	*)
+
 
 Begin["`Private`"]
 
@@ -41,6 +44,10 @@ Com[A_,B_]:=Module[{a=A,b=B},Return[A.B-B.A]];
 (*This function imports file with path name "infile" at radial bin ri, and creates associations for parts of the data.
 Format to call: dataname=ImportData[infile,1]["keyword"][[index]]
 *)
+
+versionCheck[]:=Print["newest"];
+	
+
 ImportData[infile_]:=
 Association[
 "lotsodo"->Import[infile,{"Data","distribution(erg|ccm,lab)"}] (*distribution functions*),
