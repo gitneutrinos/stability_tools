@@ -20,6 +20,10 @@ buildkGrid::usage=
 	"constructions the adaptive k grid"
 kAdapt::usage=
 	"runs the full routine"
+GDValue::usage=
+	"returns the maximum possible value of the frequency"
+GDdata::usage=
+	"the gd version of kadapt"
 
 
 
@@ -224,6 +228,41 @@ Reap[
 ][[2,1]];
 Return[evout] (*Close reap over r*)
 ]; (*close module*)
+
+
+GDValue[tm_]:=Block[{cs,rrow,rcol,drow,dcol,mv,reg,\[Epsilon],tms},
+\[Epsilon]=$MachineEpsilon;
+tms=Expand[(tm/\[Epsilon])];
+cs=Diagonal[tms];
+rrow=Total[Abs[tms],{2}]-Abs[cs];
+rcol=Total[Abs[tms],{1}]-Abs[cs];
+drow=MapThread[Disk,{ReIm[cs],rrow}];
+dcol=MapThread[Disk,{ReIm[cs],rcol}];
+reg=RegionIntersection[Apply[RegionUnion,drow],Apply[RegionUnion,dcol]];
+mv=\[Epsilon] Max[MeshCoordinates[BoundaryDiscretizeRegion[reg,{{-1,1},{0,1}}]][[All,2]]];
+Return[mv]];
+
+
+GDdata[infile_,rstr_,rend_,testE_,hi_,nstep_]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,evals,pot,ktarget,S,gdout,out},
+data=ImportData[infile];
+out=
+Reap[
+	Do[
+		singleRadiusData = SelectSingleRadius[data,rx];
+		ea=getEquations[singleRadiusData,testE,hi,kvar];
+		S=stabilityMatrix[data,ea];
+		ktarget=(S/.kvar->0)[[1,1]];
+		kl=buildkGrid[ktarget,nstep];
+		Do[
+			gdout=GDValue[S];
+			Sow[{data["radius"][[rx]],kl[[kx]],gdout}]; 
+		,{kx,1,Length[kl]}] (*close do over ktargets*)
+	,{rx,rstr,rend}] (*close do over r*)
+][[2,1]];
+Return[out] (*Close reap over r*)
+		
+]
+
 
 End[]
 
