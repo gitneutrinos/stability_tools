@@ -76,6 +76,19 @@ SelectSingleRadius[data_,ri_]:=Association[
 "mids"->data["mids"] (*Cos\[Theta] bin midpoints*)
 ]
 
+
+siPotential[data_]:=Module[{nubardensity,nudensity,\[Mu],\[Mu]b,n,tot},
+n=Length[data["mids"]];
+
+nudensity[dt_]:= Sum[Sum[data["lotsodo"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
+nubardensity[dt_]:= Sum[Sum[data["lotsodo"][[2,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
+
+\[Mu]=munits Table[nudensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
+\[Mu]b=munits Table[nubardensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
+
+tot=(Tr[\[Mu]]+Tr[\[Mu]b]);
+Return[tot]
+]
 (*This function creates the hamiltonians based on the data set, and returns them in a "general" way that is readable.  
 Returns 9 arguments with index,
 1,3,5,7 = H,\[Rho],A,\[Delta]H
@@ -122,25 +135,10 @@ Hb[i]=Hvac-Hm-Hsi[i];
 \[Delta]Hb[i]=Sum[((D[Hb[i][[1,2]],\[Rho][j][[1,2]]])A[j])+((D[Hb[i][[1,2]],\[Rho]b[j][[1,2]]])Ab[j]),{j,1,n}];
 ,{i,1,n}];
 
-HsiRad=(Tr[\[Mu]]+Tr[\[Mu]b]);
 
-Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb,HsiRad}]
+Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb}]
 )
 ];
-
-
-siPotential[data_]:=Module[{nubardensity,nudensity,\[Mu],\[Mu]b,n,tot},
-n=Length[data["mids"]];
-
-nudensity[dt_]:= Sum[Sum[data["lotsodo"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
-nubardensity[dt_]:= Sum[Sum[data["lotsodo"][[2,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
-
-\[Mu]=munits Table[nudensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
-\[Mu]b=munits Table[nubardensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
-
-tot=(Tr[\[Mu]]+Tr[\[Mu]b]);
-Return[tot]
-]
 
 
 (*Calculates the equations of motion by computing the relvant commutators. 
@@ -205,7 +203,7 @@ Return[S];
 ]
 ];
 
-potential[data_,ea_]:=ea[[5]]/.rules[Length[data["mids"]]]
+
 
 
 (*This scales the stability matrix up to a more managable scale based on the machine prescision, Solves for the eigenvalues, and then scales backs.  Returns a list of eigenvalues*)
