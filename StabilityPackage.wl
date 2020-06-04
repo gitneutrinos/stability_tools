@@ -26,6 +26,8 @@ GDdata::usage=
 	"the gd version of kadapt"
 siPotential::usage=
 	"returns the total neutrino+antineutrino potential"
+SelectSingleRadius::usage=
+	"get single radius data"
 
 
 
@@ -127,8 +129,7 @@ Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb,HsiRad}]
 ];
 
 
-siPotential[data_]:=Module[{nubardensity,nudensity,\[Mu],\[Mu]b},
-
+siPotential[data_]:=Module[{nubardensity,nudensity,\[Mu],\[Mu]b,n,tot},
 n=Length[data["mids"]];
 
 nudensity[dt_]:= Sum[Sum[data["lotsodo"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
@@ -137,7 +138,8 @@ nubardensity[dt_]:= Sum[Sum[data["lotsodo"][[2,f,dt,dp]]/ (h (data["freqmid"][[f
 \[Mu]=munits Table[nudensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
 \[Mu]b=munits Table[nubardensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
 
-Return[(Tr[\[Mu]]+Tr[\[Mu]b])]
+tot=(Tr[\[Mu]]+Tr[\[Mu]b]);
+Return[tot]
 ]
 
 
