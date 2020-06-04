@@ -24,6 +24,8 @@ GDValue::usage=
 	"returns the maximum possible value of the frequency"
 GDdata::usage=
 	"the gd version of kadapt"
+siPotential::usage=
+	"returns the total neutrino+antineutrino potential"
 
 
 
@@ -125,6 +127,18 @@ Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb,HsiRad}]
 ];
 
 
+siPotential[data_]:=Module[{nubardensity,nudensity,\[Mu],\[Mu]b},
+
+nudensity[dt_]:= Sum[Sum[data["lotsodo"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
+nubardensity[dt_]:= Sum[Sum[data["lotsodo"][[2,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
+
+\[Mu]=munits Table[nudensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
+\[Mu]b=munits Table[nubardensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
+
+Return[(Tr[\[Mu]]+Tr[\[Mu]b])]
+]
+
+
 (*Calculates the equations of motion by computing the relvant commutators. 
  Returns 5 arguments with index,
  1,3= neutrino equations of motion, A
@@ -202,9 +216,10 @@ Return[as]
 
 
 (*Constructs a nstep sized log spaced k grid based on the target k associated with the infile at radial bin r.  Currently the limits are 2 orders of magnitude above and below the target value, ignoring negatives for the moment *)
-buildkGrid[ktarget_,nstep_]:=Module[{kgrid,fspace},
+buildkGrid[data_,nstep_]:=Module[{kgrid,fSpace,ktarget},
+ktarget=siPotential[data];
 fSpace[min_,max_,steps_,f_: Log]:=InverseFunction[ConditionalExpression[f[#],min<#<max]&]/@Range[f@min,f@max,(f@max-f@min)/(steps-1)];
-kgrid=Join[fSpace[ktarget*10^-1,ktarget*10^1,nstep],-fSpace[ktarget*10^-1,ktarget*10^1,nstep/2]];
+kgrid=Join[fSpace[ktarget*10^-3,ktarget*10^1,nstep],-fSpace[ktarget*10^-3,ktarget*10^1,nstep/2]];
 Return[kgrid];
 ];
 
@@ -217,11 +232,10 @@ Reap[
 		singleRadiusData = SelectSingleRadius[data,rx];
 		ea=getEquations[singleRadiusData,testE,hi,kvar];
 		S=stabilityMatrix[data,ea];
-		ktarget=(S/.kvar->0)[[1,1]];
-		kl=buildkGrid[ktarget,nstep];
+		kl=buildkGrid[singleRadiusData,nstep];
 		Do[
 			evals=Sort[Im[evscale[kl[[kx]],S,kvar]],Greater];
-			pot=potential[data,ea]/.kvar->kl[[kx]];
+			pot=siPotential[singleRadiusData];
 			Sow[{data["radius"][[rx]],kl[[kx]],evals[[1]],pot}]; 
 		,{kx,1,Length[kl]}] (*close do over ktargets*)
 	,{rx,rstr,rend}] (*close do over r*)
@@ -243,7 +257,7 @@ mv=\[Epsilon] Max[MeshCoordinates[BoundaryDiscretizeRegion[reg,{{-1,1},{0,1}}]][
 Return[mv]];
 
 
-GDdata[infile_,rstr_,rend_,testE_,hi_,nstep_]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,evals,pot,ktarget,S,gdout,out},
+GDdata[infile_,rstr_,rend_,testE_,hi_,nstep_]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,evals,pot,ktarget,S,gdout,out,ea2,S2},
 data=ImportData[infile];
 out=
 Reap[
@@ -254,13 +268,69 @@ Reap[
 		ktarget=(S/.kvar->0)[[1,1]];
 		kl=buildkGrid[ktarget,nstep];
 		Do[
-			gdout=GDValue[S];
+		ea2=getEquations[singleRadiusData,testE,hi,kx];
+		S2=stabilityMatrix[data,ea];
+			gdout=GDValue[S2]; (*this isn't updating k correctly*)
 			Sow[{data["radius"][[rx]],kl[[kx]],gdout}]; 
 		,{kx,1,Length[kl]}] (*close do over ktargets*)
 	,{rx,rstr,rend}] (*close do over r*)
 ][[2,1]];
 Return[out] (*Close reap over r*)
 		
+]
+
+
+getIntialGuessBox[data_,species_]:=Module[{datasr,foc1234,afoc1234,ei,aei,ag,aag,\[Beta]g,\[Chi]g,a\[Beta]g,a\[Chi]g},
+datasr=SelectSingleRadius[data,1];
+foc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freq"][[E+1]]+data["freq"][[E]])) (data["freq"][[E+1]]^3-data["freq"][[E]]^3)) )(datasr["lotsodo"][[1,E,1]] + 3 z datasr["lotsodo"][[1,E,2]]
++(5/2 (3 (datasr["lotsodo"][[1,E,1]] -datasr["lotsodo"][[1,E,3]] )/2 x^2+3 (datasr["lotsodo"][[1,E,1]] -datasr["lotsodo"][[1,E,3]] )/2 y^2+3 datasr["lotsodo"][[1,E,3]] z^2-datasr["lotsodo"][[1,E,1]] )));
+afoc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freq"][[E+1]]+data["freq"][[E]])) (data["freq"][[E+1]]^3-data["freq"][[E]]^3)) )(datasr["lotsodo"][[2,E,1]] + 3 z datasr["lotsodo"][[2,E,2]]
++(5/2 (3 (datasr["lotsodo"][[2,E,1]] -datasr["lotsodo"][[2,E,3]] )/2 x^2+3 (datasr["lotsodo"][[2,E,1]] -datasr["lotsodo"][[2,E,3]] )/2 y^2+3 datasr["lotsodo"][[2,E,3]] z^2-datasr["lotsodo"][[2,E,1]] )));
+
+(*Generate intial guesses from the expansion reconstruction of the distribution function. g stands for "guess"*)
+(*review what these are?*)
+ei[m_]:= Sum[1/3 (datasr["freq"][[f+1]]^3-datasr["freq"][[f]]^3)foc1234[Sin[ArcCos[m]],0,m,f],{f,1,80}];
+aei[m_]:= Sum[1/3 (datasr["freq"][[f+1]]^3-datasr["freq"][[f]]^3)afoc1234[Sin[ArcCos[m]],0,m,f],{f,1,80}];
+ag=1/2 (Abs[ei[1]]+Abs[ei[-1]]);
+aag=1/2 (Abs[aei[1]]+Abs[aei[-1]]);
+\[Beta]g=0;
+\[Chi]g=-5;
+a\[Beta]g=0;
+a\[Chi]g=-5;
+Which[
+species==1, Return[{ag,\[Beta]g,\[Chi]g}],
+species==2, Return[{aag,a\[Beta]g,a\[Chi]g}]
+]																
+];
+
+
+eBoxFitSingleRadius[data_,ri_,species_,guesses_]:=Module[{ebox,es1box,es2box,es3box,ne,Fe,Pre,ane,aFe,aPre,datasr,br},
+datasr=SelectSingleRadius[data,ri];
+
+(*Equation of an ellipse in the "box transform" units*)
+ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])
++a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2+1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
+es1box[a_,\[Beta]_,\[Chi]_]:=1/c^3 NIntegrate[ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->13];
+es2box[a_,\[Beta]_,\[Chi]_]:=1/c^3 NIntegrate[m ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->13];
+es3box[a_,\[Beta]_,\[Chi]_]:=1/c^3 NIntegrate[ m^2 ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->13];
+
+Which[
+species==1,
+ne=Sum[ datasr["lotsodo"][[1,f,1]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
+Fe=Sum[ datasr["lotsodo"][[1,f,2]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
+Pre=Sum[ datasr["lotsodo"][[1,f,3]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
+br=FindRoot[{2 Pi es1box[a,\[Beta],\[Chi]]-ne,2 Pi es2box[a,\[Beta],\[Chi]]-Fe,2 Pi es3box[a,\[Beta],\[Chi]]-Pre},{{a,guesses[[1]]},{\[Beta],guesses[[2]]},{\[Chi],guesses[[3]]}},Evaluated->False]
+,
+species==2,
+ane=Sum[ datasr["lotsodo"][[2,f,1]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
+
+aFe:=Sum[ datasr["lotsodo"][[2,f,2]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
+
+aPre=Sum[ datasr["lotsodo"][[2,f,3]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
+br=FindRoot[{2 Pi es1box[a,\[Beta],\[Chi]]-ane,2 Pi es2box[a,\[Beta],\[Chi]]-aFe,2 Pi es3box[a,\[Beta],\[Chi]]-aPre},{{a,guesses[[1]]},{\[Beta],guesses[[2]]},{\[Chi],guesses[[3]]}},Evaluated->False]
+
+];
+Return[br]
 ]
 
 
