@@ -6,12 +6,8 @@ ImportData::usage =
 	"ImportData[file] reads in the data from file."
 buildHamiltonians::usage=
 	"[data,test Energy, Hierarchy=1/-1]. Return elements of the hamiltonians"
-buildHamiltoniansnodh::usage=
-	"testing with dh=0"
 getEquations::usage=
 	"[data,test energy, hierarchy=-1/1, k]. Return the equations of motions"
-getEquationsnodh::usage=
-	"Return the equations of motions"
 stabilityMatrix::usage=
 	"[data,Equations of motion (getEquations output)]. Returns the stability matrix"
 buildkGrid::usage=
@@ -20,8 +16,6 @@ buildkGrid::usage=
 kAdapt::usage=
 	"[file, radius start, radius end, test energy, hierarchy, number of k steps, (optional) manual target k, 
 (optional) k lowwer bound multiple; Default \!\(\*SuperscriptBox[\(10\), \(-3\)]\),(optional) k upper bound Default: 10]. Runs the full routine"
-kAdaptnodh::usage=
-	"runs the full routine"
 GDValue::usage=
 	"returns the maximum possible value of the frequency"
 GDdata::usage=
@@ -113,7 +107,8 @@ Returns 9 arguments with index,
 2,4,6,8 = Hb,\[Rho]b,Ab,\[Delta]Hb
 9=HsiRadial
 *)
-buildHamiltonians[data_,testE_,hi_]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,nudensity,nubardensity,Ve,\[Omega],HsiRad},(
+Options[buildHamiltonians]={"\[Delta]h"-> True};
+buildHamiltonians[data_,testE_,hi_,OptionsPattern[]]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,nudensity,nubardensity,Ve,\[Omega],HsiRad,dhswitch},(
 
 Ve=munits/mp *data["Yes"]  *data["matters"];
 \[Omega]=\[Omega]EMev[testE];
@@ -142,6 +137,7 @@ Hvac=hi{{-\[Omega]/2,0.},{0.,\[Omega]/2}};
 \[Mu]=munits Table[nudensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
 \[Mu]b=munits Table[nubardensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
 
+If[OptionValue["dh"],dhswitch=IdentityMatrix[2],dhswitch={{0.,0.},{0.,0.}}];
 
 Do[
 Hsi[j]=Sum[\[Mu][[k,j]]\[Rho][k](2Pi)(1-Cos[\[Theta][[j]]]Cos[\[Theta][[k]]]),{k,1,n}]+Sum[-\[Mu]b[[k,j]]\[Rho]b[k](2Pi)(1-Cos[\[Theta][[j]]]Cos[\[Theta][[k]]]),{k,1,n}];
@@ -149,77 +145,14 @@ Hsi[j]=Sum[\[Mu][[k,j]]\[Rho][k](2Pi)(1-Cos[\[Theta][[j]]]Cos[\[Theta][[k]]]),{k
 Do[
 H[i]=Hvac+Hm+Hsi[i];
 Hb[i]=Hvac-Hm-Hsi[i];
-\[Delta]H[i]=Sum[((D[H[i][[1,2]],\[Rho][j][[1,2]]]) A[j])+((D[H[i][[1,2]],\[Rho]b[j][[1,2]]])Ab[j]),{j,1,n}];
-\[Delta]Hb[i]=Sum[((D[Hb[i][[1,2]],\[Rho][j][[1,2]]])A[j])+((D[Hb[i][[1,2]],\[Rho]b[j][[1,2]]])Ab[j]),{j,1,n}];
+\[Delta]H[i]=dhswitch.Sum[((D[H[i][[1,2]],\[Rho][j][[1,2]]]) A[j])+((D[H[i][[1,2]],\[Rho]b[j][[1,2]]])Ab[j]),{j,1,n}];
+\[Delta]Hb[i]=dhswitch.Sum[((D[Hb[i][[1,2]],\[Rho][j][[1,2]]])A[j])+((D[Hb[i][[1,2]],\[Rho]b[j][[1,2]]])Ab[j]),{j,1,n}];
 ,{i,1,n}];
-
-
 Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb}]
 )
 ];
 
 
-buildHamiltoniansnodh[data_,testE_,hi_]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,nudensity,nubardensity,Ve,\[Omega],HsiRad},(
-
-Ve=munits/mp *data["Yes"]  *data["matters"];
-\[Omega]=\[Omega]EMev[testE];
-
-name11="ee";
-name12="ex";
-name21="xe";
-name22="xx";
-
-n=Length[data["mids"]];
-\[Theta]=ArcCos[data["mids"]];
-
-Do[
-\[Rho][i]={{ToExpression[StringJoin["\[Rho]",name11,ToString[i]]],ToExpression[StringJoin["\[Rho]",name12,ToString[i]]]},{ToExpression[StringJoin["\[Rho]",name21,ToString[i]]],ToExpression[StringJoin["\[Rho]",name22,ToString[i]]]}};
-\[Rho]b[i]={{ToExpression[StringJoin["\[Rho]b",name11,ToString[i]]],ToExpression[StringJoin["\[Rho]b",name12,ToString[i]]]},{ToExpression[StringJoin["\[Rho]b",name21,ToString[i]]],ToExpression[StringJoin["\[Rho]b",name22,ToString[i]]]}};
-A[i]={{0,ToExpression[StringJoin["A",name12,ToString[i]]]},{ToExpression[StringJoin["A",name21,ToString[i]]],0}};
-Ab[i]={{0,ToExpression[StringJoin["Ab",name12,ToString[i]]]},{ToExpression[StringJoin["Ab",name21,ToString[i]]],0}};
-,{i,1,n}];
-
-
-nudensity[dt_]:= Sum[Sum[data["lotsodo"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
-nubardensity[dt_]:= Sum[Sum[data["lotsodo"][[2,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
-
-Hm={{Ve,0.},{0.,0.}};
-Hvac=hi{{-\[Omega]/2,0.},{0.,\[Omega]/2}};
-\[Mu]=munits Table[nudensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
-\[Mu]b=munits Table[nubardensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
-
-
-Do[
-Hsi[j]=Sum[\[Mu][[k,j]]\[Rho][k](2Pi)(1-Cos[\[Theta][[j]]]Cos[\[Theta][[k]]]),{k,1,n}]+Sum[-\[Mu]b[[k,j]]\[Rho]b[k](2Pi)(1-Cos[\[Theta][[j]]]Cos[\[Theta][[k]]]),{k,1,n}];
-,{j,1,n}];
-Do[
-H[i]=Hvac+Hm+Hsi[i];
-Hb[i]=Hvac-Hm-Hsi[i];
-\[Delta]H[i]={{0.,0.},{0.,0.}};
-\[Delta]Hb[i]={{0.,0.},{0.,0.}};
-,{i,1,n}];
-
-
-Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb}]
-)
-];
-
-getEquationsnodh[data_,testE_,hi_,k_]:=Module[{n,\[Theta],eqn,eqnb,hs},( 
-hs=buildHamiltoniansnodh[data,testE,hi];
-n=Length[data["mids"]];
-\[Theta]=ArcCos[data["mids"]];
-(*This could be replaced with a mapthread or with associations, but one step at time*)
-With[{H=hs[[1]],Hb=hs[[2]],\[Rho]=hs[[3]],\[Rho]b=hs[[4]],A=hs[[5]],Ab=hs[[6]],\[Delta]H=hs[[7]],\[Delta]Hb=hs[[8]]}, 
-
-Do[
-eqn[j]=Com[H[j],A[j]][[1,2]]+ Com[\[Delta]H[j],\[Rho][j]][[1,2]]+(k Cos[\[Theta][[j]]] A[j][[1,2]]);
-eqnb[j]=-Com[Hb[j],Ab[j]][[1,2]]- Com[\[Delta]Hb[j],\[Rho]b[j]][[1,2]]+(k Cos[\[Theta][[j]]] Ab[j][[1,2]]);
-,{j,1,n}];
-
-Return[{eqn,eqnb,A,Ab}]
-](*Close with*)
-)
-];
 
 
 (*Calculates the equations of motion by computing the relvant commutators. 
@@ -228,8 +161,9 @@ Return[{eqn,eqnb,A,Ab}]
  2,4 = Antineutrino equations of motion, Ab
  5=HsiRadial
  *)
-getEquations[data_,testE_,hi_,k_]:=Module[{n,\[Theta],eqn,eqnb,hs},( 
-hs=buildHamiltonians[data,testE,hi];
+Options[getEquations]={"dh"-> True};
+getEquations[data_,testE_,hi_,k_,OptionsPattern[]]:=Module[{n,\[Theta],eqn,eqnb,hs},( 
+If[OptionValue["dh"],hs=buildHamiltonians[data,testE,hi],hs=buildHamiltonians[data,testE,hi,"dh"-> False];
 n=Length[data["mids"]];
 \[Theta]=ArcCos[data["mids"]];
 (*This could be replaced with a mapthread or with associations, but one step at time*)
@@ -299,6 +233,7 @@ Return[as]
 
 
 (*Constructs a nstep sized log spaced k grid based on the target k associated with the infile at radial bin r.  Currently the limits are 2 orders of magnitude above and below the target value, ignoring negatives for the moment *)
+
 buildkGrid[data_,nstep_,mktarget_:0.,kblow_:10^-3,kbhigh_:10^1]:=Module[{kgrid,fSpace,ktarget},
 If[mktarget!=0.,
 ktarget=mktarget,
@@ -312,13 +247,14 @@ Return[kgrid];
 
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
-kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,mktarget_:0.,kblow_:10^-3,kbhigh_:10^1]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,evals,pot,ktarget,S},
+Options[kAdapt]={"dh"-> True};
+kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,mktarget_:0.,kblow_:10^-3,kbhigh_:10^1,OptionsPattern[]]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,evals,pot,ktarget,S},
 data=ImportData[infile];
 evout=
 Reap[
 	Do[
 		singleRadiusData = SelectSingleRadius[data,rx];
-		ea=getEquations[singleRadiusData,testE,hi,kvar];
+		If[OptionValue["dh"],ea=getEquations[singleRadiusData,testE,hi,kvar], ea=getEquations[singleRadiusData,testE,hi,kvar,"dh"-> False]];
 		S=stabilityMatrix[data,ea];
 		kl=buildkGrid[singleRadiusData,nstep,mktarget];
 		Do[
@@ -332,24 +268,7 @@ Return[evout] (*Close reap over r*)
 ]; (*close module*)
 
 
-kAdaptnodh[infile_,rstr_,rend_,testE_,hi_,nstep_]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,evals,pot,ktarget,S},
-data=ImportData[infile];
-evout=
-Reap[
-	Do[
-		singleRadiusData = SelectSingleRadius[data,rx];
-		ea=getEquationsnodh[singleRadiusData,testE,hi,kvar];
-		S=stabilityMatrix[data,ea];
-		kl=buildkGrid[singleRadiusData,nstep];
-		Do[
-			evals=Sort[Im[evscale[kl[[kx]],S,kvar]],Greater];
-			pot=siPotential[singleRadiusData];
-			Sow[{data["radius"][[rx]],kl[[kx]],evals[[1]],pot}]; 
-		,{kx,1,Length[kl]}] (*close do over ktargets*)
-	,{rx,rstr,rend}] (*close do over r*)
-][[2,1]];
-Return[evout] (*Close reap over r*)
-]; (*close module*)
+
 
 
 GDValue[tm_]:=Block[{cs,rrow,rcol,drow,dcol,mv,reg,\[Epsilon],tms},
