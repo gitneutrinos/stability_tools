@@ -26,6 +26,8 @@ makeLocalVariables::usage=
 "[],Imports the variables definitions used in the package to the local notebook. Useful for analysis"
 boxFit::usage=
 "[infile,species=1,2]. Box fits a file."
+evscale::usage=
+"[ktest,S,kx] Get eigenvalues of matrix with tiny scale."
 
 
 
@@ -46,22 +48,8 @@ munits=Sqrt[2] (Gf/Geverg^2 )(hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
 \[Omega]EMev[En_]:=(\[CapitalDelta]m12sq)/(2 (En Meverg));
 Com[A_,B_]:=Module[{a=A,b=B},Return[A.B-B.A]];
 
-makeLocalVariables[]:=Block[{},
-c=2.99792458 10^10; (* cm/s*)
-h=6.6260755 10^-27; (*erg s*)
-hbar = h/(2 Pi); (*erg s*)
-Gf=1.1663787 10^-5; (*GeV^-2*)
-everg=1.60218 10^-12; (* convert eV to ergs*)
-Geverg = everg*10^9; (* convert GeV to ergs *)
-Meverg = everg*10^6; (*convert Mev to erg*) 
-ergev=1.0/everg; (*convert ergs to eV*)
-ergmev=ergev/10^6; (*convert erg to MeV*)
-mp=1.6726219 10^-24; (*Proton mass in g*) 
-munits=Sqrt[2] (Gf/Geverg^2 )(hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
-\[CapitalDelta]m12sq=(7.59 10^-5) everg^2;
-\[Omega]EMev[En_]:=(\[CapitalDelta]m12sq)/(2 (En Meverg));
-Com[A_,B_]:=Module[{a=A,b=B},Return[A.B-B.A]];
-];
+
+
 
 
 	
@@ -107,7 +95,7 @@ Returns 9 arguments with index,
 2,4,6,8 = Hb,\[Rho]b,Ab,\[Delta]Hb
 9=HsiRadial
 *)
-Options[buildHamiltonians]={"\[Delta]h"-> True};
+Options[buildHamiltonians]={"dh"-> True};
 buildHamiltonians[data_,testE_,hi_,OptionsPattern[]]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,nudensity,nubardensity,Ve,\[Omega],HsiRad,dhswitch},(
 
 Ve=munits/mp *data["Yes"]  *data["matters"];
@@ -162,8 +150,8 @@ Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb}]
  5=HsiRadial
  *)
 Options[getEquations]={"dh"-> True};
-getEquations[data_,testE_,hi_,k_,OptionsPattern[]]:=Module[{n,\[Theta],eqn,eqnb,hs},( 
-If[OptionValue["dh"],hs=buildHamiltonians[data,testE,hi],hs=buildHamiltonians[data,testE,hi,"dh"-> False];
+getEquations[data_,testE_,hi_,k_,OptionsPattern[]]:=Module[{n,\[Theta],eqn,eqnb,hs},
+If[OptionValue["dh"],hs=buildHamiltonians[data,testE,hi],hs=buildHamiltonians[data,testE,hi,"dh"-> False]];
 n=Length[data["mids"]];
 \[Theta]=ArcCos[data["mids"]];
 (*This could be replaced with a mapthread or with associations, but one step at time*)
@@ -176,7 +164,7 @@ eqnb[j]=-Com[Hb[j],Ab[j]][[1,2]]- Com[\[Delta]Hb[j],\[Rho]b[j]][[1,2]]+(k Cos[\[
 
 Return[{eqn,eqnb,A,Ab}]
 ](*Close with*)
-)
+
 ];
 
 
@@ -377,6 +365,9 @@ Return[Join[s1,fits]]
 End[]
 
 EndPackage[]
+
+
+
 
 
 

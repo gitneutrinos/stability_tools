@@ -104,13 +104,41 @@ kAdapt[file,ri,ri,testE,hi,10]
 ];
 ListLogPlot[{Transpose@{kdebug[[All,2]],kdebug[[All,3]]},OldData},ImageSize-> Scaled[0.65]]
 
-
 (*2x2 matrix check*)
-build2bMatrix[wt_,kx_]:=Block[{S2ba,S2b},
-S2ba=stabilityMatrix[2,{0.,Pi},wt,kx,0.,-1.];
+get2bdata[]:=Block[{S2ba,S2b,data2b,fakeEn,c,h,hbar,Gf,everg,Geverg,munits},
+c=2.99792458 10^10; (* cm/s*)
+h=6.6260755 10^-27; (*erg s*)
+hbar = h/(2 Pi); (*erg s*)
+Gf=1.1663787 10^-5; (*GeV^-2*)
+everg=1.60218 10^-12; (* convert eV to ergs*)
+Geverg = everg*10^9; (* convert GeV to ergs *)
+munits=Sqrt[2] (Gf/Geverg^2 )(hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
+data2b=
+ Association[
+"muss"-> {-1,0,1},
+"matters"-> 0.,
+"Yes"-> 0.,
+"mids"-> {-Pi,Pi},
+"freqs"->{0,2},
+"lotsodo"-> {{{{ (1+a),0.},{0.,0.}}},{{{0.,0.},{ (1-a),0.}}}},
+ "freqmid"-> {1},
+ "munits"-> munits
+]
+];
+build2bMatrix[]:=Block[{fakeEn,S2ba,S2b},
+fakeEn=6.080273099999999`*^-22; (*MeV input, output in ergs*)
+S2ba=stabilityMatrix[get2bdata[],getEquations[get2bdata[],fakeEn,-1,0.]];
 S2b={{S2ba[[1,1]],S2ba[[1,4]]},{S2ba[[4,1]],S2ba[[4,4]]}};
 Return[S2b]
 ];
+
+\[CapitalOmega]ch[k_,\[Mu]ch_,a_,\[Omega]_]=2 a \[Mu]ch+Sqrt[(2 a \[Mu]ch)^2+\[Omega](\[Omega]-4 \[Mu]ch)];
+evtest=Eigenvalues[build2bMatrix[]/.{a-> 0.1}][[2]];
+vt=VerificationTest[
+Abs[Im[\[CapitalOmega]ch[0.,N[2.0929595558280123`*^-21/2],0.1,0.1]]]-Abs[Im[evtest]]<10^-3
+,TestID-> "2 Beam Growth Rate"]
+
+
 
 
 (* ::Input::Initialization:: *)
