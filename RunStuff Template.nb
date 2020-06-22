@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    161622,       3738]
-NotebookOptionsPosition[    159274,       3689]
-NotebookOutlinePosition[    159694,       3706]
-CellTagsIndexPosition[    159651,       3703]
+NotebookDataLength[     76124,       1761]
+NotebookOptionsPosition[     73914,       1719]
+NotebookOutlinePosition[     74312,       1735]
+CellTagsIndexPosition[     74269,       1732]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -131,14 +131,9 @@ Cell[BoxData[{
 
 Cell[BoxData["\<\"C:\\\\Users\\\\Sam\\\\Documents\\\\GitHub\\\\stability_\
 tools\"\>"], "Output",
- CellChangeTimes->{{3.8013988557444763`*^9, 3.801398859785906*^9}, 
-   3.801399045690092*^9, 3.801399168602594*^9, 3.801399427782333*^9, 
-   3.8013995484983816`*^9, 3.8014003009920654`*^9, 3.8018191669354663`*^9, 
-   3.8018253656558533`*^9, 3.801826800948448*^9, 3.801826986930667*^9},
- CellLabel->"Out[3]=",ExpressionUUID->"e8c1305f-90e1-4c90-a016-918bdadb931d"]
+ CellChangeTimes->{3.801842636893943*^9},
+ CellLabel->"Out[3]=",ExpressionUUID->"4682afc3-a468-44f3-b495-c203adb3d4f7"]
 }, Open  ]],
-
-Cell[CellGroupData[{
 
 Cell[BoxData[{
  RowBox[{"?", "stabilityMatrix"}], "\[IndentingNewLine]", 
@@ -147,2028 +142,25 @@ Cell[BoxData[{
  CellChangeTimes->{{3.8013990477305393`*^9, 3.801399067755871*^9}},
  CellLabel->"In[5]:=",ExpressionUUID->"bdd8f3fb-c826-41e0-b21f-cb454beab10c"],
 
-Cell[BoxData[
- InterpretationBox[
-  StyleBox[
-   FrameBox[
-    DynamicModuleBox[{System`InformationDump`open$$ = False, 
-     System`InformationDump`mouseOver$$ = False}, 
-     PaneSelectorBox[{True->
-      TagBox[GridBox[{
-         {
-          ItemBox[
-           PaneBox[
-            StyleBox["\<\" Symbol\"\>", "InformationTitleText",
-             StripOnInput->False,
-             BaseStyle -> None],
-            FrameMargins->{{4, 0}, {-1, 1}}],
-           BaseStyle->"InformationTitleBackground",
-           StripOnInput->False], 
-          ItemBox["\<\"\"\>",
-           BaseStyle->"InformationTitleBackground",
-           StripOnInput->False]},
-         {
-          ItemBox[
-           PaneBox[
-            
-            StyleBox["\<\"[data,Equations of motion (getEquations output)]. \
-Returns the stability matrix\"\>", "InformationUsageText",
-             StripOnInput->False,
-             LineSpacing->{1.5, 1.5, 3.}],
-            FrameMargins->{{10, 10}, {8, 10}}],
-           BaseStyle->"InformationUsageSubtitleBackground",
-           StripOnInput->False], 
-          ItemBox["\<\"\"\>",
-           BaseStyle->"InformationUsageSubtitleBackground",
-           StripOnInput->False]},
-         {
-          PaneBox[GridBox[{
-             {
-              
-              DynamicModuleBox[{System`InformationDump`open$$ = {
-               False, False, False, False, False, False, False, False, False, 
-                False, False, False}}, 
-               StyleBox[GridBox[{
-                  {
-                   TagBox[
-                    TooltipBox[
-                    StyleBox["\<\" Definitions\"\>", "InformationRowLabel",
-                    StripOnInput->False],
-                    "\"Definitions\"",
-                    TooltipStyle->"TextStyling"],
-                    Annotation[#, "Definitions", "Tooltip"]& ], GridBox[{
-                    {
-                    RowBox[{
-                    RowBox[{"stabilityMatrix", "[", 
-                    RowBox[{
-                    "StabililtyPackage`Private`data_", ",", 
-                    "StabililtyPackage`Private`ea_"}], "]"}], ":=", 
-                    RowBox[{"Module", "[", 
-                    RowBox[{
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`S1", ",", 
-                    "StabililtyPackage`Private`S2", ",", 
-                    "StabililtyPackage`Private`S3", ",", 
-                    "StabililtyPackage`Private`S4", ",", 
-                    "StabililtyPackage`Private`S", ",", 
-                    "StabililtyPackage`Private`n"}], "}"}], ",", 
-                    RowBox[{
-                    RowBox[{"StabililtyPackage`Private`n", "=", 
-                    RowBox[{"Length", "[", 
-                    RowBox[{
-                    "StabililtyPackage`Private`data", "[", "\<\"mids\"\>", 
-                    "]"}], "]"}]}], ";", 
-                    RowBox[{"With", "[", 
-                    RowBox[{
-                    RowBox[{"{", 
-                    RowBox[{
-                    RowBox[{"StabililtyPackage`Private`eqn", "=", 
-                    RowBox[{
-                    "StabililtyPackage`Private`ea", "\[LeftDoubleBracket]", 
-                    "1", "\[RightDoubleBracket]"}]}], ",", 
-                    RowBox[{"StabililtyPackage`Private`eqnb", "=", 
-                    RowBox[{
-                    "StabililtyPackage`Private`ea", "\[LeftDoubleBracket]", 
-                    "2", "\[RightDoubleBracket]"}]}], ",", 
-                    RowBox[{"StabililtyPackage`Private`A", "=", 
-                    RowBox[{
-                    "StabililtyPackage`Private`ea", "\[LeftDoubleBracket]", 
-                    "3", "\[RightDoubleBracket]"}]}], ",", 
-                    RowBox[{"StabililtyPackage`Private`Ab", "=", 
-                    RowBox[{
-                    "StabililtyPackage`Private`ea", "\[LeftDoubleBracket]", 
-                    "4", "\[RightDoubleBracket]"}]}]}], "}"}], ",", 
-                    RowBox[{
-                    RowBox[{"StabililtyPackage`Private`S1", "=", 
-                    RowBox[{"Table", "[", 
-                    RowBox[{
-                    RowBox[{"Coefficient", "[", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`eqn", "[", 
-                    "StabililtyPackage`Private`l", "]"}], ",", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`A", "[", 
-                    "StabililtyPackage`Private`m", "]"}], 
-                    "\[LeftDoubleBracket]", 
-                    RowBox[{"1", ",", "2"}], "\[RightDoubleBracket]"}]}], 
-                    "]"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`l", ",", "1", ",", 
-                    "StabililtyPackage`Private`n"}], "}"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`m", ",", "1", ",", 
-                    "StabililtyPackage`Private`n"}], "}"}]}], "]"}]}], ";", 
-                    RowBox[{"StabililtyPackage`Private`S2", "=", 
-                    RowBox[{"Table", "[", 
-                    RowBox[{
-                    RowBox[{"Coefficient", "[", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`eqn", "[", 
-                    "StabililtyPackage`Private`l", "]"}], ",", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`Ab", "[", 
-                    "StabililtyPackage`Private`m", "]"}], 
-                    "\[LeftDoubleBracket]", 
-                    RowBox[{"1", ",", "2"}], "\[RightDoubleBracket]"}]}], 
-                    "]"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`l", ",", "1", ",", 
-                    "StabililtyPackage`Private`n"}], "}"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`m", ",", "1", ",", 
-                    "StabililtyPackage`Private`n"}], "}"}]}], "]"}]}], ";", 
-                    RowBox[{"StabililtyPackage`Private`S3", "=", 
-                    RowBox[{"Table", "[", 
-                    RowBox[{
-                    RowBox[{"Coefficient", "[", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`eqnb", "[", 
-                    "StabililtyPackage`Private`l", "]"}], ",", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`A", "[", 
-                    "StabililtyPackage`Private`m", "]"}], 
-                    "\[LeftDoubleBracket]", 
-                    RowBox[{"1", ",", "2"}], "\[RightDoubleBracket]"}]}], 
-                    "]"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`l", ",", "1", ",", 
-                    "StabililtyPackage`Private`n"}], "}"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`m", ",", "1", ",", 
-                    "StabililtyPackage`Private`n"}], "}"}]}], "]"}]}], ";", 
-                    RowBox[{"StabililtyPackage`Private`S4", "=", 
-                    RowBox[{"Table", "[", 
-                    RowBox[{
-                    RowBox[{"Coefficient", "[", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`eqnb", "[", 
-                    "StabililtyPackage`Private`l", "]"}], ",", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`Ab", "[", 
-                    "StabililtyPackage`Private`m", "]"}], 
-                    "\[LeftDoubleBracket]", 
-                    RowBox[{"1", ",", "2"}], "\[RightDoubleBracket]"}]}], 
-                    "]"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`l", ",", "1", ",", 
-                    "StabililtyPackage`Private`n"}], "}"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`m", ",", "1", ",", 
-                    "StabililtyPackage`Private`n"}], "}"}]}], "]"}]}], ";", 
-                    RowBox[{"StabililtyPackage`Private`S", "=", 
-                    RowBox[{
-                    RowBox[{"ArrayFlatten", "[", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    RowBox[{"{", 
-                    RowBox[{"StabililtyPackage`Private`S1", ",", 
-                    "StabililtyPackage`Private`S2"}], "}"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`S3", ",", 
-                    "StabililtyPackage`Private`S4"}], "}"}]}], "}"}], "]"}], "/.",
-                     "\[VeryThinSpace]", 
-                    RowBox[{
-                    "StabililtyPackage`Private`rules", "[", 
-                    "StabililtyPackage`Private`n", "]"}]}]}], ";", 
-                    RowBox[{
-                    "Return", "[", "StabililtyPackage`Private`S", "]"}], 
-                    ";"}]}], "]"}]}]}], "]"}]}]}
-                    },
-                    DefaultBaseStyle->"Column",
-                    GridBoxAlignment->{"Columns" -> {{Left}}},
-                    
-                    GridBoxItemSize->{
-                    "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}]},
-                  {
-                   TagBox[
-                    TooltipBox[
-                    StyleBox["\<\" Full Name\"\>", "InformationRowLabel",
-                    StripOnInput->False],
-                    "\"FullName\"",
-                    TooltipStyle->"TextStyling"],
-                    
-                    Annotation[#, "FullName", 
-                    "Tooltip"]& ], "\<\"StabililtyPackage`stabilityMatrix\"\>"}
-                 },
-                 AutoDelete->False,
-                 GridBoxAlignment->{"Columns" -> {Right, Left}},
-                 GridBoxDividers->None,
-                 GridBoxItemSize->{"Columns" -> {Automatic, Automatic}},
-                 GridBoxSpacings->{"Columns" -> {
-                    Offset[0.27999999999999997`], {
-                    Offset[0.5599999999999999]}, 
-                    Offset[0.27999999999999997`]}, "Rows" -> {
-                    Offset[0.2], {
-                    Offset[0.8]}, 
-                    Offset[0.2]}}], "DialogStyle",
-                StripOnInput->False],
-               DynamicModuleValues:>{}]}
-            },
-            DefaultBaseStyle->"Column",
-            GridBoxAlignment->{"Columns" -> {{Left}}},
-            GridBoxDividers->{"Columns" -> {{False}}, "Rows" -> {{False}}},
-            
-            GridBoxItemSize->{
-             "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}},
-            GridBoxSpacings->{"Columns" -> {
-                Offset[0.27999999999999997`], {
-                 Offset[0.5599999999999999]}, 
-                Offset[0.27999999999999997`]}, "Rows" -> {
-                Offset[0.2], {
-                 Offset[3.6]}, 
-                Offset[0.2]}}],
-           FrameMargins->6], ""},
-         {
-          ItemBox[
-           TagBox[
-            ButtonBox[
-             PaneSelectorBox[{False->
-              
-              DynamicBox[FEPrivate`FrontEndResource[
-               "FEBitmaps", "UpPointerOpener"]], True->
-              
-              DynamicBox[FEPrivate`FrontEndResource[
-               "FEBitmaps", "UpPointerOpenerHot"]]}, Dynamic[
-              System`InformationDump`mouseOver$$]],
-             Alignment->Left,
-             Appearance->{"Default" -> None},
-             
-             ButtonFunction:>FEPrivate`Set[
-              System`InformationDump`open$$, False],
-             Evaluator->Automatic,
-             FrameMargins->{{9, 0}, {0, 0}},
-             ImageMargins->0,
-             ImageSize->Full,
-             Method->"Preemptive"],
-            
-            EventHandlerTag[{
-             "MouseEntered" :> 
-              FEPrivate`Set[System`InformationDump`mouseOver$$, True], 
-              "MouseExited" :> 
-              FEPrivate`Set[System`InformationDump`mouseOver$$, False], 
-              Method -> "Preemptive", PassEventsDown -> Automatic, 
-              PassEventsUp -> True}]],
-           BaseStyle->"InformationTitleBackground",
-           StripOnInput->False], "\[SpanFromLeft]"}
-        },
-        AutoDelete->False,
-        FrameStyle->Directive[
-          GrayLevel[0.8], 
-          Thickness[Tiny]],
-        GridBoxAlignment->{"Columns" -> {Left, Right}, "Rows" -> {{Center}}},
-        GridBoxDividers->{
-         "Columns" -> {{None}}, "Rows" -> {False, {True}, False}},
-        GridBoxItemSize->{
-         "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
-       "Grid"], False->
-      TagBox[GridBox[{
-         {
-          ItemBox[
-           PaneBox[
-            StyleBox["\<\" Symbol\"\>", "InformationTitleText",
-             StripOnInput->False],
-            FrameMargins->{{4, 0}, {-1, 1}}],
-           BaseStyle->"InformationTitleBackground",
-           StripOnInput->False], 
-          ItemBox["\<\"\"\>",
-           BaseStyle->"InformationTitleBackground",
-           StripOnInput->False]},
-         {
-          ItemBox[
-           PaneBox[
-            
-            StyleBox["\<\"[data,Equations of motion (getEquations output)]. \
-Returns the stability matrix\"\>", "InformationUsageText",
-             StripOnInput->False,
-             LineSpacing->{1.5, 1.5, 3.}],
-            FrameMargins->{{10, 10}, {8, 10}}],
-           BaseStyle->"InformationUsageSubtitleBackground",
-           StripOnInput->False], 
-          ItemBox["\<\"\"\>",
-           BaseStyle->"InformationUsageSubtitleBackground",
-           StripOnInput->False]},
-         {
-          ItemBox[
-           TagBox[
-            ButtonBox[
-             PaneSelectorBox[{False->
-              
-              DynamicBox[FEPrivate`FrontEndResource[
-               "FEBitmaps", "DownPointerOpener"],
-               ImageSizeCache->{15., {4., 11.}}], True->
-              
-              DynamicBox[FEPrivate`FrontEndResource[
-               "FEBitmaps", "DownPointerOpenerHot"],
-               ImageSizeCache->{15., {4., 11.}}]}, Dynamic[
-              System`InformationDump`mouseOver$$]],
-             Alignment->Left,
-             Appearance->{"Default" -> None},
-             
-             ButtonFunction:>FEPrivate`Set[
-              System`InformationDump`open$$, True],
-             Evaluator->Automatic,
-             FrameMargins->{{9, 0}, {0, 0}},
-             ImageMargins->0,
-             ImageSize->Full,
-             Method->"Preemptive"],
-            EventHandlerTag[{
-             "MouseEntered" :> 
-              FEPrivate`Set[System`InformationDump`mouseOver$$, True], 
-              "MouseExited" :> 
-              FEPrivate`Set[System`InformationDump`mouseOver$$, False], 
-              Method -> "Preemptive", PassEventsDown -> Automatic, 
-              PassEventsUp -> True}]],
-           BaseStyle->"InformationTitleBackground",
-           StripOnInput->False], "\[SpanFromLeft]"}
-        },
-        AutoDelete->False,
-        FrameStyle->Directive[
-          GrayLevel[0.8], 
-          Thickness[Tiny]],
-        GridBoxAlignment->{"Columns" -> {Left, Right}, "Rows" -> {{Center}}},
-        GridBoxDividers->{
-         "Columns" -> {{None}}, "Rows" -> {False, {True}, False}},
-        GridBoxItemSize->{
-         "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
-       "Grid"]}, Dynamic[System`InformationDump`open$$],
-      BaselinePosition->Baseline,
-      FrameMargins->0,
-      ImageSize->Automatic],
-     DynamicModuleValues:>{}],
-    BaseStyle->"InformationGridFrame",
-    StripOnInput->False], "InformationGridPlain",
-   StripOnInput->False],
-  InformationData[
-   Association[
-   "ObjectType" -> "Symbol", "Usage" -> 
-    "[data,Equations of motion (getEquations output)]. Returns the stability \
-matrix", "Documentation" -> None, "OwnValues" -> None, "UpValues" -> None, 
-    "DownValues" -> 
-    Information`InformationValueForm[
-     DownValues, StabililtyPackage`stabilityMatrix, {
-      StabililtyPackage`stabilityMatrix[
-         Pattern[StabililtyPackage`Private`data, 
-          Blank[]], 
-         Pattern[StabililtyPackage`Private`ea, 
-          Blank[]]] :> 
-       Module[{StabililtyPackage`Private`S1, StabililtyPackage`Private`S2, 
-          StabililtyPackage`Private`S3, StabililtyPackage`Private`S4, 
-          StabililtyPackage`Private`S, StabililtyPackage`Private`n}, 
-         StabililtyPackage`Private`n = Length[
-            StabililtyPackage`Private`data["mids"]]; 
-         With[{StabililtyPackage`Private`eqn = 
-            Part[StabililtyPackage`Private`ea, 1], 
-            StabililtyPackage`Private`eqnb = 
-            Part[StabililtyPackage`Private`ea, 2], 
-            StabililtyPackage`Private`A = 
-            Part[StabililtyPackage`Private`ea, 3], 
-            StabililtyPackage`Private`Ab = 
-            Part[StabililtyPackage`Private`ea, 4]}, 
-           StabililtyPackage`Private`S1 = Table[
-              Coefficient[
-               StabililtyPackage`Private`eqn[StabililtyPackage`Private`l], 
-               Part[
-                StabililtyPackage`Private`A[StabililtyPackage`Private`m], 1, 
-                2]], {StabililtyPackage`Private`l, 1, 
-               StabililtyPackage`Private`n}, {
-              StabililtyPackage`Private`m, 1, StabililtyPackage`Private`n}]; 
-           StabililtyPackage`Private`S2 = Table[
-              Coefficient[
-               StabililtyPackage`Private`eqn[StabililtyPackage`Private`l], 
-               Part[
-                StabililtyPackage`Private`Ab[StabililtyPackage`Private`m], 1, 
-                2]], {StabililtyPackage`Private`l, 1, 
-               StabililtyPackage`Private`n}, {
-              StabililtyPackage`Private`m, 1, StabililtyPackage`Private`n}]; 
-           StabililtyPackage`Private`S3 = Table[
-              Coefficient[
-               StabililtyPackage`Private`eqnb[StabililtyPackage`Private`l], 
-               Part[
-                StabililtyPackage`Private`A[StabililtyPackage`Private`m], 1, 
-                2]], {StabililtyPackage`Private`l, 1, 
-               StabililtyPackage`Private`n}, {
-              StabililtyPackage`Private`m, 1, StabililtyPackage`Private`n}]; 
-           StabililtyPackage`Private`S4 = Table[
-              Coefficient[
-               StabililtyPackage`Private`eqnb[StabililtyPackage`Private`l], 
-               Part[
-                StabililtyPackage`Private`Ab[StabililtyPackage`Private`m], 1, 
-                2]], {StabililtyPackage`Private`l, 1, 
-               StabililtyPackage`Private`n}, {
-              StabililtyPackage`Private`m, 1, StabililtyPackage`Private`n}]; 
-           StabililtyPackage`Private`S = ReplaceAll[
-              
-              ArrayFlatten[{{
-                StabililtyPackage`Private`S1, StabililtyPackage`Private`S2}, {
-                StabililtyPackage`Private`S3, StabililtyPackage`Private`S4}}], 
-              StabililtyPackage`Private`rules[StabililtyPackage`Private`n]]; 
-           Return[StabililtyPackage`Private`S]; Null]]}], "SubValues" -> None,
-     "DefaultValues" -> None, "NValues" -> None, "FormatValues" -> None, 
-    "Options" -> None, "Attributes" -> {}, "FullName" -> 
-    "StabililtyPackage`stabilityMatrix"], False]]], "Output",
- CellChangeTimes->{{3.8013990546700478`*^9, 3.8013990683569994`*^9}, 
-   3.801399170388995*^9},
- CellLabel->"Out[5]=",ExpressionUUID->"0d74f071-1761-4185-ac38-8fd59b745e91"],
-
-Cell[BoxData[
- InterpretationBox[
-  StyleBox[
-   FrameBox[
-    DynamicModuleBox[{System`InformationDump`open$$ = False, 
-     System`InformationDump`mouseOver$$ = False}, 
-     PaneSelectorBox[{True->
-      TagBox[GridBox[{
-         {
-          ItemBox[
-           PaneBox[
-            StyleBox["\<\" Symbol\"\>", "InformationTitleText",
-             StripOnInput->False,
-             BaseStyle -> None],
-            FrameMargins->{{4, 0}, {-1, 1}}],
-           BaseStyle->"InformationTitleBackground",
-           StripOnInput->False], 
-          ItemBox["\<\"\"\>",
-           BaseStyle->"InformationTitleBackground",
-           StripOnInput->False]},
-         {
-          ItemBox[
-           PaneBox[
-            
-            StyleBox["\<\"[data,test energy, hierarchy=-1/1, k]. Return the \
-equations of motions\"\>", "InformationUsageText",
-             StripOnInput->False,
-             LineSpacing->{1.5, 1.5, 3.}],
-            FrameMargins->{{10, 10}, {8, 10}}],
-           BaseStyle->"InformationUsageSubtitleBackground",
-           StripOnInput->False], 
-          ItemBox["\<\"\"\>",
-           BaseStyle->"InformationUsageSubtitleBackground",
-           StripOnInput->False]},
-         {
-          PaneBox[GridBox[{
-             {
-              
-              DynamicModuleBox[{System`InformationDump`open$$ = {
-               False, False, False, False, False, False, False, False, False, 
-                False, False, False}}, 
-               StyleBox[GridBox[{
-                  {
-                   TagBox[
-                    TooltipBox[
-                    StyleBox["\<\" Definitions\"\>", "InformationRowLabel",
-                    StripOnInput->False],
-                    "\"Definitions\"",
-                    TooltipStyle->"TextStyling"],
-                    Annotation[#, "Definitions", "Tooltip"]& ], GridBox[{
-                    {
-                    RowBox[{
-                    RowBox[{"getEquations", "[", 
-                    RowBox[{
-                    "StabililtyPackage`Private`data_", ",", 
-                    "StabililtyPackage`Private`testE_", ",", 
-                    "StabililtyPackage`Private`hi_", ",", 
-                    "StabililtyPackage`Private`k_", ",", 
-                    RowBox[{"OptionsPattern", "[", "]"}]}], "]"}], ":=", 
-                    RowBox[{"Module", "[", 
-                    RowBox[{
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`n", ",", 
-                    "StabililtyPackage`Private`\[Theta]", ",", 
-                    "StabililtyPackage`Private`eqn", ",", 
-                    "StabililtyPackage`Private`eqnb", ",", 
-                    "StabililtyPackage`Private`hs"}], "}"}], ",", 
-                    RowBox[{
-                    RowBox[{"If", "[", 
-                    RowBox[{
-                    RowBox[{"OptionValue", "[", "\<\"dh\"\>", "]"}], ",", 
-                    RowBox[{"StabililtyPackage`Private`hs", "=", 
-                    RowBox[{"buildHamiltonians", "[", 
-                    RowBox[{
-                    "StabililtyPackage`Private`data", ",", 
-                    "StabililtyPackage`Private`testE", ",", 
-                    "StabililtyPackage`Private`hi"}], "]"}]}], ",", 
-                    RowBox[{"StabililtyPackage`Private`hs", "=", 
-                    RowBox[{"buildHamiltonians", "[", 
-                    RowBox[{
-                    "StabililtyPackage`Private`data", ",", 
-                    "StabililtyPackage`Private`testE", ",", 
-                    "StabililtyPackage`Private`hi", ",", 
-                    RowBox[{"\<\"dh\"\>", "\[Rule]", "False"}]}], "]"}]}]}], 
-                    "]"}], ";", 
-                    RowBox[{"StabililtyPackage`Private`n", "=", 
-                    RowBox[{"Length", "[", 
-                    RowBox[{
-                    "StabililtyPackage`Private`data", "[", "\<\"mids\"\>", 
-                    "]"}], "]"}]}], ";", 
-                    RowBox[{"StabililtyPackage`Private`\[Theta]", "=", 
-                    RowBox[{"ArcCos", "[", 
-                    RowBox[{
-                    "StabililtyPackage`Private`data", "[", "\<\"mids\"\>", 
-                    "]"}], "]"}]}], ";", 
-                    RowBox[{"With", "[", 
-                    RowBox[{
-                    RowBox[{"{", 
-                    RowBox[{
-                    RowBox[{"StabililtyPackage`Private`H", "=", 
-                    RowBox[{
-                    "StabililtyPackage`Private`hs", "\[LeftDoubleBracket]", 
-                    "1", "\[RightDoubleBracket]"}]}], ",", 
-                    RowBox[{"StabililtyPackage`Private`Hb", "=", 
-                    RowBox[{
-                    "StabililtyPackage`Private`hs", "\[LeftDoubleBracket]", 
-                    "2", "\[RightDoubleBracket]"}]}], ",", 
-                    RowBox[{"StabililtyPackage`Private`\[Rho]", "=", 
-                    RowBox[{
-                    "StabililtyPackage`Private`hs", "\[LeftDoubleBracket]", 
-                    "3", "\[RightDoubleBracket]"}]}], ",", 
-                    RowBox[{"StabililtyPackage`Private`\[Rho]b", "=", 
-                    RowBox[{
-                    "StabililtyPackage`Private`hs", "\[LeftDoubleBracket]", 
-                    "4", "\[RightDoubleBracket]"}]}], ",", 
-                    RowBox[{"StabililtyPackage`Private`A", "=", 
-                    RowBox[{
-                    "StabililtyPackage`Private`hs", "\[LeftDoubleBracket]", 
-                    "5", "\[RightDoubleBracket]"}]}], ",", 
-                    RowBox[{"StabililtyPackage`Private`Ab", "=", 
-                    RowBox[{
-                    "StabililtyPackage`Private`hs", "\[LeftDoubleBracket]", 
-                    "6", "\[RightDoubleBracket]"}]}], ",", 
-                    RowBox[{"StabililtyPackage`Private`\[Delta]H", "=", 
-                    RowBox[{
-                    "StabililtyPackage`Private`hs", "\[LeftDoubleBracket]", 
-                    "7", "\[RightDoubleBracket]"}]}], ",", 
-                    RowBox[{"StabililtyPackage`Private`\[Delta]Hb", "=", 
-                    RowBox[{
-                    "StabililtyPackage`Private`hs", "\[LeftDoubleBracket]", 
-                    "8", "\[RightDoubleBracket]"}]}]}], "}"}], ",", 
-                    RowBox[{
-                    RowBox[{"Do", "[", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`eqn", "[", 
-                    "StabililtyPackage`Private`j", "]"}], "=", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{"StabililtyPackage`Private`Com", "[", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`H", "[", 
-                    "StabililtyPackage`Private`j", "]"}], ",", 
-                    RowBox[{
-                    "StabililtyPackage`Private`A", "[", 
-                    "StabililtyPackage`Private`j", "]"}]}], "]"}], 
-                    "\[LeftDoubleBracket]", 
-                    RowBox[{"1", ",", "2"}], "\[RightDoubleBracket]"}], "+", 
-                    RowBox[{
-                    RowBox[{"StabililtyPackage`Private`Com", "[", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Delta]H", "[", 
-                    "StabililtyPackage`Private`j", "]"}], ",", 
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Rho]", "[", 
-                    "StabililtyPackage`Private`j", "]"}]}], "]"}], 
-                    "\[LeftDoubleBracket]", 
-                    RowBox[{"1", ",", "2"}], "\[RightDoubleBracket]"}], "+", 
-                    RowBox[{"StabililtyPackage`Private`k", " ", 
-                    RowBox[{"Cos", "[", 
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Theta]", 
-                    "\[LeftDoubleBracket]", "StabililtyPackage`Private`j", 
-                    "\[RightDoubleBracket]"}], "]"}], " ", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`A", "[", 
-                    "StabililtyPackage`Private`j", "]"}], 
-                    "\[LeftDoubleBracket]", 
-                    RowBox[{"1", ",", "2"}], "\[RightDoubleBracket]"}]}]}]}], 
-                    ";", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`eqnb", "[", 
-                    "StabililtyPackage`Private`j", "]"}], "=", 
-                    RowBox[{
-                    RowBox[{"-", 
-                    RowBox[{
-                    RowBox[{"StabililtyPackage`Private`Com", "[", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`Hb", "[", 
-                    "StabililtyPackage`Private`j", "]"}], ",", 
-                    RowBox[{
-                    "StabililtyPackage`Private`Ab", "[", 
-                    "StabililtyPackage`Private`j", "]"}]}], "]"}], 
-                    "\[LeftDoubleBracket]", 
-                    RowBox[{"1", ",", "2"}], "\[RightDoubleBracket]"}]}], "-", 
-                    RowBox[{
-                    RowBox[{"StabililtyPackage`Private`Com", "[", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Delta]Hb", "[", 
-                    "StabililtyPackage`Private`j", "]"}], ",", 
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Rho]b", "[", 
-                    "StabililtyPackage`Private`j", "]"}]}], "]"}], 
-                    "\[LeftDoubleBracket]", 
-                    RowBox[{"1", ",", "2"}], "\[RightDoubleBracket]"}], "+", 
-                    RowBox[{"StabililtyPackage`Private`k", " ", 
-                    RowBox[{"Cos", "[", 
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Theta]", 
-                    "\[LeftDoubleBracket]", "StabililtyPackage`Private`j", 
-                    "\[RightDoubleBracket]"}], "]"}], " ", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`Ab", "[", 
-                    "StabililtyPackage`Private`j", "]"}], 
-                    "\[LeftDoubleBracket]", 
-                    RowBox[{"1", ",", "2"}], "\[RightDoubleBracket]"}]}]}]}], 
-                    ";"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`j", ",", "1", ",", 
-                    "StabililtyPackage`Private`n"}], "}"}]}], "]"}], ";", 
-                    RowBox[{"Return", "[", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`eqn", ",", 
-                    "StabililtyPackage`Private`eqnb", ",", 
-                    "StabililtyPackage`Private`A", ",", 
-                    "StabililtyPackage`Private`Ab"}], "}"}], "]"}]}]}], 
-                    "]"}]}]}], "]"}]}]}
-                    },
-                    DefaultBaseStyle->"Column",
-                    GridBoxAlignment->{"Columns" -> {{Left}}},
-                    
-                    GridBoxItemSize->{
-                    "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}]},
-                  {
-                   TagBox[
-                    TooltipBox[
-                    StyleBox["\<\" Options\"\>", "InformationRowLabel",
-                    StripOnInput->False],
-                    "\"Options\"",
-                    TooltipStyle->"TextStyling"],
-                    Annotation[#, "Options", "Tooltip"]& ], 
-                   RowBox[{"\<\"dh\"\>", "\[Rule]", "True"}]},
-                  {
-                   TagBox[
-                    TooltipBox[
-                    StyleBox["\<\" Full Name\"\>", "InformationRowLabel",
-                    StripOnInput->False],
-                    "\"FullName\"",
-                    TooltipStyle->"TextStyling"],
-                    
-                    Annotation[#, "FullName", 
-                    "Tooltip"]& ], "\<\"StabililtyPackage`getEquations\"\>"}
-                 },
-                 AutoDelete->False,
-                 GridBoxAlignment->{"Columns" -> {Right, Left}},
-                 GridBoxDividers->None,
-                 GridBoxItemSize->{"Columns" -> {Automatic, Automatic}},
-                 GridBoxSpacings->{"Columns" -> {
-                    Offset[0.27999999999999997`], {
-                    Offset[0.5599999999999999]}, 
-                    Offset[0.27999999999999997`]}, "Rows" -> {
-                    Offset[0.2], {
-                    Offset[0.8]}, 
-                    Offset[0.2]}}], "DialogStyle",
-                StripOnInput->False],
-               DynamicModuleValues:>{}]}
-            },
-            DefaultBaseStyle->"Column",
-            GridBoxAlignment->{"Columns" -> {{Left}}},
-            GridBoxDividers->{"Columns" -> {{False}}, "Rows" -> {{False}}},
-            
-            GridBoxItemSize->{
-             "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}},
-            GridBoxSpacings->{"Columns" -> {
-                Offset[0.27999999999999997`], {
-                 Offset[0.5599999999999999]}, 
-                Offset[0.27999999999999997`]}, "Rows" -> {
-                Offset[0.2], {
-                 Offset[3.6]}, 
-                Offset[0.2]}}],
-           FrameMargins->6], ""},
-         {
-          ItemBox[
-           TagBox[
-            ButtonBox[
-             PaneSelectorBox[{False->
-              
-              DynamicBox[FEPrivate`FrontEndResource[
-               "FEBitmaps", "UpPointerOpener"]], True->
-              
-              DynamicBox[FEPrivate`FrontEndResource[
-               "FEBitmaps", "UpPointerOpenerHot"]]}, Dynamic[
-              System`InformationDump`mouseOver$$]],
-             Alignment->Left,
-             Appearance->{"Default" -> None},
-             
-             ButtonFunction:>FEPrivate`Set[
-              System`InformationDump`open$$, False],
-             Evaluator->Automatic,
-             FrameMargins->{{9, 0}, {0, 0}},
-             ImageMargins->0,
-             ImageSize->Full,
-             Method->"Preemptive"],
-            
-            EventHandlerTag[{
-             "MouseEntered" :> 
-              FEPrivate`Set[System`InformationDump`mouseOver$$, True], 
-              "MouseExited" :> 
-              FEPrivate`Set[System`InformationDump`mouseOver$$, False], 
-              Method -> "Preemptive", PassEventsDown -> Automatic, 
-              PassEventsUp -> True}]],
-           BaseStyle->"InformationTitleBackground",
-           StripOnInput->False], "\[SpanFromLeft]"}
-        },
-        AutoDelete->False,
-        FrameStyle->Directive[
-          GrayLevel[0.8], 
-          Thickness[Tiny]],
-        GridBoxAlignment->{"Columns" -> {Left, Right}, "Rows" -> {{Center}}},
-        GridBoxDividers->{
-         "Columns" -> {{None}}, "Rows" -> {False, {True}, False}},
-        GridBoxItemSize->{
-         "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
-       "Grid"], False->
-      TagBox[GridBox[{
-         {
-          ItemBox[
-           PaneBox[
-            StyleBox["\<\" Symbol\"\>", "InformationTitleText",
-             StripOnInput->False],
-            FrameMargins->{{4, 0}, {-1, 1}}],
-           BaseStyle->"InformationTitleBackground",
-           StripOnInput->False], 
-          ItemBox["\<\"\"\>",
-           BaseStyle->"InformationTitleBackground",
-           StripOnInput->False]},
-         {
-          ItemBox[
-           PaneBox[
-            
-            StyleBox["\<\"[data,test energy, hierarchy=-1/1, k]. Return the \
-equations of motions\"\>", "InformationUsageText",
-             StripOnInput->False,
-             LineSpacing->{1.5, 1.5, 3.}],
-            FrameMargins->{{10, 10}, {8, 10}}],
-           BaseStyle->"InformationUsageSubtitleBackground",
-           StripOnInput->False], 
-          ItemBox["\<\"\"\>",
-           BaseStyle->"InformationUsageSubtitleBackground",
-           StripOnInput->False]},
-         {
-          ItemBox[
-           TagBox[
-            ButtonBox[
-             PaneSelectorBox[{False->
-              
-              DynamicBox[FEPrivate`FrontEndResource[
-               "FEBitmaps", "DownPointerOpener"],
-               ImageSizeCache->{15., {4., 11.}}], True->
-              
-              DynamicBox[FEPrivate`FrontEndResource[
-               "FEBitmaps", "DownPointerOpenerHot"],
-               ImageSizeCache->{15., {4., 11.}}]}, Dynamic[
-              System`InformationDump`mouseOver$$]],
-             Alignment->Left,
-             Appearance->{"Default" -> None},
-             
-             ButtonFunction:>FEPrivate`Set[
-              System`InformationDump`open$$, True],
-             Evaluator->Automatic,
-             FrameMargins->{{9, 0}, {0, 0}},
-             ImageMargins->0,
-             ImageSize->Full,
-             Method->"Preemptive"],
-            
-            EventHandlerTag[{
-             "MouseEntered" :> 
-              FEPrivate`Set[System`InformationDump`mouseOver$$, True], 
-              "MouseExited" :> 
-              FEPrivate`Set[System`InformationDump`mouseOver$$, False], 
-              Method -> "Preemptive", PassEventsDown -> Automatic, 
-              PassEventsUp -> True}]],
-           BaseStyle->"InformationTitleBackground",
-           StripOnInput->False], "\[SpanFromLeft]"}
-        },
-        AutoDelete->False,
-        FrameStyle->Directive[
-          GrayLevel[0.8], 
-          Thickness[Tiny]],
-        GridBoxAlignment->{"Columns" -> {Left, Right}, "Rows" -> {{Center}}},
-        GridBoxDividers->{
-         "Columns" -> {{None}}, "Rows" -> {False, {True}, False}},
-        GridBoxItemSize->{
-         "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
-       "Grid"]}, Dynamic[System`InformationDump`open$$],
-      BaselinePosition->Baseline,
-      FrameMargins->0,
-      ImageSize->Automatic],
-     DynamicModuleValues:>{}],
-    BaseStyle->"InformationGridFrame",
-    StripOnInput->False], "InformationGridPlain",
-   StripOnInput->False],
-  InformationData[
-   Association[
-   "ObjectType" -> "Symbol", "Usage" -> 
-    "[data,test energy, hierarchy=-1/1, k]. Return the equations of motions", 
-    "Documentation" -> None, "OwnValues" -> None, "UpValues" -> None, 
-    "DownValues" -> 
-    Information`InformationValueForm[
-     DownValues, StabililtyPackage`getEquations, {
-      StabililtyPackage`getEquations[
-         Pattern[StabililtyPackage`Private`data, 
-          Blank[]], 
-         Pattern[StabililtyPackage`Private`testE, 
-          Blank[]], 
-         Pattern[StabililtyPackage`Private`hi, 
-          Blank[]], 
-         Pattern[StabililtyPackage`Private`k, 
-          Blank[]], 
-         OptionsPattern[]] :> 
-       Module[{StabililtyPackage`Private`n, 
-          StabililtyPackage`Private`\[Theta], StabililtyPackage`Private`eqn, 
-          StabililtyPackage`Private`eqnb, StabililtyPackage`Private`hs}, If[
-           OptionValue["dh"], StabililtyPackage`Private`hs = 
-           StabililtyPackage`buildHamiltonians[
-            StabililtyPackage`Private`data, StabililtyPackage`Private`testE, 
-             StabililtyPackage`Private`hi], StabililtyPackage`Private`hs = 
-           StabililtyPackage`buildHamiltonians[
-            StabililtyPackage`Private`data, StabililtyPackage`Private`testE, 
-             StabililtyPackage`Private`hi, "dh" -> False]]; 
-         StabililtyPackage`Private`n = Length[
-            StabililtyPackage`Private`data["mids"]]; 
-         StabililtyPackage`Private`\[Theta] = ArcCos[
-            StabililtyPackage`Private`data["mids"]]; 
-         With[{StabililtyPackage`Private`H = 
-            Part[StabililtyPackage`Private`hs, 1], 
-            StabililtyPackage`Private`Hb = 
-            Part[StabililtyPackage`Private`hs, 2], 
-            StabililtyPackage`Private`\[Rho] = 
-            Part[StabililtyPackage`Private`hs, 3], 
-            StabililtyPackage`Private`\[Rho]b = 
-            Part[StabililtyPackage`Private`hs, 4], 
-            StabililtyPackage`Private`A = 
-            Part[StabililtyPackage`Private`hs, 5], 
-            StabililtyPackage`Private`Ab = 
-            Part[StabililtyPackage`Private`hs, 6], 
-            StabililtyPackage`Private`\[Delta]H = 
-            Part[StabililtyPackage`Private`hs, 7], 
-            StabililtyPackage`Private`\[Delta]Hb = 
-            Part[StabililtyPackage`Private`hs, 8]}, 
-           Do[StabililtyPackage`Private`eqn[StabililtyPackage`Private`j] = 
-              Part[
-                 StabililtyPackage`Private`Com[
-                  StabililtyPackage`Private`H[StabililtyPackage`Private`j], 
-                  StabililtyPackage`Private`A[StabililtyPackage`Private`j]], 
-                 1, 2] + Part[
-                 StabililtyPackage`Private`Com[
-                  StabililtyPackage`Private`\[Delta]H[
-                  StabililtyPackage`Private`j], 
-                  StabililtyPackage`Private`\[Rho][
-                  StabililtyPackage`Private`j]], 1, 2] + 
-               StabililtyPackage`Private`k Cos[
-                  Part[
-                  StabililtyPackage`Private`\[Theta], 
-                   StabililtyPackage`Private`j]] Part[
-                  StabililtyPackage`Private`A[StabililtyPackage`Private`j], 1,
-                   2]; StabililtyPackage`Private`eqnb[
-               StabililtyPackage`Private`j] = -Part[
-                  StabililtyPackage`Private`Com[
-                   StabililtyPackage`Private`Hb[StabililtyPackage`Private`j], 
-                   StabililtyPackage`Private`Ab[StabililtyPackage`Private`j]],
-                   1, 2] - Part[
-                StabililtyPackage`Private`Com[
-                 StabililtyPackage`Private`\[Delta]Hb[
-                 StabililtyPackage`Private`j], 
-                 StabililtyPackage`Private`\[Rho]b[
-                 StabililtyPackage`Private`j]], 1, 2] + 
-               StabililtyPackage`Private`k Cos[
-                  Part[
-                  StabililtyPackage`Private`\[Theta], 
-                   StabililtyPackage`Private`j]] Part[
-                  StabililtyPackage`Private`Ab[StabililtyPackage`Private`j], 
-                  1, 2]; Null, {
-             StabililtyPackage`Private`j, 1, StabililtyPackage`Private`n}]; 
-           Return[{StabililtyPackage`Private`eqn, 
-              StabililtyPackage`Private`eqnb, StabililtyPackage`Private`A, 
-              StabililtyPackage`Private`Ab}]]]}], "SubValues" -> None, 
-    "DefaultValues" -> None, "NValues" -> None, "FormatValues" -> None, 
-    "Options" -> {"dh" -> True}, "Attributes" -> {}, "FullName" -> 
-    "StabililtyPackage`getEquations"], False]]], "Output",
- CellChangeTimes->{{3.8013990546700478`*^9, 3.8013990683569994`*^9}, 
-   3.8013991705960503`*^9},
- CellLabel->"Out[6]=",ExpressionUUID->"5c8f242e-ba66-44c8-916d-46fd6ffd0805"],
-
-Cell[BoxData[
- InterpretationBox[
-  StyleBox[
-   FrameBox[
-    DynamicModuleBox[{System`InformationDump`open$$ = False, 
-     System`InformationDump`mouseOver$$ = False}, 
-     PaneSelectorBox[{True->
-      TagBox[GridBox[{
-         {
-          ItemBox[
-           PaneBox[
-            StyleBox["\<\" Symbol\"\>", "InformationTitleText",
-             StripOnInput->False,
-             BaseStyle -> None],
-            FrameMargins->{{4, 0}, {-1, 1}}],
-           BaseStyle->"InformationTitleBackground",
-           StripOnInput->False], 
-          ItemBox["\<\"\"\>",
-           BaseStyle->"InformationTitleBackground",
-           StripOnInput->False]},
-         {
-          ItemBox[
-           PaneBox[
-            
-            StyleBox["\<\"[data,test Energy, Hierarchy=1/-1]. Return elements \
-of the hamiltonians\"\>", "InformationUsageText",
-             StripOnInput->False,
-             LineSpacing->{1.5, 1.5, 3.}],
-            FrameMargins->{{10, 10}, {8, 10}}],
-           BaseStyle->"InformationUsageSubtitleBackground",
-           StripOnInput->False], 
-          ItemBox["\<\"\"\>",
-           BaseStyle->"InformationUsageSubtitleBackground",
-           StripOnInput->False]},
-         {
-          PaneBox[GridBox[{
-             {
-              
-              DynamicModuleBox[{System`InformationDump`open$$ = {
-               False, False, False, False, False, False, False, False, False, 
-                False, False, False}}, 
-               StyleBox[GridBox[{
-                  {
-                   TagBox[
-                    TooltipBox[
-                    StyleBox["\<\" Definitions\"\>", "InformationRowLabel",
-                    StripOnInput->False],
-                    "\"Definitions\"",
-                    TooltipStyle->"TextStyling"],
-                    Annotation[#, "Definitions", "Tooltip"]& ], GridBox[{
-                    {
-                    RowBox[{
-                    RowBox[{"buildHamiltonians", "[", 
-                    RowBox[{
-                    "StabililtyPackage`Private`data_", ",", 
-                    "StabililtyPackage`Private`testE_", ",", 
-                    "StabililtyPackage`Private`hi_", ",", 
-                    RowBox[{"OptionsPattern", "[", "]"}]}], "]"}], ":=", 
-                    RowBox[{"Module", "[", 
-                    RowBox[{
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`n", ",", 
-                    "StabililtyPackage`Private`\[Theta]", ",", 
-                    "StabililtyPackage`Private`name11", ",", 
-                    "StabililtyPackage`Private`name12", ",", 
-                    "StabililtyPackage`Private`name21", ",", 
-                    "StabililtyPackage`Private`name22", ",", 
-                    "StabililtyPackage`Private`\[Rho]", ",", 
-                    "StabililtyPackage`Private`\[Rho]b", ",", 
-                    "StabililtyPackage`Private`A", ",", 
-                    "StabililtyPackage`Private`Ab", ",", 
-                    "StabililtyPackage`Private`Hm", ",", 
-                    "StabililtyPackage`Private`Hvac", ",", 
-                    "StabililtyPackage`Private`\[Mu]", ",", 
-                    "StabililtyPackage`Private`\[Mu]b", ",", 
-                    "StabililtyPackage`Private`Hsi", ",", 
-                    "StabililtyPackage`Private`H", ",", 
-                    "StabililtyPackage`Private`Hb", ",", 
-                    "StabililtyPackage`Private`\[Delta]H", ",", 
-                    "StabililtyPackage`Private`\[Delta]Hb", ",", 
-                    "StabililtyPackage`Private`nudensity", ",", 
-                    "StabililtyPackage`Private`nubardensity", ",", 
-                    "StabililtyPackage`Private`Ve", ",", 
-                    "StabililtyPackage`Private`\[Omega]", ",", 
-                    "StabililtyPackage`Private`HsiRad", ",", 
-                    "StabililtyPackage`Private`dhswitch"}], "}"}], ",", 
-                    RowBox[{
-                    RowBox[{"StabililtyPackage`Private`Ve", "=", 
-                    FractionBox[
-                    RowBox[{"StabililtyPackage`Private`munits", " ", 
-                    RowBox[{
-                    "StabililtyPackage`Private`data", "[", "\<\"Yes\"\>", 
-                    "]"}], " ", 
-                    RowBox[{
-                    "StabililtyPackage`Private`data", "[", "\<\"matters\"\>", 
-                    "]"}]}], "StabililtyPackage`Private`mp"]}], ";", 
-                    RowBox[{"StabililtyPackage`Private`\[Omega]", "=", 
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Omega]EMev", "[", 
-                    "StabililtyPackage`Private`testE", "]"}]}], ";", 
-                    RowBox[{
-                    "StabililtyPackage`Private`name11", "=", "\<\"ee\"\>"}], 
-                    ";", 
-                    RowBox[{
-                    "StabililtyPackage`Private`name12", "=", "\<\"ex\"\>"}], 
-                    ";", 
-                    RowBox[{
-                    "StabililtyPackage`Private`name21", "=", "\<\"xe\"\>"}], 
-                    ";", 
-                    RowBox[{
-                    "StabililtyPackage`Private`name22", "=", "\<\"xx\"\>"}], 
-                    ";", 
-                    RowBox[{"StabililtyPackage`Private`n", "=", 
-                    RowBox[{"Length", "[", 
-                    RowBox[{
-                    "StabililtyPackage`Private`data", "[", "\<\"mids\"\>", 
-                    "]"}], "]"}]}], ";", 
-                    RowBox[{"StabililtyPackage`Private`\[Theta]", "=", 
-                    RowBox[{"ArcCos", "[", 
-                    RowBox[{
-                    "StabililtyPackage`Private`data", "[", "\<\"mids\"\>", 
-                    "]"}], "]"}]}], ";", 
-                    RowBox[{"Do", "[", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Rho]", "[", 
-                    "StabililtyPackage`Private`i", "]"}], "=", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    RowBox[{"{", 
-                    RowBox[{
-                    RowBox[{"ToExpression", "[", 
-                    
-                    RowBox[{"\<\"\[Rho]\"\>", "<>", 
-                    "StabililtyPackage`Private`name11", "<>", 
-                    RowBox[{
-                    "ToString", "[", "StabililtyPackage`Private`i", "]"}]}], 
-                    "]"}], ",", 
-                    RowBox[{"ToExpression", "[", 
-                    
-                    RowBox[{"\<\"\[Rho]\"\>", "<>", 
-                    "StabililtyPackage`Private`name12", "<>", 
-                    RowBox[{
-                    "ToString", "[", "StabililtyPackage`Private`i", "]"}]}], 
-                    "]"}]}], "}"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    RowBox[{"ToExpression", "[", 
-                    
-                    RowBox[{"\<\"\[Rho]\"\>", "<>", 
-                    "StabililtyPackage`Private`name21", "<>", 
-                    RowBox[{
-                    "ToString", "[", "StabililtyPackage`Private`i", "]"}]}], 
-                    "]"}], ",", 
-                    RowBox[{"ToExpression", "[", 
-                    
-                    RowBox[{"\<\"\[Rho]\"\>", "<>", 
-                    "StabililtyPackage`Private`name22", "<>", 
-                    RowBox[{
-                    "ToString", "[", "StabililtyPackage`Private`i", "]"}]}], 
-                    "]"}]}], "}"}]}], "}"}]}], ";", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Rho]b", "[", 
-                    "StabililtyPackage`Private`i", "]"}], "=", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    RowBox[{"{", 
-                    RowBox[{
-                    RowBox[{"ToExpression", "[", 
-                    
-                    RowBox[{"\<\"\[Rho]b\"\>", "<>", 
-                    "StabililtyPackage`Private`name11", "<>", 
-                    RowBox[{
-                    "ToString", "[", "StabililtyPackage`Private`i", "]"}]}], 
-                    "]"}], ",", 
-                    RowBox[{"ToExpression", "[", 
-                    
-                    RowBox[{"\<\"\[Rho]b\"\>", "<>", 
-                    "StabililtyPackage`Private`name12", "<>", 
-                    RowBox[{
-                    "ToString", "[", "StabililtyPackage`Private`i", "]"}]}], 
-                    "]"}]}], "}"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    RowBox[{"ToExpression", "[", 
-                    
-                    RowBox[{"\<\"\[Rho]b\"\>", "<>", 
-                    "StabililtyPackage`Private`name21", "<>", 
-                    RowBox[{
-                    "ToString", "[", "StabililtyPackage`Private`i", "]"}]}], 
-                    "]"}], ",", 
-                    RowBox[{"ToExpression", "[", 
-                    
-                    RowBox[{"\<\"\[Rho]b\"\>", "<>", 
-                    "StabililtyPackage`Private`name22", "<>", 
-                    RowBox[{
-                    "ToString", "[", "StabililtyPackage`Private`i", "]"}]}], 
-                    "]"}]}], "}"}]}], "}"}]}], ";", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`A", "[", 
-                    "StabililtyPackage`Private`i", "]"}], "=", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    RowBox[{"{", 
-                    RowBox[{"0", ",", 
-                    RowBox[{"ToExpression", "[", 
-                    
-                    RowBox[{"\<\"A\"\>", "<>", 
-                    "StabililtyPackage`Private`name12", "<>", 
-                    RowBox[{
-                    "ToString", "[", "StabililtyPackage`Private`i", "]"}]}], 
-                    "]"}]}], "}"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    RowBox[{"ToExpression", "[", 
-                    
-                    RowBox[{"\<\"A\"\>", "<>", 
-                    "StabililtyPackage`Private`name21", "<>", 
-                    RowBox[{
-                    "ToString", "[", "StabililtyPackage`Private`i", "]"}]}], 
-                    "]"}], ",", "0"}], "}"}]}], "}"}]}], ";", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`Ab", "[", 
-                    "StabililtyPackage`Private`i", "]"}], "=", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    RowBox[{"{", 
-                    RowBox[{"0", ",", 
-                    RowBox[{"ToExpression", "[", 
-                    
-                    RowBox[{"\<\"Ab\"\>", "<>", 
-                    "StabililtyPackage`Private`name12", "<>", 
-                    RowBox[{
-                    "ToString", "[", "StabililtyPackage`Private`i", "]"}]}], 
-                    "]"}]}], "}"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    RowBox[{"ToExpression", "[", 
-                    
-                    RowBox[{"\<\"Ab\"\>", "<>", 
-                    "StabililtyPackage`Private`name21", "<>", 
-                    RowBox[{
-                    "ToString", "[", "StabililtyPackage`Private`i", "]"}]}], 
-                    "]"}], ",", "0"}], "}"}]}], "}"}]}], ";"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`i", ",", "1", ",", 
-                    "StabililtyPackage`Private`n"}], "}"}]}], "]"}], ";", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`nudensity", "[", 
-                    "StabililtyPackage`Private`dt_", "]"}], ":=", 
-                    RowBox[{
-                    UnderoverscriptBox["\[Sum]", 
-                    RowBox[{"StabililtyPackage`Private`dp", "=", "1"}], "2"], 
-                    RowBox[{"(", 
-                    RowBox[{
-                    UnderoverscriptBox["\[Sum]", 
-                    RowBox[{"StabililtyPackage`Private`f", "=", "1"}], 
-                    RowBox[{
-                    RowBox[{"Length", "[", 
-                    RowBox[{
-                    "StabililtyPackage`Private`data", "[", "\<\"freqs\"\>", 
-                    "]"}], "]"}], "-", "1"}]], 
-                    FractionBox[
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`data", "[", "\<\"lotsodo\"\>", 
-                    "]"}], "\[LeftDoubleBracket]", 
-                    RowBox[{
-                    "1", ",", "StabililtyPackage`Private`f", ",", 
-                    "StabililtyPackage`Private`dt", ",", 
-                    "StabililtyPackage`Private`dp"}], 
-                    "\[RightDoubleBracket]"}], 
-                    RowBox[{"StabililtyPackage`Private`h", " ", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`data", "[", "\<\"freqmid\"\>", 
-                    "]"}], "\[LeftDoubleBracket]", 
-                    "StabililtyPackage`Private`f", "\[RightDoubleBracket]"}], 
-                    " ", 
-                    RowBox[{"Abs", "[", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`data", "[", "\<\"muss\"\>", 
-                    "]"}], "\[LeftDoubleBracket]", 
-                    RowBox[{"StabililtyPackage`Private`dt", "+", "1"}], 
-                    "\[RightDoubleBracket]"}], "-", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`data", "[", "\<\"muss\"\>", 
-                    "]"}], "\[LeftDoubleBracket]", 
-                    "StabililtyPackage`Private`dt", "\[RightDoubleBracket]"}]}
-                    ], "]"}]}]]}], ")"}]}]}], ";", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`nubardensity", "[", 
-                    "StabililtyPackage`Private`dt_", "]"}], ":=", 
-                    RowBox[{
-                    UnderoverscriptBox["\[Sum]", 
-                    RowBox[{"StabililtyPackage`Private`dp", "=", "1"}], "2"], 
-                    RowBox[{"(", 
-                    RowBox[{
-                    UnderoverscriptBox["\[Sum]", 
-                    RowBox[{"StabililtyPackage`Private`f", "=", "1"}], 
-                    RowBox[{
-                    RowBox[{"Length", "[", 
-                    RowBox[{
-                    "StabililtyPackage`Private`data", "[", "\<\"freqs\"\>", 
-                    "]"}], "]"}], "-", "1"}]], 
-                    FractionBox[
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`data", "[", "\<\"lotsodo\"\>", 
-                    "]"}], "\[LeftDoubleBracket]", 
-                    RowBox[{
-                    "2", ",", "StabililtyPackage`Private`f", ",", 
-                    "StabililtyPackage`Private`dt", ",", 
-                    "StabililtyPackage`Private`dp"}], 
-                    "\[RightDoubleBracket]"}], 
-                    RowBox[{"StabililtyPackage`Private`h", " ", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`data", "[", "\<\"freqmid\"\>", 
-                    "]"}], "\[LeftDoubleBracket]", 
-                    "StabililtyPackage`Private`f", "\[RightDoubleBracket]"}], 
-                    " ", 
-                    RowBox[{"Abs", "[", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`data", "[", "\<\"muss\"\>", 
-                    "]"}], "\[LeftDoubleBracket]", 
-                    RowBox[{"StabililtyPackage`Private`dt", "+", "1"}], 
-                    "\[RightDoubleBracket]"}], "-", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`data", "[", "\<\"muss\"\>", 
-                    "]"}], "\[LeftDoubleBracket]", 
-                    "StabililtyPackage`Private`dt", 
-                    "\[RightDoubleBracket]"}]}], "]"}]}]]}], ")"}]}]}], ";", 
-                    RowBox[{"StabililtyPackage`Private`Hm", "=", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    RowBox[{"{", 
-                    RowBox[{"StabililtyPackage`Private`Ve", ",", "0.`"}], 
-                    "}"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{"0.`", ",", "0.`"}], "}"}]}], "}"}]}], ";", 
-                    RowBox[{"StabililtyPackage`Private`Hvac", "=", 
-                    RowBox[{"StabililtyPackage`Private`hi", " ", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    RowBox[{"{", 
-                    RowBox[{
-                    RowBox[{"-", 
-                    FractionBox["StabililtyPackage`Private`\[Omega]", "2"]}], 
-                    ",", "0.`"}], "}"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{"0.`", ",", 
-                    FractionBox["StabililtyPackage`Private`\[Omega]", "2"]}], 
-                    "}"}]}], "}"}]}]}], ";", 
-                    RowBox[{"StabililtyPackage`Private`\[Mu]", "=", 
-                    RowBox[{"StabililtyPackage`Private`munits", " ", 
-                    RowBox[{"Table", "[", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`nudensity", "[", 
-                    "StabililtyPackage`Private`i", "]"}], " ", 
-                    RowBox[{"(", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`data", "[", "\<\"muss\"\>", 
-                    "]"}], "\[LeftDoubleBracket]", 
-                    RowBox[{"StabililtyPackage`Private`i", "+", "1"}], 
-                    "\[RightDoubleBracket]"}], "-", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`data", "[", "\<\"muss\"\>", 
-                    "]"}], "\[LeftDoubleBracket]", 
-                    "StabililtyPackage`Private`i", 
-                    "\[RightDoubleBracket]"}]}], ")"}]}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`i", ",", "1", ",", 
-                    "StabililtyPackage`Private`n"}], "}"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`j", ",", "1", ",", 
-                    "StabililtyPackage`Private`n"}], "}"}]}], "]"}]}]}], ";", 
-                    RowBox[{"StabililtyPackage`Private`\[Mu]b", "=", 
-                    RowBox[{"StabililtyPackage`Private`munits", " ", 
-                    RowBox[{"Table", "[", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`nubardensity", "[", 
-                    "StabililtyPackage`Private`i", "]"}], " ", 
-                    RowBox[{"(", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`data", "[", "\<\"muss\"\>", 
-                    "]"}], "\[LeftDoubleBracket]", 
-                    RowBox[{"StabililtyPackage`Private`i", "+", "1"}], 
-                    "\[RightDoubleBracket]"}], "-", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`data", "[", "\<\"muss\"\>", 
-                    "]"}], "\[LeftDoubleBracket]", 
-                    "StabililtyPackage`Private`i", 
-                    "\[RightDoubleBracket]"}]}], ")"}]}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`i", ",", "1", ",", 
-                    "StabililtyPackage`Private`n"}], "}"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`j", ",", "1", ",", 
-                    "StabililtyPackage`Private`n"}], "}"}]}], "]"}]}]}], ";", 
-                    RowBox[{"If", "[", 
-                    RowBox[{
-                    RowBox[{"OptionValue", "[", "\<\"dh\"\>", "]"}], ",", 
-                    RowBox[{"StabililtyPackage`Private`dhswitch", "=", 
-                    RowBox[{"IdentityMatrix", "[", "2", "]"}]}], ",", 
-                    RowBox[{"StabililtyPackage`Private`dhswitch", "=", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    RowBox[{"{", 
-                    RowBox[{"0.`", ",", "0.`"}], "}"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{"0.`", ",", "0.`"}], "}"}]}], "}"}]}]}], "]"}], 
-                    ";", 
-                    RowBox[{"Do", "[", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`Hsi", "[", 
-                    "StabililtyPackage`Private`j", "]"}], "=", 
-                    RowBox[{
-                    RowBox[{
-                    UnderoverscriptBox["\[Sum]", 
-                    RowBox[{"StabililtyPackage`Private`k", "=", "1"}], 
-                    "StabililtyPackage`Private`n"], 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Mu]", "\[LeftDoubleBracket]", 
-                    RowBox[{
-                    "StabililtyPackage`Private`k", ",", 
-                    "StabililtyPackage`Private`j"}], 
-                    "\[RightDoubleBracket]"}], " ", 
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Rho]", "[", 
-                    "StabililtyPackage`Private`k", "]"}], " ", 
-                    RowBox[{"(", 
-                    RowBox[{"2", " ", "\[Pi]"}], ")"}], " ", 
-                    RowBox[{"(", 
-                    RowBox[{"1", "-", 
-                    RowBox[{
-                    RowBox[{"Cos", "[", 
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Theta]", 
-                    "\[LeftDoubleBracket]", "StabililtyPackage`Private`j", 
-                    "\[RightDoubleBracket]"}], "]"}], " ", 
-                    RowBox[{"Cos", "[", 
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Theta]", 
-                    "\[LeftDoubleBracket]", "StabililtyPackage`Private`k", 
-                    "\[RightDoubleBracket]"}], "]"}]}]}], ")"}]}]}], "+", 
-                    RowBox[{
-                    UnderoverscriptBox["\[Sum]", 
-                    RowBox[{"StabililtyPackage`Private`k", "=", "1"}], 
-                    "StabililtyPackage`Private`n"], 
-                    RowBox[{
-                    RowBox[{"-", 
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Mu]b", 
-                    "\[LeftDoubleBracket]", 
-                    RowBox[{
-                    "StabililtyPackage`Private`k", ",", 
-                    "StabililtyPackage`Private`j"}], 
-                    "\[RightDoubleBracket]"}]}], " ", 
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Rho]b", "[", 
-                    "StabililtyPackage`Private`k", "]"}], " ", 
-                    RowBox[{"(", 
-                    RowBox[{"2", " ", "\[Pi]"}], ")"}], " ", 
-                    RowBox[{"(", 
-                    RowBox[{"1", "-", 
-                    RowBox[{
-                    RowBox[{"Cos", "[", 
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Theta]", 
-                    "\[LeftDoubleBracket]", "StabililtyPackage`Private`j", 
-                    "\[RightDoubleBracket]"}], "]"}], " ", 
-                    RowBox[{"Cos", "[", 
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Theta]", 
-                    "\[LeftDoubleBracket]", "StabililtyPackage`Private`k", 
-                    "\[RightDoubleBracket]"}], "]"}]}]}], ")"}]}]}]}]}], 
-                    ";"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`j", ",", "1", ",", 
-                    "StabililtyPackage`Private`n"}], "}"}]}], "]"}], ";", 
-                    RowBox[{"Do", "[", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`H", "[", 
-                    "StabililtyPackage`Private`i", "]"}], "=", 
-                    RowBox[{
-                    "StabililtyPackage`Private`Hvac", "+", 
-                    "StabililtyPackage`Private`Hm", "+", 
-                    RowBox[{
-                    "StabililtyPackage`Private`Hsi", "[", 
-                    "StabililtyPackage`Private`i", "]"}]}]}], ";", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`Hb", "[", 
-                    "StabililtyPackage`Private`i", "]"}], "=", 
-                    RowBox[{"StabililtyPackage`Private`Hvac", "-", 
-                    "StabililtyPackage`Private`Hm", "-", 
-                    RowBox[{
-                    "StabililtyPackage`Private`Hsi", "[", 
-                    "StabililtyPackage`Private`i", "]"}]}]}], ";", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Delta]H", "[", 
-                    "StabililtyPackage`Private`i", "]"}], "=", 
-                    RowBox[{"StabililtyPackage`Private`dhswitch", ".", 
-                    RowBox[{
-                    UnderoverscriptBox["\[Sum]", 
-                    RowBox[{"StabililtyPackage`Private`j", "=", "1"}], 
-                    "StabililtyPackage`Private`n"], 
-                    RowBox[{"(", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{
-                    SubscriptBox["\[PartialD]", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Rho]", "[", 
-                    "StabililtyPackage`Private`j", "]"}], 
-                    "\[LeftDoubleBracket]", 
-                    RowBox[{"1", ",", "2"}], "\[RightDoubleBracket]"}]], 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`H", "[", 
-                    "StabililtyPackage`Private`i", "]"}], 
-                    "\[LeftDoubleBracket]", 
-                    RowBox[{"1", ",", "2"}], "\[RightDoubleBracket]"}]}], " ", 
-                    RowBox[{
-                    "StabililtyPackage`Private`A", "[", 
-                    "StabililtyPackage`Private`j", "]"}]}], "+", 
-                    RowBox[{
-                    RowBox[{
-                    SubscriptBox["\[PartialD]", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Rho]b", "[", 
-                    "StabililtyPackage`Private`j", "]"}], 
-                    "\[LeftDoubleBracket]", 
-                    RowBox[{"1", ",", "2"}], "\[RightDoubleBracket]"}]], 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`H", "[", 
-                    "StabililtyPackage`Private`i", "]"}], 
-                    "\[LeftDoubleBracket]", 
-                    RowBox[{"1", ",", "2"}], "\[RightDoubleBracket]"}]}], " ", 
-                    RowBox[{
-                    "StabililtyPackage`Private`Ab", "[", 
-                    "StabililtyPackage`Private`j", "]"}]}]}], ")"}]}]}]}], 
-                    ";", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Delta]Hb", "[", 
-                    "StabililtyPackage`Private`i", "]"}], "=", 
-                    RowBox[{"StabililtyPackage`Private`dhswitch", ".", 
-                    RowBox[{
-                    UnderoverscriptBox["\[Sum]", 
-                    RowBox[{"StabililtyPackage`Private`j", "=", "1"}], 
-                    "StabililtyPackage`Private`n"], 
-                    RowBox[{"(", 
-                    RowBox[{
-                    RowBox[{
-                    RowBox[{
-                    SubscriptBox["\[PartialD]", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Rho]", "[", 
-                    "StabililtyPackage`Private`j", "]"}], 
-                    "\[LeftDoubleBracket]", 
-                    RowBox[{"1", ",", "2"}], "\[RightDoubleBracket]"}]], 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`Hb", "[", 
-                    "StabililtyPackage`Private`i", "]"}], 
-                    "\[LeftDoubleBracket]", 
-                    RowBox[{"1", ",", "2"}], "\[RightDoubleBracket]"}]}], " ", 
-                    RowBox[{
-                    "StabililtyPackage`Private`A", "[", 
-                    "StabililtyPackage`Private`j", "]"}]}], "+", 
-                    RowBox[{
-                    RowBox[{
-                    SubscriptBox["\[PartialD]", 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`\[Rho]b", "[", 
-                    "StabililtyPackage`Private`j", "]"}], 
-                    "\[LeftDoubleBracket]", 
-                    RowBox[{"1", ",", "2"}], "\[RightDoubleBracket]"}]], 
-                    RowBox[{
-                    RowBox[{
-                    "StabililtyPackage`Private`Hb", "[", 
-                    "StabililtyPackage`Private`i", "]"}], 
-                    "\[LeftDoubleBracket]", 
-                    RowBox[{"1", ",", "2"}], "\[RightDoubleBracket]"}]}], " ", 
-                    RowBox[{
-                    "StabililtyPackage`Private`Ab", "[", 
-                    "StabililtyPackage`Private`j", "]"}]}]}], ")"}]}]}]}], 
-                    ";"}], ",", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`i", ",", "1", ",", 
-                    "StabililtyPackage`Private`n"}], "}"}]}], "]"}], ";", 
-                    RowBox[{"Return", "[", 
-                    RowBox[{"{", 
-                    RowBox[{
-                    "StabililtyPackage`Private`H", ",", 
-                    "StabililtyPackage`Private`Hb", ",", 
-                    "StabililtyPackage`Private`\[Rho]", ",", 
-                    "StabililtyPackage`Private`\[Rho]b", ",", 
-                    "StabililtyPackage`Private`A", ",", 
-                    "StabililtyPackage`Private`Ab", ",", 
-                    "StabililtyPackage`Private`\[Delta]H", ",", 
-                    "StabililtyPackage`Private`\[Delta]Hb"}], "}"}], 
-                    "]"}]}]}], "]"}]}]}
-                    },
-                    DefaultBaseStyle->"Column",
-                    GridBoxAlignment->{"Columns" -> {{Left}}},
-                    
-                    GridBoxItemSize->{
-                    "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}]},
-                  {
-                   TagBox[
-                    TooltipBox[
-                    StyleBox["\<\" Options\"\>", "InformationRowLabel",
-                    StripOnInput->False],
-                    "\"Options\"",
-                    TooltipStyle->"TextStyling"],
-                    Annotation[#, "Options", "Tooltip"]& ], 
-                   RowBox[{"\<\"\[Delta]h\"\>", "\[Rule]", "True"}]},
-                  {
-                   TagBox[
-                    TooltipBox[
-                    StyleBox["\<\" Full Name\"\>", "InformationRowLabel",
-                    StripOnInput->False],
-                    "\"FullName\"",
-                    TooltipStyle->"TextStyling"],
-                    
-                    Annotation[#, "FullName", 
-                    "Tooltip"]& ], "\<\"StabililtyPackage`buildHamiltonians\"\
-\>"}
-                 },
-                 AutoDelete->False,
-                 GridBoxAlignment->{"Columns" -> {Right, Left}},
-                 GridBoxDividers->None,
-                 GridBoxItemSize->{"Columns" -> {Automatic, Automatic}},
-                 GridBoxSpacings->{"Columns" -> {
-                    Offset[0.27999999999999997`], {
-                    Offset[0.5599999999999999]}, 
-                    Offset[0.27999999999999997`]}, "Rows" -> {
-                    Offset[0.2], {
-                    Offset[0.8]}, 
-                    Offset[0.2]}}], "DialogStyle",
-                StripOnInput->False],
-               DynamicModuleValues:>{}]}
-            },
-            DefaultBaseStyle->"Column",
-            GridBoxAlignment->{"Columns" -> {{Left}}},
-            GridBoxDividers->{"Columns" -> {{False}}, "Rows" -> {{False}}},
-            
-            GridBoxItemSize->{
-             "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}},
-            GridBoxSpacings->{"Columns" -> {
-                Offset[0.27999999999999997`], {
-                 Offset[0.5599999999999999]}, 
-                Offset[0.27999999999999997`]}, "Rows" -> {
-                Offset[0.2], {
-                 Offset[3.6]}, 
-                Offset[0.2]}}],
-           FrameMargins->6], ""},
-         {
-          ItemBox[
-           TagBox[
-            ButtonBox[
-             PaneSelectorBox[{False->
-              
-              DynamicBox[FEPrivate`FrontEndResource[
-               "FEBitmaps", "UpPointerOpener"]], True->
-              
-              DynamicBox[FEPrivate`FrontEndResource[
-               "FEBitmaps", "UpPointerOpenerHot"]]}, Dynamic[
-              System`InformationDump`mouseOver$$]],
-             Alignment->Left,
-             Appearance->{"Default" -> None},
-             
-             ButtonFunction:>FEPrivate`Set[
-              System`InformationDump`open$$, False],
-             Evaluator->Automatic,
-             FrameMargins->{{9, 0}, {0, 0}},
-             ImageMargins->0,
-             ImageSize->Full,
-             Method->"Preemptive"],
-            
-            EventHandlerTag[{
-             "MouseEntered" :> 
-              FEPrivate`Set[System`InformationDump`mouseOver$$, True], 
-              "MouseExited" :> 
-              FEPrivate`Set[System`InformationDump`mouseOver$$, False], 
-              Method -> "Preemptive", PassEventsDown -> Automatic, 
-              PassEventsUp -> True}]],
-           BaseStyle->"InformationTitleBackground",
-           StripOnInput->False], "\[SpanFromLeft]"}
-        },
-        AutoDelete->False,
-        FrameStyle->Directive[
-          GrayLevel[0.8], 
-          Thickness[Tiny]],
-        GridBoxAlignment->{"Columns" -> {Left, Right}, "Rows" -> {{Center}}},
-        GridBoxDividers->{
-         "Columns" -> {{None}}, "Rows" -> {False, {True}, False}},
-        GridBoxItemSize->{
-         "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
-       "Grid"], False->
-      TagBox[GridBox[{
-         {
-          ItemBox[
-           PaneBox[
-            StyleBox["\<\" Symbol\"\>", "InformationTitleText",
-             StripOnInput->False],
-            FrameMargins->{{4, 0}, {-1, 1}}],
-           BaseStyle->"InformationTitleBackground",
-           StripOnInput->False], 
-          ItemBox["\<\"\"\>",
-           BaseStyle->"InformationTitleBackground",
-           StripOnInput->False]},
-         {
-          ItemBox[
-           PaneBox[
-            
-            StyleBox["\<\"[data,test Energy, Hierarchy=1/-1]. Return elements \
-of the hamiltonians\"\>", "InformationUsageText",
-             StripOnInput->False,
-             LineSpacing->{1.5, 1.5, 3.}],
-            FrameMargins->{{10, 10}, {8, 10}}],
-           BaseStyle->"InformationUsageSubtitleBackground",
-           StripOnInput->False], 
-          ItemBox["\<\"\"\>",
-           BaseStyle->"InformationUsageSubtitleBackground",
-           StripOnInput->False]},
-         {
-          ItemBox[
-           TagBox[
-            ButtonBox[
-             PaneSelectorBox[{False->
-              
-              DynamicBox[FEPrivate`FrontEndResource[
-               "FEBitmaps", "DownPointerOpener"],
-               ImageSizeCache->{15., {4., 11.}}], True->
-              
-              DynamicBox[FEPrivate`FrontEndResource[
-               "FEBitmaps", "DownPointerOpenerHot"],
-               ImageSizeCache->{15., {4., 11.}}]}, Dynamic[
-              System`InformationDump`mouseOver$$]],
-             Alignment->Left,
-             Appearance->{"Default" -> None},
-             
-             ButtonFunction:>FEPrivate`Set[
-              System`InformationDump`open$$, True],
-             Evaluator->Automatic,
-             FrameMargins->{{9, 0}, {0, 0}},
-             ImageMargins->0,
-             ImageSize->Full,
-             Method->"Preemptive"],
-            
-            EventHandlerTag[{
-             "MouseEntered" :> 
-              FEPrivate`Set[System`InformationDump`mouseOver$$, True], 
-              "MouseExited" :> 
-              FEPrivate`Set[System`InformationDump`mouseOver$$, False], 
-              Method -> "Preemptive", PassEventsDown -> Automatic, 
-              PassEventsUp -> True}]],
-           BaseStyle->"InformationTitleBackground",
-           StripOnInput->False], "\[SpanFromLeft]"}
-        },
-        AutoDelete->False,
-        FrameStyle->Directive[
-          GrayLevel[0.8], 
-          Thickness[Tiny]],
-        GridBoxAlignment->{"Columns" -> {Left, Right}, "Rows" -> {{Center}}},
-        GridBoxDividers->{
-         "Columns" -> {{None}}, "Rows" -> {False, {True}, False}},
-        GridBoxItemSize->{
-         "Columns" -> {{Automatic}}, "Rows" -> {{Automatic}}}],
-       "Grid"]}, Dynamic[System`InformationDump`open$$],
-      BaselinePosition->Baseline,
-      FrameMargins->0,
-      ImageSize->Automatic],
-     DynamicModuleValues:>{}],
-    BaseStyle->"InformationGridFrame",
-    StripOnInput->False], "InformationGridPlain",
-   StripOnInput->False],
-  InformationData[
-   Association[
-   "ObjectType" -> "Symbol", "Usage" -> 
-    "[data,test Energy, Hierarchy=1/-1]. Return elements of the hamiltonians",
-     "Documentation" -> None, "OwnValues" -> None, "UpValues" -> None, 
-    "DownValues" -> 
-    Information`InformationValueForm[
-     DownValues, StabililtyPackage`buildHamiltonians, {
-      StabililtyPackage`buildHamiltonians[
-         Pattern[StabililtyPackage`Private`data, 
-          Blank[]], 
-         Pattern[StabililtyPackage`Private`testE, 
-          Blank[]], 
-         Pattern[StabililtyPackage`Private`hi, 
-          Blank[]], 
-         OptionsPattern[]] :> 
-       Module[{StabililtyPackage`Private`n, 
-          StabililtyPackage`Private`\[Theta], 
-          StabililtyPackage`Private`name11, StabililtyPackage`Private`name12, 
-          StabililtyPackage`Private`name21, StabililtyPackage`Private`name22, 
-          StabililtyPackage`Private`\[Rho], StabililtyPackage`Private`\[Rho]b,
-           StabililtyPackage`Private`A, StabililtyPackage`Private`Ab, 
-          StabililtyPackage`Private`Hm, StabililtyPackage`Private`Hvac, 
-          StabililtyPackage`Private`\[Mu], StabililtyPackage`Private`\[Mu]b, 
-          StabililtyPackage`Private`Hsi, StabililtyPackage`Private`H, 
-          StabililtyPackage`Private`Hb, StabililtyPackage`Private`\[Delta]H, 
-          StabililtyPackage`Private`\[Delta]Hb, 
-          StabililtyPackage`Private`nudensity, 
-          StabililtyPackage`Private`nubardensity, 
-          StabililtyPackage`Private`Ve, StabililtyPackage`Private`\[Omega], 
-          StabililtyPackage`Private`HsiRad, 
-          StabililtyPackage`Private`dhswitch}, 
-         StabililtyPackage`Private`Ve = 
-          StabililtyPackage`Private`munits StabililtyPackage`Private`mp^(-1) 
-           StabililtyPackage`Private`data["Yes"] 
-           StabililtyPackage`Private`data["matters"]; 
-         StabililtyPackage`Private`\[Omega] = 
-          StabililtyPackage`Private`\[Omega]EMev[
-           StabililtyPackage`Private`testE]; 
-         StabililtyPackage`Private`name11 = "ee"; 
-         StabililtyPackage`Private`name12 = "ex"; 
-         StabililtyPackage`Private`name21 = "xe"; 
-         StabililtyPackage`Private`name22 = "xx"; 
-         StabililtyPackage`Private`n = Length[
-            StabililtyPackage`Private`data["mids"]]; 
-         StabililtyPackage`Private`\[Theta] = ArcCos[
-            StabililtyPackage`Private`data["mids"]]; 
-         Do[StabililtyPackage`Private`\[Rho][StabililtyPackage`Private`i] = {{
-               ToExpression[
-                StringJoin["\[Rho]", StabililtyPackage`Private`name11, 
-                 ToString[StabililtyPackage`Private`i]]], 
-               ToExpression[
-                StringJoin["\[Rho]", StabililtyPackage`Private`name12, 
-                 ToString[StabililtyPackage`Private`i]]]}, {
-               ToExpression[
-                StringJoin["\[Rho]", StabililtyPackage`Private`name21, 
-                 ToString[StabililtyPackage`Private`i]]], 
-               ToExpression[
-                StringJoin["\[Rho]", StabililtyPackage`Private`name22, 
-                 ToString[StabililtyPackage`Private`i]]]}}; 
-           StabililtyPackage`Private`\[Rho]b[StabililtyPackage`Private`i] = {{
-               ToExpression[
-                StringJoin["\[Rho]b", StabililtyPackage`Private`name11, 
-                 ToString[StabililtyPackage`Private`i]]], 
-               ToExpression[
-                StringJoin["\[Rho]b", StabililtyPackage`Private`name12, 
-                 ToString[StabililtyPackage`Private`i]]]}, {
-               ToExpression[
-                StringJoin["\[Rho]b", StabililtyPackage`Private`name21, 
-                 ToString[StabililtyPackage`Private`i]]], 
-               ToExpression[
-                StringJoin["\[Rho]b", StabililtyPackage`Private`name22, 
-                 ToString[StabililtyPackage`Private`i]]]}}; 
-           StabililtyPackage`Private`A[StabililtyPackage`Private`i] = {{0, 
-               ToExpression[
-                StringJoin["A", StabililtyPackage`Private`name12, 
-                 ToString[StabililtyPackage`Private`i]]]}, {
-               ToExpression[
-                StringJoin["A", StabililtyPackage`Private`name21, 
-                 ToString[StabililtyPackage`Private`i]]], 0}}; 
-           StabililtyPackage`Private`Ab[StabililtyPackage`Private`i] = {{0, 
-               ToExpression[
-                StringJoin["Ab", StabililtyPackage`Private`name12, 
-                 ToString[StabililtyPackage`Private`i]]]}, {
-               ToExpression[
-                StringJoin["Ab", StabililtyPackage`Private`name21, 
-                 ToString[StabililtyPackage`Private`i]]], 0}}; Null, {
-           StabililtyPackage`Private`i, 1, StabililtyPackage`Private`n}]; 
-         StabililtyPackage`Private`nudensity[
-            Pattern[StabililtyPackage`Private`dt, 
-             Blank[]]] := Sum[
-            Sum[Part[
-               StabililtyPackage`Private`data["lotsodo"], 1, 
-               StabililtyPackage`Private`f, StabililtyPackage`Private`dt, 
-               StabililtyPackage`Private`dp]/(StabililtyPackage`Private`h Part[
-               StabililtyPackage`Private`data["freqmid"], 
-               StabililtyPackage`Private`f] Abs[Part[
-                 StabililtyPackage`Private`data["muss"], 
-                 StabililtyPackage`Private`dt + 1] - Part[
-                StabililtyPackage`Private`data["muss"], 
-                StabililtyPackage`Private`dt]]), {
-             StabililtyPackage`Private`f, 1, Length[
-                StabililtyPackage`Private`data["freqs"]] - 1}], {
-            StabililtyPackage`Private`dp, 1, 2}]; 
-         StabililtyPackage`Private`nubardensity[
-            Pattern[StabililtyPackage`Private`dt, 
-             Blank[]]] := Sum[
-            Sum[Part[
-               StabililtyPackage`Private`data["lotsodo"], 2, 
-               StabililtyPackage`Private`f, StabililtyPackage`Private`dt, 
-               StabililtyPackage`Private`dp]/(StabililtyPackage`Private`h Part[
-               StabililtyPackage`Private`data["freqmid"], 
-               StabililtyPackage`Private`f] Abs[Part[
-                 StabililtyPackage`Private`data["muss"], 
-                 StabililtyPackage`Private`dt + 1] - Part[
-                StabililtyPackage`Private`data["muss"], 
-                StabililtyPackage`Private`dt]]), {
-             StabililtyPackage`Private`f, 1, Length[
-                StabililtyPackage`Private`data["freqs"]] - 1}], {
-            StabililtyPackage`Private`dp, 1, 2}]; 
-         StabililtyPackage`Private`Hm = {{StabililtyPackage`Private`Ve, 0.}, {
-            0., 0.}}; 
-         StabililtyPackage`Private`Hvac = 
-          StabililtyPackage`Private`hi {{-StabililtyPackage`Private`\[Omega]/
-              2, 0.}, {0., StabililtyPackage`Private`\[Omega]/2}}; 
-         StabililtyPackage`Private`\[Mu] = 
-          StabililtyPackage`Private`munits 
-           Table[StabililtyPackage`Private`nudensity[
-              StabililtyPackage`Private`i] (Part[
-                StabililtyPackage`Private`data["muss"], 
-                StabililtyPackage`Private`i + 1] - Part[
-               StabililtyPackage`Private`data["muss"], 
-               StabililtyPackage`Private`i]), {
-             StabililtyPackage`Private`i, 1, StabililtyPackage`Private`n}, {
-             StabililtyPackage`Private`j, 1, StabililtyPackage`Private`n}]; 
-         StabililtyPackage`Private`\[Mu]b = 
-          StabililtyPackage`Private`munits 
-           Table[StabililtyPackage`Private`nubardensity[
-              StabililtyPackage`Private`i] (Part[
-                StabililtyPackage`Private`data["muss"], 
-                StabililtyPackage`Private`i + 1] - Part[
-               StabililtyPackage`Private`data["muss"], 
-               StabililtyPackage`Private`i]), {
-             StabililtyPackage`Private`i, 1, StabililtyPackage`Private`n}, {
-             StabililtyPackage`Private`j, 1, StabililtyPackage`Private`n}]; If[
-           OptionValue["dh"], StabililtyPackage`Private`dhswitch = 
-           IdentityMatrix[2], 
-           StabililtyPackage`Private`dhswitch = {{0., 0.}, {0., 0.}}]; 
-         Do[StabililtyPackage`Private`Hsi[StabililtyPackage`Private`j] = 
-            Sum[Part[
-                StabililtyPackage`Private`\[Mu], StabililtyPackage`Private`k, 
-                 StabililtyPackage`Private`j] 
-               StabililtyPackage`Private`\[Rho][StabililtyPackage`Private`k] (
-                2 Pi) (1 - Cos[
-                  Part[
-                  StabililtyPackage`Private`\[Theta], 
-                   StabililtyPackage`Private`j]] Cos[
-                  Part[
-                  StabililtyPackage`Private`\[Theta], 
-                   StabililtyPackage`Private`k]]), {
-               StabililtyPackage`Private`k, 1, StabililtyPackage`Private`n}] + 
-             Sum[-Part[
-                StabililtyPackage`Private`\[Mu]b, StabililtyPackage`Private`k,
-                  StabililtyPackage`Private`j] 
-               StabililtyPackage`Private`\[Rho]b[
-                StabililtyPackage`Private`k] (2 Pi) (1 - Cos[
-                  Part[
-                  StabililtyPackage`Private`\[Theta], 
-                   StabililtyPackage`Private`j]] Cos[
-                  Part[
-                  StabililtyPackage`Private`\[Theta], 
-                   StabililtyPackage`Private`k]]), {
-               StabililtyPackage`Private`k, 1, StabililtyPackage`Private`n}]; 
-           Null, {StabililtyPackage`Private`j, 1, 
-            StabililtyPackage`Private`n}]; 
-         Do[StabililtyPackage`Private`H[StabililtyPackage`Private`i] = 
-            StabililtyPackage`Private`Hvac + StabililtyPackage`Private`Hm + 
-             StabililtyPackage`Private`Hsi[StabililtyPackage`Private`i]; 
-           StabililtyPackage`Private`Hb[StabililtyPackage`Private`i] = 
-            StabililtyPackage`Private`Hvac - StabililtyPackage`Private`Hm - 
-             StabililtyPackage`Private`Hsi[StabililtyPackage`Private`i]; 
-           StabililtyPackage`Private`\[Delta]H[StabililtyPackage`Private`i] = 
-            Dot[StabililtyPackage`Private`dhswitch, 
-              Sum[D[
-                  Part[
-                   StabililtyPackage`Private`H[StabililtyPackage`Private`i], 
-                   1, 2], 
-                  Part[
-                   StabililtyPackage`Private`\[Rho][
-                   StabililtyPackage`Private`j], 1, 2]] 
-                StabililtyPackage`Private`A[StabililtyPackage`Private`j] + D[
-                  Part[
-                   StabililtyPackage`Private`H[StabililtyPackage`Private`i], 
-                   1, 2], 
-                  Part[
-                   StabililtyPackage`Private`\[Rho]b[
-                   StabililtyPackage`Private`j], 1, 2]] 
-                StabililtyPackage`Private`Ab[StabililtyPackage`Private`j], {
-               StabililtyPackage`Private`j, 1, StabililtyPackage`Private`n}]]; 
-           StabililtyPackage`Private`\[Delta]Hb[StabililtyPackage`Private`i] = 
-            Dot[StabililtyPackage`Private`dhswitch, 
-              Sum[D[
-                  Part[
-                   StabililtyPackage`Private`Hb[StabililtyPackage`Private`i], 
-                   1, 2], 
-                  Part[
-                   StabililtyPackage`Private`\[Rho][
-                   StabililtyPackage`Private`j], 1, 2]] 
-                StabililtyPackage`Private`A[StabililtyPackage`Private`j] + D[
-                  Part[
-                   StabililtyPackage`Private`Hb[StabililtyPackage`Private`i], 
-                   1, 2], 
-                  Part[
-                   StabililtyPackage`Private`\[Rho]b[
-                   StabililtyPackage`Private`j], 1, 2]] 
-                StabililtyPackage`Private`Ab[StabililtyPackage`Private`j], {
-               StabililtyPackage`Private`j, 1, StabililtyPackage`Private`n}]]; 
-           Null, {StabililtyPackage`Private`i, 1, 
-            StabililtyPackage`Private`n}]; 
-         Return[{StabililtyPackage`Private`H, StabililtyPackage`Private`Hb, 
-            StabililtyPackage`Private`\[Rho], 
-            StabililtyPackage`Private`\[Rho]b, StabililtyPackage`Private`A, 
-            StabililtyPackage`Private`Ab, StabililtyPackage`Private`\[Delta]H,
-             StabililtyPackage`Private`\[Delta]Hb}]]}], "SubValues" -> None, 
-    "DefaultValues" -> None, "NValues" -> None, "FormatValues" -> None, 
-    "Options" -> {"\[Delta]h" -> True}, "Attributes" -> {}, "FullName" -> 
-    "StabililtyPackage`buildHamiltonians"], False]]], "Output",
- CellChangeTimes->{{3.8013990546700478`*^9, 3.8013990683569994`*^9}, 
-   3.801399170650054*^9},
- CellLabel->"Out[7]=",ExpressionUUID->"416daac5-8c1f-4fb3-9185-985c3c2fe0f1"]
-}, Open  ]],
-
 Cell[BoxData[""], "Input",
  CellChangeTimes->{{3.801399084087366*^9, 3.801399087740158*^9}, 
    3.8013991807592354`*^9},ExpressionUUID->"83ca9afe-1c30-45ea-a60e-\
 ed93027e22b8"],
-
-Cell[CellGroupData[{
 
 Cell[BoxData[""], "Input",
  CellChangeTimes->{{3.801399174444874*^9, 
   3.8013991775285454`*^9}},ExpressionUUID->"e096ea8e-02aa-46dc-bcee-\
 75a6cf5d9c87"],
 
-Cell[BoxData["h"], "Output",
- CellChangeTimes->{3.801399175019006*^9},
- CellLabel->"Out[9]=",ExpressionUUID->"b5bd23ba-b78a-40fa-b6b5-26159d39cf67"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
 Cell[BoxData[""], "Input",
  CellChangeTimes->{{3.801399091513973*^9, 
   3.8013990946696653`*^9}},ExpressionUUID->"e4d5f45b-4fc8-4c3a-adc8-\
 f4603e635208"],
 
-Cell[BoxData["h"], "Output",
- CellChangeTimes->{3.801399092841261*^9},
- CellLabel->"Out[10]=",ExpressionUUID->"28d15530-c6b6-4b43-ab5a-093b5bc13aee"]
-}, Open  ]],
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{{3.801839984818774*^9, 
+  3.8018400204244795`*^9}},ExpressionUUID->"6c00259c-7ea6-4d48-b650-\
+237a30c253f9"],
 
 Cell[CellGroupData[{
 
@@ -3035,253 +1027,293 @@ Cell[BoxData[
    3.801824031878535*^9, 3.801824034475089*^9}, {3.8018241142721415`*^9, 
    3.8018241166156416`*^9}, {3.801825387847642*^9, 3.801825389583007*^9}, {
    3.8018260496160307`*^9, 3.801826056127421*^9}, 3.801827258059784*^9},
- CellLabel->"In[32]:=",ExpressionUUID->"03ce031f-4669-4bca-9be0-24e3076301b2"],
+ CellLabel->"In[5]:=",ExpressionUUID->"03ce031f-4669-4bca-9be0-24e3076301b2"],
 
 Cell[BoxData[
- GraphicsBox[{{}, {{
-     {RGBColor[0.368417, 0.506779, 0.709798], PointSize[
-      0.011000000000000001`], AbsoluteThickness[1.6], 
-      PointBox[{{2.3639772986947037`*^-18, -41.28652789230698}, {
-       6.577907259087188*^-18, -40.712298500244415`}, {
-       1.830341769061953*^-17, -40.89084771925459}, {
-       5.0930346987557535`*^-17, -48.16705174150502}, {
-       1.4171671586789936`*^-16, -48.242545768167766`}, {
-       3.9433518018813854`*^-16, -48.27516524458736}, \
-{-3.9433518018813865`*^-19, -47.76751521331981}, {-3.943351801881405*^-18, \
--42.71879256271444}, {-3.943351801881395*^-17, -48.047840619966216`}, \
-{-3.9433518018813854`*^-16, -48.228978452168825`}}]}, 
-     {RGBColor[0.880722, 0.611041, 0.142051], PointSize[
-      0.011000000000000001`], AbsoluteThickness[1.6], PointBox[CompressedData["
-1:eJw903kwnGccwPEISxTpSAWRuNa1IdlI6or9MUyQJ45GVaLORCJEhFRIMo0j
-Su2iMSQpi4TZssUyTakljlc9JI44thVLFds6o+xI3YqJ9MlMp3+8885n5pnn
-nd/vna/+pRteV3bv2rXLhTzv3zbVhX1SjURQkzWVqRE4Yb3FJxrpnCTw7WFW
-1U874YfLW3apjGQYs1hP19JGuEv8Rom7nALjOWJ5dR2EX7cYR/bNpcKSZ4LQ
-RhfhQNVNdv6+NNhpr424q4fw8qVVsSQ6A2J1EpBYH+G+bLfETeVMoHXmVDoY
-IBzfrD39y1wWaM4VKDYaIixr3pAezXkAZX+fSWUZI7xa9Nqa7/gIRGEDpdgE
-4RwHiV64SQ6Mtx8+53IYYdYFbbaKHReC2jN3ukwR/iY+NdOFkw+S4aI/nY8g
-zAnI2+Oi9AQUAqNEjUcR/lZOml0vKoJchkRodIzME9ZRtiblwYBCoWyqOcKj
-lXbW/bnFMOE09DGDON430ro9gg+huq0eJ8h5cZGENh9VCnRlz1JvJsI3pIyu
-V/xycPM5+d19cr+ZVH8rZV8lSMuLNYfJ90+xByJjmn8A7Qb5cgvimruxir+d
-qwIPq1szPDOEfx8/vy1dqoajiTSvg8Qz0ysjBXU1MHsoyaSYzLNcoUufK6uF
-wjO1HhbEk2xnOavuZ+BY0CbXT+ZfV5mK96c3QkBacuFtYscPWw15tRSkCC7T
-jIhflvlvjqW3wDufjtwRBsIyvK1PKa9WCC8568wlXnD9ntms8ByE10c+8iMO
-vVxyVTT7AjLkGAI6sdBsxpC50QF/6aQpL5L9L+mWGnFsX8LYCy+bNmKvO1PG
-K3U98PO4PCePOEZ4MfvATRF4F3/Nv0mcmVU5oNrwK+QHh9t5EodHXuGsBL0C
-pdyNHXNi2Qp3ZjBTDBt0Ga4a8XXLx1W3zYaAOTNQs0X+f/EdQ8UGv2HIiGbI
-TRFbPsiO0WgdgXiNTnYf8WjY2z2yIRLY/irHtpHY+rN3F54ZjgO/w/9eOfFk
-WWfEZtMEjDbFeOcR7/e1KfSLmwKLvS4N6cS2DlYBvaEzIPLuCownjj1RYlOV
-PAsLT3MdvyD+rw/K8Z61wGvnNH7ok6By60gKdT7kqmY3DeHHOurzjVFp1KnR
-6aBtJYRN4qYELHoWRfnGaKmpItz5tMXJYOgRlRSoGmq/H+Ee1uDAoks+tShT
-b8nTRPiQRrrfpBaPuoj0Vf0PIpxicDqiMpVP1QlMTe+/782noLfMuIKSuoas
-uZO+PP+55h8mqKLse7u//In0tT40M+TGqqVyD6xyRaQvVubuKdW9TRS/LbH4
-RzrC6lur3FFopcS8hepg0pvjhJvk+EY7JRx7/vkb4j9oJ+MS3vZQKs0spUDS
-X081zSJssJ/q+oTOFhIPTiix8xqGKN7YBxabxNdm9SKOr41R5ZruTseMSJ8b
-JbY2MZNUgf3Zel+j//dHzXMjXeOI/wXkNyWQ
-       "]]}}, {
-     {RGBColor[0.368417, 0.506779, 0.709798], PointSize[
-      0.011000000000000001`], AbsoluteThickness[1.6]}, 
-     {RGBColor[0.880722, 0.611041, 0.142051], PointSize[
-      0.011000000000000001`], AbsoluteThickness[1.6]}, {}, {}, {}}, {
-     {RGBColor[0.368417, 0.506779, 0.709798], PointSize[
-      0.011000000000000001`], AbsoluteThickness[1.6]}, 
-     {RGBColor[0.880722, 0.611041, 0.142051], PointSize[
-      0.011000000000000001`], AbsoluteThickness[1.6]}, {}, {}, {}}}, {{}, {}}},
-  AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
-  Axes->{True, True},
-  AxesLabel->{None, None},
-  AxesOrigin->{0, -48.97902680786499},
-  DisplayFunction->Identity,
-  Frame->{{False, False}, {False, False}},
-  FrameLabel->{{None, None}, {None, None}},
-  FrameTicks->{{
-     Charting`ScaledTicks[{Log, Exp}], 
-     Charting`ScaledFrameTicks[{Identity, Identity}]}, {Automatic, Automatic}},
-  GridLines->{None, None},
-  GridLinesStyle->Directive[
-    GrayLevel[0.5, 0.4]],
-  ImageSize->Scaled[0.65],
-  Method->{
-   "OptimizePlotMarkers" -> True, "OptimizePlotMarkers" -> True, 
-    "CoordinatesToolOptions" -> {"DisplayFunction" -> ({
-        Identity[
-         Part[#, 1]], 
-        Exp[
-         Part[#, 2]]}& ), "CopiedValueFunction" -> ({
-        Identity[
-         Part[#, 1]], 
-        Exp[
-         Part[#, 2]]}& )}},
-  PlotRange->{{-1.406355*^-15, 
-   2.61019*^-15}, {-48.97902680786499, -40.712298500244415`}},
-  PlotRangeClipping->True,
-  PlotRangePadding->{{
-     Scaled[0.02], 
-     Scaled[0.02]}, {
-     Scaled[0.02], 
-     Scaled[0.05]}},
-  Ticks->FrontEndValueCache[{Automatic, 
-     Charting`ScaledTicks[{Log, Exp}]}, {Automatic, {{-48.35428695287496, 
-       FormBox[
-        TemplateBox[{"10", 
-          RowBox[{"-", "21"}]}, "Superscript", SyntaxForm -> SuperscriptBox], 
-        TraditionalForm], {0.01, 0.}}, {-46.051701859880914`, 
-       FormBox[
-        TemplateBox[{"10", 
-          RowBox[{"-", "20"}]}, "Superscript", SyntaxForm -> SuperscriptBox], 
-        TraditionalForm], {0.01, 0.}}, {-43.74911676688687, 
-       FormBox[
-        TemplateBox[{"10", 
-          RowBox[{"-", "19"}]}, "Superscript", SyntaxForm -> SuperscriptBox], 
-        TraditionalForm], {0.01, 0.}}, {-41.44653167389282, 
-       FormBox[
-        TemplateBox[{"10", 
-          RowBox[{"-", "18"}]}, "Superscript", SyntaxForm -> SuperscriptBox], 
-        TraditionalForm], {0.01, 0.}}, {-50.65687204586901, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-49.96372486530906, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-49.558259757200894`, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-49.270577684749114`, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-49.047434133434905`, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-48.86511257664095, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-48.71096189681369, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-48.57743050418917, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-48.459647468532786`, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-47.66113977231502, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-47.25567466420685, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-46.96799259175507, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-46.74484904044086, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-46.5625274836469, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-46.40837680381964, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-46.27484541119512, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-46.15706237553874, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-45.35855467932097, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-44.95308957121281, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-44.66540749876102, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-44.44226394744681, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-44.25994239065286, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-44.1057917108256, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-43.97226031820108, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-43.85447728254469, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-43.055969586326924`, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-42.65050447821876, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-42.36282240576698, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-42.13967885445277, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-41.95735729765881, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-41.803206617831556`, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-41.66967522520703, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-41.55189218955065, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-40.753384493332874`, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-40.34791938522471, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-40.060237312772934`, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-39.837093761458725`, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-39.654772204664766`, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-39.500621524837506`, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-39.36709013221299, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-39.249307096556606`, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-39.14394658089878, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-38.73848147279061, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-38.45079940033883, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}, {-38.22765584902462, 
-       FormBox[
-        TemplateBox[{0., 0.}, "Spacer2"], TraditionalForm], {0.005, 
-       0.}}}}]]], "Output",
- CellChangeTimes->{
-  3.8013996559055033`*^9, 3.801400194770239*^9, {3.8014002743982935`*^9, 
-   3.8014003070354223`*^9}, 3.801400354171971*^9, 3.801400391891075*^9, {
-   3.801416268245016*^9, 3.8014162812938404`*^9}, {3.801416317911665*^9, 
-   3.8014163250482225`*^9}, 3.8018187162107253`*^9, 3.801819074058813*^9, 
-   3.80181916998615*^9, 3.801819486424102*^9, 3.8018240416946526`*^9, 
-   3.8018241199463773`*^9, {3.8018253685305057`*^9, 3.801825392875745*^9}, 
-   3.801826060130299*^9, 3.801826803738083*^9, 3.8018269897142906`*^9, 
-   3.8018272667026553`*^9},
- CellLabel->"Out[34]=",ExpressionUUID->"55594a1e-6dfa-4590-8313-cf39325a568e"],
+ TemplateBox[{
+  "Thread", "tdlen", 
+   "\"Objects of unequal length in \\!\\(\\*RowBox[{RowBox[{\\\"{\\\", \
+RowBox[{RowBox[{\\\"{\\\", RowBox[{RowBox[{\\\"{\\\", RowBox[{RowBox[{\\\"{\\\
+\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \
+\\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \
+\\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}]}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", \
+RowBox[{RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \
+\\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \
+\\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}]}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", \
+RowBox[{RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \
+\\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \
+\\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}]}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", \
+RowBox[{RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \
+\\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \
+\\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}]}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", \
+RowBox[{RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \
+\\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \
+\\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}]}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"\
+\[LeftSkeleton]\\\", \\\"11\\\", \\\"\[RightSkeleton]\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", \
+RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \
+\\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \
+\\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}]}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", \
+RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \
+\\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \
+\\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}]}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", \
+RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \
+\\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \
+\\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}]}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", \
+RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \
+\\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \\\",\\\", \\\
+\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"1.`\\\", \
+\\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}]}], \\\"}\\\"}]}], \
+\\\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{RowBox[{\\\"{\\\", \
+RowBox[{\\\"\[LeftSkeleton]\\\", \\\"1\\\", \\\"\[RightSkeleton]\\\"}], \\\"}\
+\\\"}], \\\",\\\", RowBox[{\\\"\[LeftSkeleton]\\\", \\\"18\\\", \\\"\
+\[RightSkeleton]\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"\
+\[LeftSkeleton]\\\", \\\"1\\\", \\\"\[RightSkeleton]\\\"}], \\\"}\\\"}]}], \\\
+\"}\\\"}], \\\",\\\", RowBox[{\\\"{\\\", RowBox[{\\\"\[LeftSkeleton]\\\", \
+\\\"1\\\", \\\"\[RightSkeleton]\\\"}], \\\"}\\\"}]}], \\\"}\\\"}], \\\" \\\", \
+RowBox[{\\\"{\\\", RowBox[{\\\"\[LeftSkeleton]\\\", \\\"1\\\", \\\"\
+\[RightSkeleton]\\\"}], \\\"}\\\"}]}]\\) cannot be combined.\"", 2, 6, 1, 
+   20593442139931269708, "Local"},
+  "MessageTemplate"]], "Message", "MSG",
+ CellChangeTimes->{3.8018426642430754`*^9},
+ CellLabel->
+  "During evaluation of \
+In[5]:=",ExpressionUUID->"9656ed6d-8bb1-4c1a-82a5-300b43fa369a"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "Thread", "tdlen", 
+   "\"Objects of unequal length in \\!\\(\\*RowBox[{RowBox[{\\\"{\\\", \
+RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \
+\\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\
+\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\"}], \\\"}\\\"}], \
+\\\" \\\", RowBox[{\\\"{\\\", RowBox[{RowBox[{\\\"{\\\", RowBox[{RowBox[{\\\"\
+\[LeftAssociation]\\\", RowBox[{\\\"\[LeftSkeleton]\\\", \\\"1\\\", \\\"\
+\[RightSkeleton]\\\"}], \\\"\[RightAssociation]\\\"}], \\\",\\\", \
+RowBox[{\\\"-\\\", \\\"0.0012034359198644115`\\\"}], \\\",\\\", RowBox[{\\\"-\
+\\\", \\\"0.00452388358344193`\\\"}], \\\",\\\", RowBox[{\\\"-\\\", \
+\\\"0.012581817764023371`\\\"}], \\\",\\\", RowBox[{\\\"-\\\", \
+\\\"0.03139758424905991`\\\"}], \\\",\\\", RowBox[{\\\"-\\\", \
+\\\"0.08110853079027883`\\\"}], \\\",\\\", RowBox[{\\\"-\\\", \
+\\\"0.21258662042267448`\\\"}], \\\",\\\", RowBox[{\\\"-\\\", \
+\\\"0.4443303316011928`\\\"}], \\\",\\\", RowBox[{\\\"-\\\", \
+\\\"0.5975903428673581`\\\"}], \\\",\\\", RowBox[{\\\"-\\\", \
+\\\"0.39540282510648284`\\\"}], \\\",\\\", \\\"0.00015870068512250895`\\\", \
+\\\",\\\", \\\"0.0012004799264484199`\\\", \\\",\\\", \
+\\\"0.004545952448070777`\\\", \\\",\\\", \\\"0.012896410988349764`\\\", \
+\\\",\\\", \\\"0.03383107882264402`\\\", \\\",\\\", \
+\\\"0.09386952839691706`\\\", \\\",\\\", \\\"0.24876891460564293`\\\", \
+\\\",\\\", \\\"0.48292950090944514`\\\", \\\",\\\", \\\"0.5855045953502184`\\\
+\", \\\",\\\", \\\"0.35610862624002354`\\\"}], \\\"}\\\"}], \\\",\\\", \
+RowBox[{\\\"\[LeftSkeleton]\\\", \\\"18\\\", \\\"\[RightSkeleton]\\\"}], \
+\\\",\\\", RowBox[{\\\"{\\\", RowBox[{RowBox[{\\\"-\\\", \
+\\\"0.0060317359716290314`\\\"}], \\\",\\\", RowBox[{\\\"\[LeftSkeleton]\\\", \
+\\\"18\\\", \\\"\[RightSkeleton]\\\"}], \\\",\\\", RowBox[{\\\"\
+\[LeftAssociation]\\\", RowBox[{RowBox[{\\\"\\\\\\\"lotsodo\\\\\\\"\\\", \\\"\
+\[Rule]\\\", RowBox[{\\\"{\\\", RowBox[{\\\"\[LeftSkeleton]\\\", \\\"1\\\", \
+\\\"\[RightSkeleton]\\\"}], \\\"}\\\"}]}], \\\",\\\", \
+RowBox[{\\\"\\\\\\\"matters\\\\\\\"\\\", \\\"\[Rule]\\\", \
+\\\"9.165216223432253`*^25\\\"}], \\\",\\\", RowBox[{\\\"\[LeftSkeleton]\\\", \
+\\\"3\\\", \\\"\[RightSkeleton]\\\"}], \\\",\\\", \
+RowBox[{\\\"\\\\\\\"muss\\\\\\\"\\\", \\\"\[Rule]\\\", RowBox[{\\\"{\\\", \
+RowBox[{RowBox[{\\\"-\\\", \\\"8.772170157847254`*^15\\\"}], \\\",\\\", \
+RowBox[{\\\"-\\\", \\\"8.187317780919062`*^15\\\"}], \\\",\\\", RowBox[{\\\"\
+\[LeftSkeleton]\\\", \\\"7\\\", \\\"\[RightSkeleton]\\\"}], \\\",\\\", \
+\\\"8.187317780918902`*^15\\\", \\\",\\\", \\\"8.772170157847093`*^15\\\"}], \
+\\\"}\\\"}]}], \\\",\\\", RowBox[{\\\"\\\\\\\"mids\\\\\\\"\\\", \\\"\[Rule]\\\
+\", RowBox[{\\\"{\\\", RowBox[{RowBox[{\\\"-\\\", \\\"8.54327378599095`*^15\\\
+\"}], \\\",\\\", RowBox[{\\\"-\\\", \\\"7.588483049915986`*^15\\\"}], \\\",\\\
+\", RowBox[{\\\"-\\\", \\\"5.959896339988587`*^15\\\"}], \\\",\\\", \
+RowBox[{\\\"-\\\", \\\"3.8018181429290305`*^15\\\"}], \\\",\\\", \
+RowBox[{\\\"-\\\", \\\"1.3059510336838992`*^15\\\"}], \\\",\\\", \
+\\\"1.3059510336839038`*^15\\\", \\\",\\\", \\\"3.8018181429290345`*^15\\\", \
+\\\",\\\", \\\"5.959896339988591`*^15\\\", \\\",\\\", \
+\\\"7.58848304991599`*^15\\\", \\\",\\\", \\\"8.543273785990954`*^15\\\"}], \
+\\\"}\\\"}]}]}], \\\"\[RightAssociation]\\\"}]}], \\\"}\\\"}]}], \
+\\\"}\\\"}]}]\\) cannot be combined.\"", 2, 6, 2, 20593442139931269708, 
+   "Local"},
+  "MessageTemplate"]], "Message", "MSG",
+ CellChangeTimes->{3.80184266444713*^9},
+ CellLabel->
+  "During evaluation of \
+In[5]:=",ExpressionUUID->"adad64b3-e356-4462-9e9b-daedde12ca0f"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "Thread", "tdlen", 
+   "\"Objects of unequal length in \\!\\(\\*RowBox[{RowBox[{\\\"{\\\", \
+RowBox[{\\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \
+\\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\
+\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", \
+\\\"1.`\\\", \\\",\\\", \\\"1.`\\\", \\\",\\\", RowBox[{\\\"\[LeftSkeleton]\\\
+\", \\\"10\\\", \\\"\[RightSkeleton]\\\"}]}], \\\"}\\\"}], \\\" \\\", \
+RowBox[{\\\"{\\\", RowBox[{RowBox[{\\\"{\\\", RowBox[{RowBox[{\\\"\
+\[LeftAssociation]\\\", RowBox[{RowBox[{\\\"\\\\\\\"lotsodo\\\\\\\"\\\", \\\"\
+\[Rule]\\\", RowBox[{\\\"{\\\", RowBox[{\\\"\[LeftSkeleton]\\\", \\\"1\\\", \
+\\\"\[RightSkeleton]\\\"}], \\\"}\\\"}]}], \\\",\\\", \
+RowBox[{\\\"\\\\\\\"matters\\\\\\\"\\\", \\\"\[Rule]\\\", RowBox[{\\\"-\\\", \
+\\\"9.165216223432253`*^25\\\"}]}], \\\",\\\", \
+RowBox[{\\\"\\\\\\\"Yes\\\\\\\"\\\", \\\"\[Rule]\\\", RowBox[{\\\"-\\\", \
+\\\"1.6590352303953798`*^15\\\"}]}], \\\",\\\", RowBox[{\\\"\\\\\\\"freqs\\\\\
+\\\"\\\", \\\"\[Rule]\\\", RowBox[{\\\"{\\\", RowBox[{RowBox[{\\\"-\\\", \
+RowBox[{\\\"\[LeftSkeleton]\\\", \\\"22\\\", \\\"\[RightSkeleton]\\\"}]}], \\\
+\",\\\", RowBox[{\\\"\[LeftSkeleton]\\\", \\\"19\\\", \
+\\\"\[RightSkeleton]\\\"}], \\\",\\\", RowBox[{\\\"-\\\", RowBox[{\\\"\
+\[LeftSkeleton]\\\", \\\"22\\\", \\\"\[RightSkeleton]\\\"}]}]}], \
+\\\"}\\\"}]}], \\\",\\\", RowBox[{\\\"\\\\\\\"freqmid\\\\\\\"\\\", \
+\\\"\[Rule]\\\", RowBox[{\\\"{\\\", RowBox[{RowBox[{\\\"-\\\", \
+\\\"2.1211061794958133`*^36\\\"}], \\\",\\\", RowBox[{\\\"-\\\", \
+\\\"4.8401404527584346`*^36\\\"}], \\\",\\\", \
+RowBox[{\\\"\[LeftSkeleton]\\\", \\\"56\\\", \\\"\[RightSkeleton]\\\"}], \
+\\\",\\\", RowBox[{\\\"-\\\", \\\"4.284370157359475`*^38\\\"}], \\\",\\\", \
+RowBox[{\\\"-\\\", \\\"5.577224217282279`*^38\\\"}]}], \\\"}\\\"}]}], \\\",\\\
+\", RowBox[{\\\"\\\\\\\"muss\\\\\\\"\\\", \\\"\[Rule]\\\", RowBox[{\\\"{\\\", \
+RowBox[{\\\"8.772170157847258`*^15\\\", \\\",\\\", \\\"8.187317780919066`*^15\
+\\\", \\\",\\\", \\\"6.876305115850332`*^15\\\", \\\",\\\", \
+\\\"4.954442264596328`*^15\\\", \\\",\\\", \\\"2.5923887849637845`*^15\\\", \
+\\\",\\\", \\\"84.41673992956818`\\\", \\\",\\\", RowBox[{\\\"-\\\", \
+\\\"2.592388784963616`*^15\\\"}], \\\",\\\", RowBox[{\\\"-\\\", \
+\\\"4.954442264596159`*^15\\\"}], \\\",\\\", RowBox[{\\\"-\\\", \
+\\\"6.876305115850163`*^15\\\"}], \\\",\\\", RowBox[{\\\"-\\\", \
+\\\"8.187317780918898`*^15\\\"}], \\\",\\\", RowBox[{\\\"-\\\", \
+\\\"8.772170157847089`*^15\\\"}]}], \\\"}\\\"}]}], \\\",\\\", \
+RowBox[{\\\"\\\\\\\"mids\\\\\\\"\\\", \\\"\[Rule]\\\", RowBox[{\\\"{\\\", \
+RowBox[{\\\"8.543273785990954`*^15\\\", \\\",\\\", \
+\\\"7.58848304991599`*^15\\\", \\\",\\\", \\\"5.959896339988591`*^15\\\", \
+\\\",\\\", \\\"3.8018181429290345`*^15\\\", \\\",\\\", \
+\\\"1.3059510336839035`*^15\\\", \\\",\\\", RowBox[{\\\"-\\\", \
+\\\"1.3059510336838995`*^15\\\"}], \\\",\\\", RowBox[{\\\"-\\\", \
+\\\"3.8018181429290305`*^15\\\"}], \\\",\\\", RowBox[{\\\"-\\\", \
+\\\"5.959896339988587`*^15\\\"}], \\\",\\\", RowBox[{\\\"-\\\", \
+\\\"7.588483049915986`*^15\\\"}], \\\",\\\", RowBox[{\\\"-\\\", \
+\\\"8.54327378599095`*^15\\\"}]}], \\\"}\\\"}]}]}], \\\"\[RightAssociation]\\\
+\"}], \\\",\\\", RowBox[{\\\"\[LeftSkeleton]\\\", \\\"19\\\", \\\"\
+\[RightSkeleton]\\\"}]}], \\\"}\\\"}], \\\",\\\", RowBox[{\\\"\[LeftSkeleton]\
+\\\", \\\"19\\\", \\\"\[RightSkeleton]\\\"}]}], \\\"}\\\"}]}]\\) cannot be \
+combined.\"", 2, 6, 3, 20593442139931269708, "Local"},
+  "MessageTemplate"]], "Message", "MSG",
+ CellChangeTimes->{3.801842664632172*^9},
+ CellLabel->
+  "During evaluation of \
+In[5]:=",ExpressionUUID->"a9efa617-0c0d-4bb3-95e7-8c7dadf471f4"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "General", "stop", 
+   "\"Further output of \\!\\(\\*StyleBox[RowBox[{\\\"Thread\\\", \\\"::\\\", \
+\\\"tdlen\\\"}], \\\"MessageName\\\"]\\) will be suppressed during this \
+calculation.\"", 2, 6, 4, 20593442139931269708, "Local"},
+  "MessageTemplate"]], "Message", "MSG",
+ CellChangeTimes->{3.8018426647451873`*^9},
+ CellLabel->
+  "During evaluation of \
+In[5]:=",ExpressionUUID->"713cddf0-a54a-4547-8ac6-64b665c4b9a1"]
+}, Open  ]],
 
 Cell[BoxData[
  InterpretationBox[
@@ -3398,15 +1430,12 @@ Cell[BoxData[
                     RowBox[{"\[CapitalOmega]ch", "[", 
                     RowBox[{"0.`", ",", 
                     RowBox[{"N", "[", 
-                    FractionBox[
-                    RowBox[{"\[LeftSkeleton]", "24", "\[RightSkeleton]"}], 
-                    "2"], "]"}], ",", "0.1`", ",", "0.1`"}], "]"}], "]"}], 
-                    "]"}], "-", 
+                    FractionBox["2.0929595558280123`*^-21", "2"], "]"}], ",", 
+                    "0.1`", ",", "0.1`"}], "]"}], "]"}], "]"}], "-", 
                     RowBox[{"Abs", "[", 
-                    RowBox[{"\[LeftSkeleton]", "1", "\[RightSkeleton]"}], 
-                    "]"}]}], "<", 
-                    RowBox[{"\[LeftSkeleton]", "1", "\[RightSkeleton]"}]}], 
-                    Short[#, 
+                    RowBox[{"Im", "[", "evtest", "]"}], "]"}]}], "<", 
+                    FractionBox["1", 
+                    SuperscriptBox["10", "3"]]}], Short[#, 
                     Rational[2, 3]]& ], ImageSize -> {{1, 500}, Automatic}, 
                    BaselinePosition -> Baseline, ContentPadding -> False, 
                    FrameMargins -> 0, StripOnInput -> True], 
@@ -3439,7 +1468,7 @@ Cell[BoxData[
                    TagBox[
                     
                     TemplateBox[{
-                    "0``7.150514997831988", "\"s\"", "seconds", 
+                    "0``7.1505149978319915", "\"s\"", "seconds", 
                     "\"Seconds\""}, "Quantity", SyntaxForm -> Mod], Short[#, 
                     Rational[2, 3]]& ], ImageSize -> {{1, 500}, Automatic}, 
                    BaselinePosition -> Baseline, ContentPadding -> False, 
@@ -3462,7 +1491,7 @@ Cell[BoxData[
     DynamicModuleValues:>{}], "]"}],
   TestResultObject[
    Association[
-   "TestClass" -> None, "TestIndex" -> 2, "TestID" -> "2 Beam Growth Rate", 
+   "TestClass" -> None, "TestIndex" -> 3, "TestID" -> "2 Beam Growth Rate", 
     "Outcome" -> "Success", "Input" -> HoldForm[Abs[
          Im[
           $CellContext`\[CapitalOmega]ch[0., 
@@ -3470,22 +1499,22 @@ Cell[BoxData[
         Im[$CellContext`evtest]] < 10^(-3)], "ExpectedOutput" -> 
     HoldForm[True], "ActualOutput" -> HoldForm[True], 
     "ExpectedMessages" -> {}, "ActualMessages" -> {}, "AbsoluteTimeUsed" -> 
-    Quantity[0``7.150514997831988, "Seconds"], "CPUTimeUsed" -> 
-    Quantity[0., "Seconds"], "MemoryUsed" -> Quantity[232, "Bytes"]]],
+    Quantity[0``7.1505149978319915, "Seconds"], "CPUTimeUsed" -> 
+    Quantity[0., "Seconds"], "MemoryUsed" -> Quantity[48, "Bytes"]]],
   Editable->False,
   SelectWithContents->True,
-  Selectable->False]], "Output",
- CellChangeTimes->{
-  3.8013996559055033`*^9, 3.801400194770239*^9, {3.8014002743982935`*^9, 
-   3.8014003070354223`*^9}, 3.801400354171971*^9, 3.801400391891075*^9, {
-   3.801416268245016*^9, 3.8014162812938404`*^9}, {3.801416317911665*^9, 
-   3.8014163250482225`*^9}, 3.8018187162107253`*^9, 3.801819074058813*^9, 
-   3.80181916998615*^9, 3.801819486424102*^9, 3.8018240416946526`*^9, 
-   3.8018241199463773`*^9, {3.8018253685305057`*^9, 3.801825392875745*^9}, 
-   3.801826060130299*^9, 3.801826803738083*^9, 3.8018269897142906`*^9, 
-   3.801827266889697*^9},
- CellLabel->"Out[39]=",ExpressionUUID->"423e3efc-b15c-4168-94c2-6ce55b3de594"]
-}, Open  ]]
+  Selectable->False]], "Input",
+ CellChangeTimes->{3.80184254772114*^9},
+ CellLabel->
+  "In[111]:=",ExpressionUUID->"03ce746f-4b61-4187-b08d-e908a67c6523"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"ImportData", "[", "file", "]"}], "[", "\"\<lotsodo\>\"", "]"}], "//",
+   "Dimensions"}]], "Input",
+ CellChangeTimes->{{3.8018400440265274`*^9, 3.8018400824217668`*^9}},
+ CellLabel->"In[59]:=",ExpressionUUID->"9dd2ea1c-a4f3-4c3d-ba3a-509aa9260df3"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -3684,12 +1713,12 @@ Cell[BoxData[
       "\[IndentingNewLine]", "]"}]}], ";"}]}]}]], "Input",
  InitializationCell->True,
  CellChangeTimes->{{3.801314297117218*^9, 3.8013143760159683`*^9}},
- CellLabel->"In[13]:=",ExpressionUUID->"e6cd1b60-7959-440e-bb2d-f6c8db8172c3"]
+ CellLabel->
+  "In[108]:=",ExpressionUUID->"e6cd1b60-7959-440e-bb2d-f6c8db8172c3"]
 }, Closed]]
 },
-WindowSize->{1920, 997},
-WindowMargins->{{-8, Automatic}, {Automatic, -8}},
-Magnification->1.5,
+WindowSize->{1904, 989},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
 FrontEndVersion->"12.1 for Microsoft Windows (64-bit) (March 18, 2020)",
 StyleDefinitions->"Default.nb",
 ExpressionUUID->"f56712fa-03f2-4ec6-a2fa-16ad4c94a45f"
@@ -3705,39 +1734,33 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[558, 20, 4169, 99, 822, "Input",ExpressionUUID->"91436ba2-a31f-4384-98d7-fc2cb56064d1",
+Cell[558, 20, 4169, 99, 501, "Input",ExpressionUUID->"91436ba2-a31f-4384-98d7-fc2cb56064d1",
  InitializationCell->True],
 Cell[CellGroupData[{
-Cell[4752, 123, 298, 6, 97, "Input",ExpressionUUID->"bdb6e7cd-c239-47d9-b167-de18ebb8b40a",
+Cell[4752, 123, 298, 6, 64, "Input",ExpressionUUID->"bdb6e7cd-c239-47d9-b167-de18ebb8b40a",
  InitializationCell->True],
-Cell[5053, 131, 461, 6, 49, "Output",ExpressionUUID->"e8c1305f-90e1-4c90-a016-918bdadb931d"]
+Cell[5053, 131, 217, 3, 32, "Output",ExpressionUUID->"4682afc3-a468-44f3-b495-c203adb3d4f7"]
+}, Open  ]],
+Cell[5285, 137, 323, 5, 67, "Input",ExpressionUUID->"bdd8f3fb-c826-41e0-b21f-cb454beab10c"],
+Cell[5611, 144, 177, 3, 28, "Input",ExpressionUUID->"83ca9afe-1c30-45ea-a60e-ed93027e22b8"],
+Cell[5791, 149, 154, 3, 28, "Input",ExpressionUUID->"e096ea8e-02aa-46dc-bcee-75a6cf5d9c87"],
+Cell[5948, 154, 154, 3, 28, "Input",ExpressionUUID->"e4d5f45b-4fc8-4c3a-adc8-f4603e635208"],
+Cell[6105, 159, 154, 3, 28, "Input",ExpressionUUID->"6c00259c-7ea6-4d48-b650-237a30c253f9"],
+Cell[CellGroupData[{
+Cell[6284, 166, 162, 3, 44, "Subsubsection",ExpressionUUID->"f0af4d1c-7ee4-454c-ab7b-e2dd47595ba0"],
+Cell[CellGroupData[{
+Cell[6471, 173, 31238, 856, 1649, "Code",ExpressionUUID->"03ce031f-4669-4bca-9be0-24e3076301b2"],
+Cell[37712, 1031, 9841, 137, 76, "Message",ExpressionUUID->"9656ed6d-8bb1-4c1a-82a5-300b43fa369a"],
+Cell[47556, 1170, 3951, 60, 97, "Message",ExpressionUUID->"adad64b3-e356-4462-9e9b-daedde12ca0f"],
+Cell[51510, 1232, 4694, 70, 80, "Message",ExpressionUUID->"a9efa617-0c0d-4bb3-95e7-8c7dadf471f4"],
+Cell[56207, 1304, 451, 10, 21, "Message",ExpressionUUID->"713cddf0-a54a-4547-8ac6-64b665c4b9a1"]
+}, Open  ]],
+Cell[56673, 1317, 8986, 191, 65, InheritFromParent,ExpressionUUID->"03ce746f-4b61-4187-b08d-e908a67c6523"],
+Cell[65662, 1510, 294, 6, 28, "Input",ExpressionUUID->"9dd2ea1c-a4f3-4c3d-ba3a-509aa9260df3"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[5551, 142, 323, 5, 102, "Input",ExpressionUUID->"bdd8f3fb-c826-41e0-b21f-cb454beab10c"],
-Cell[5877, 149, 19650, 439, 145, "Output",ExpressionUUID->"0d74f071-1761-4185-ac38-8fd59b745e91"],
-Cell[25530, 590, 22696, 494, 145, "Output",ExpressionUUID->"5c8f242e-ba66-44c8-916d-46fd6ffd0805"],
-Cell[48229, 1086, 50307, 1054, 145, "Output",ExpressionUUID->"416daac5-8c1f-4fb3-9185-985c3c2fe0f1"]
-}, Open  ]],
-Cell[98551, 2143, 177, 3, 43, "Input",ExpressionUUID->"83ca9afe-1c30-45ea-a60e-ed93027e22b8"],
-Cell[CellGroupData[{
-Cell[98753, 2150, 154, 3, 43, "Input",ExpressionUUID->"e096ea8e-02aa-46dc-bcee-75a6cf5d9c87"],
-Cell[98910, 2155, 148, 2, 49, "Output",ExpressionUUID->"b5bd23ba-b78a-40fa-b6b5-26159d39cf67"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[99095, 2162, 154, 3, 43, "Input",ExpressionUUID->"e4d5f45b-4fc8-4c3a-adc8-f4603e635208"],
-Cell[99252, 2167, 149, 2, 49, "Output",ExpressionUUID->"28d15530-c6b6-4b43-ab5a-093b5bc13aee"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[99438, 2174, 162, 3, 67, "Subsubsection",ExpressionUUID->"f0af4d1c-7ee4-454c-ab7b-e2dd47595ba0"],
-Cell[CellGroupData[{
-Cell[99625, 2181, 31239, 856, 2546, "Code",ExpressionUUID->"03ce031f-4669-4bca-9be0-24e3076301b2"],
-Cell[130867, 3039, 10818, 244, 745, "Output",ExpressionUUID->"55594a1e-6dfa-4590-8313-cf39325a568e"],
-Cell[141688, 3285, 9620, 201, 100, "Output",ExpressionUUID->"423e3efc-b15c-4168-94c2-6ce55b3de594"]
-}, Open  ]]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[151357, 3492, 167, 3, 99, "Section",ExpressionUUID->"778aca77-84ec-42b0-a8fa-8f72e30637b7"],
-Cell[151527, 3497, 7731, 189, 768, "Input",ExpressionUUID->"e6cd1b60-7959-440e-bb2d-f6c8db8172c3",
+Cell[65993, 1521, 167, 3, 67, "Section",ExpressionUUID->"778aca77-84ec-42b0-a8fa-8f72e30637b7"],
+Cell[66163, 1526, 7735, 190, 512, "Input",ExpressionUUID->"e6cd1b60-7959-440e-bb2d-f6c8db8172c3",
  InitializationCell->True]
 }, Closed]]
 }

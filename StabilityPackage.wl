@@ -28,6 +28,12 @@ boxFit::usage=
 "[infile,species=1,2]. Box fits a file."
 evscale::usage=
 "[ktest,S,kx] Get eigenvalues of matrix with tiny scale."
+Bfactor::usage=
+"[data] finds the asymmetry factor for the x flavor"
+rules::usage=
+"replacement rules for density matrix values"
+siPotential::usage=
+"get SI potential for k targets"
 
 
 
@@ -76,27 +82,57 @@ SelectSingleRadius[data_,ri_]:=Association[
 "mids"->data["mids"] (*Cos\[Theta] bin midpoints*)
 ]
 
-
-siPotential[data_]:=Module[{nubardensity,nudensity,\[Mu],\[Mu]b,n,tot},
+Options[siPotential]={"xflavor"-> False};
+siPotential[data_,OptionsPattern[]]:=Block[{nubardensity,nudensity,nuxdensity,\[Mu],\[Mu]b,\[Mu]x,n,tot},
 n=Length[data["mids"]];
 
 nudensity[dt_]:= Sum[Sum[data["lotsodo"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
 nubardensity[dt_]:= Sum[Sum[data["lotsodo"][[2,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
 
+If[OptionValue["xflavor"],
+nuxdensity[dt_]:= Sum[Sum[0.25 data["lotsodo"][[3,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}]
+,
+nuxdensity[dt_]:=0.
+];
+
+
 \[Mu]=munits Table[nudensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
 \[Mu]b=munits Table[nubardensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
+\[Mu]x=munits Table[nuxdensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
 
-tot=(Tr[\[Mu]]+Tr[\[Mu]b]);
+
+tot=(Tr[\[Mu]]+Tr[\[Mu]b]+2Tr[\[Mu]x]);
 Return[tot]
 ]
+
+(*This function finds the asymetry factor between the electron (anti)neutrinos and the x (anti)neutrinos *)
+Bfactor[data_]:=Block[{n,nudensity,nubardensity,nuxdensity,\[Mu],\[Mu]b,\[Mu]x,B,Bb},
+n=Length[data["mids"]];
+
+nudensity[dt_]:= Sum[Sum[data["lotsodo"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
+nubardensity[dt_]:= Sum[Sum[data["lotsodo"][[2,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
+nuxdensity[dt_]:= Sum[Sum[0.25 data["lotsodo"][[3,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
+
+\[Mu]=munits Table[nudensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
+\[Mu]b=munits Table[nubardensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
+\[Mu]x=munits Table[nuxdensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
+
+B=Tr[\[Mu]x]/Tr[\[Mu]];
+Bb=Tr[\[Mu]x]/Tr[\[Mu]b];
+
+Return[{B,Bb}];
+];
+
+
+
 (*This function creates the hamiltonians based on the data set, and returns them in a "general" way that is readable.  
 Returns 9 arguments with index,
 1,3,5,7 = H,\[Rho],A,\[Delta]H
 2,4,6,8 = Hb,\[Rho]b,Ab,\[Delta]Hb
 9=HsiRadial
 *)
-Options[buildHamiltonians]={"dh"-> True};
-buildHamiltonians[data_,testE_,hi_,OptionsPattern[]]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,nudensity,nubardensity,Ve,\[Omega],HsiRad,dhswitch},(
+Options[buildHamiltonians]={"dh"-> True,"xflavor"-> False};
+buildHamiltonians[data_,testE_,hi_,OptionsPattern[]]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,\[Mu]x,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,nudensity,nubardensity,nuxdensity,Ve,\[Omega],HsiRad,dhswitch},(
 
 Ve=munits/mp *data["Yes"]  *data["matters"];
 \[Omega]=\[Omega]EMev[testE];
@@ -120,11 +156,20 @@ Ab[i]={{0,ToExpression[StringJoin["Ab",name12,ToString[i]]]},{ToExpression[Strin
 nudensity[dt_]:= Sum[Sum[data["lotsodo"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
 nubardensity[dt_]:= Sum[Sum[data["lotsodo"][[2,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
 
+(*To include the x flavor neutrinos, set option "xflavor-> True"*)
+If[OptionValue["xflavor"],
+nuxdensity[dt_]:= Sum[Sum[0.25 data["lotsodo"][[3,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}]
+,
+nuxdensity[dt_]:=0.
+];
+
 Hm={{Ve,0.},{0.,0.}};
 Hvac=hi{{-\[Omega]/2,0.},{0.,\[Omega]/2}};
 \[Mu]=munits Table[nudensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
 \[Mu]b=munits Table[nubardensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
+\[Mu]x=munits Table[nuxdensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
 
+(*To turn off the perturbation to H, set option "dh"\[Rule] False *)
 If[OptionValue["dh"],dhswitch=IdentityMatrix[2],dhswitch={{0.,0.},{0.,0.}}];
 
 Do[
@@ -149,11 +194,12 @@ Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb}]
  2,4 = Antineutrino equations of motion, Ab
  5=HsiRadial
  *)
-Options[getEquations]={"dh"-> True};
+Options[getEquations]={"dh"-> True,"xflavor"-> False};
 getEquations[data_,testE_,hi_,k_,OptionsPattern[]]:=Module[{n,\[Theta],eqn,eqnb,hs},
-If[OptionValue["dh"],hs=buildHamiltonians[data,testE,hi],hs=buildHamiltonians[data,testE,hi,"dh"-> False]];
+hs=buildHamiltonians[data,testE,hi,"dh"-> OptionValue["dh"],"xflavor"-> OptionValue["xflavor"]];
 n=Length[data["mids"]];
 \[Theta]=ArcCos[data["mids"]];
+
 (*This could be replaced with a mapthread or with associations, but one step at time*)
 With[{H=hs[[1]],Hb=hs[[2]],\[Rho]=hs[[3]],\[Rho]b=hs[[4]],A=hs[[5]],Ab=hs[[6]],\[Delta]H=hs[[7]],\[Delta]Hb=hs[[8]]}, 
 
@@ -169,21 +215,29 @@ Return[{eqn,eqnb,A,Ab}]
 
 
 (*Substitution rules to change "named" density matrix components with initial flavor state*)
+Options[rules]={"xflavor"-> False};
+rules[data_,OptionsPattern[]]:=Block[{r1,r2,r3,r4,rb1,rb2,rb3,rb4,rrules,n,B,Bb},
+n=Length[data["mids"]];
+If[OptionValue["xflavor"],
+B=Bfactor[data][[1]];
+Bb=Bfactor[data][[2]];
+,
+B=0.;
+Bb=0.;
+];
 
-rules[n_]:=Module[{r1,r2,r3,r4,rb1,rb2,rb3,rb4,rrules},( 
-r1=Table[ToExpression["\[Rho]ee"<>ToString[i]]-> 1.,{i,1,n}];
+r1=Table[ToExpression["\[Rho]ee"<>ToString[i]]-> 1./(1.+B),{i,1,n}];
 r2=Table[ToExpression["\[Rho]ex"<>ToString[i]] -> 0.,{i,1,n}];
 r3=Table[ToExpression["\[Rho]xe"<>ToString[i]]-> 0.,{i,1,n}];
-r4=Table[ToExpression["\[Rho]xx"<>ToString[i]]-> 0.,{i,1,n}];
+r4=Table[ToExpression["\[Rho]xx"<>ToString[i]]-> B/(1.+B),{i,1,n}];
 
-rb1=Table[ToExpression["\[Rho]bee"<>ToString[i]]-> 1.,{i,1,n}];
+rb1=Table[ToExpression["\[Rho]bee"<>ToString[i]]-> 1./(1.+Bb),{i,1,n}];
 rb2=Table[ToExpression["\[Rho]bex"<>ToString[i]]-> 0.,{i,1,n}];
 rb3=Table[ToExpression["\[Rho]bxe"<>ToString[i]]-> 0.,{i,1,n}];
-rb4=Table[ToExpression["\[Rho]bxx"<>ToString[i]]-> 0.,{i,1,n}];
+rb4=Table[ToExpression["\[Rho]bxx"<>ToString[i]]->Bb/(1.+Bb) ,{i,1,n}];
 
 rrules=Flatten[{r1,r2,r3,r4,rb1,rb2,rb3,rb4}];
 Return[rrules];
-);
 ];
 
 (*Generates the stability matrix for file infile, radial bin ri, vacuum energy scale testE, mass ordering hi=1 (NO) or -1 (IO), and wavenumber k.
@@ -191,7 +245,8 @@ Returns 2 arguments,
 1=Stability Matrix
 2=HsiRadial
 *)
-stabilityMatrix[data_,ea_]:=Module[{S1,S2,S3,S4,S,n}, 
+Options[stabilityMatrix]={"xflavor"-> False};
+stabilityMatrix[data_,ea_,OptionsPattern[]]:=Module[{S1,S2,S3,S4,S,n}, 
 
 n=Length[data["mids"]];
 
@@ -201,7 +256,7 @@ S1=Table[Coefficient[eqn[l],A[m][[1,2]]],{l,1,n},{m,1,n}];
 S2=Table[Coefficient[eqn[l],Ab[m][[1,2]]],{l,1,n},{m,1,n}];
 S3=Table[Coefficient[eqnb[l],A[m][[1,2]]],{l,1,n},{m,1,n}];
 S4=Table[Coefficient[eqnb[l],Ab[m][[1,2]]],{l,1,n},{m,1,n}];
-S=ArrayFlatten[{{S1,S2},{S3,S4}}]/.rules[n];
+S=ArrayFlatten[{{S1,S2},{S3,S4}}]/.rules[data,"xflavor"-> OptionValue["xflavor"]];
 Return[S];
 ]
 ];
@@ -222,12 +277,16 @@ Return[as]
 
 (*Constructs a nstep sized log spaced k grid based on the target k associated with the infile at radial bin r.  Currently the limits are 2 orders of magnitude above and below the target value, ignoring negatives for the moment *)
 
-buildkGrid[data_,nstep_,mktarget_:0.,kblow_:10^-3,kbhigh_:10^1]:=Module[{kgrid,fSpace,ktarget},
-If[mktarget!=0.,
-ktarget=mktarget,
-ktarget=siPotential[data];
+Options[buildkGrid]={"ktarget"-> 0.,"krange"-> {10.^-3,10.},"xflavor"-> False};
+buildkGrid[data_,nstep_,OptionsPattern[]]:=Block[{kgrid,fSpace,ktarget,kblow,kbhigh},
+If[OptionValue["ktarget"]== 0.,
+ktarget=siPotential[data,"xflavor"-> OptionValue["xflavor"]]
+,
+ktarget=OptionValue["ktarget"]
 ];
 fSpace[min_,max_,steps_,f_: Log]:=InverseFunction[ConditionalExpression[f[#],min<#<max]&]/@Range[f@min,f@max,(f@max-f@min)/(steps-1)];
+kblow=OptionValue["krange"][[1]];
+kbhigh=OptionValue["krange"][[2]];
 kgrid=Join[fSpace[ktarget*kblow,ktarget*kbhigh,nstep],-fSpace[ktarget*kblow,ktarget*kbhigh,nstep/2]];
 Return[kgrid];
 ];
@@ -235,19 +294,19 @@ Return[kgrid];
 
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
-Options[kAdapt]={"dh"-> True};
-kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,mktarget_:0.,kblow_:10^-3,kbhigh_:10^1,OptionsPattern[]]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,evals,pot,ktarget,S},
+Options[kAdapt]={"dh"-> True,"xflavor"-> False,"ktarget"-> 0.,"krange"-> {10.^-3,10.}};
+kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,OptionsPattern[]]:= Block[{kl,evout,data,singleRadiusData,ea,kvar,evals,pot,S},
 data=ImportData[infile];
 evout=
 Reap[
 	Do[
 		singleRadiusData = SelectSingleRadius[data,rx];
-		If[OptionValue["dh"],ea=getEquations[singleRadiusData,testE,hi,kvar], ea=getEquations[singleRadiusData,testE,hi,kvar,"dh"-> False]];
-		S=stabilityMatrix[data,ea];
-		kl=buildkGrid[singleRadiusData,nstep,mktarget];
+		ea=getEquations[singleRadiusData,testE,hi,kvar,"dh"-> OptionValue["dh"],"xflavor"-> OptionValue["xflavor"]];
+		S=stabilityMatrix[data,ea,"xflavor"-> OptionValue["xflavor"]];
+		kl=buildkGrid[singleRadiusData,nstep,"ktarget"-> OptionValue["ktarget"],"krange"-> OptionValue["krange"],"xflavor"-> OptionValue["xflavor"]];
 		Do[
 			evals=Sort[Im[evscale[kl[[kx]],S,kvar]],Greater];
-			pot=siPotential[singleRadiusData];
+			pot=siPotential[singleRadiusData,"xflavor"-> OptionValue["xflavor"]];
 			Sow[{data["radius"][[rx]],kl[[kx]],evals[[1]],pot}]; 
 		,{kx,1,Length[kl]}] (*close do over ktargets*)
 	,{rx,rstr,rend}] (*close do over r*)
@@ -362,4 +421,23 @@ EndPackage[]
 
 
 
+testdata=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\15Msun_1ms_DO.h5"];
+Bfactor[SelectSingleRadius[testdata,100]]
 
+
+siPotential[SelectSingleRadius[testdata,100],"xflavor"-> True]
+
+
+buildkGrid[SelectSingleRadius[testdata,100],10]//Length
+
+
+buildHamiltonians[SelectSingleRadius[testdata,100],20,-1.,"xflavor"-> True]
+eat=getEquations[SelectSingleRadius[testdata,100],20,-1.,0.,"xflavor"-> True]
+rules[SelectSingleRadius[testdata,100]]
+rules[SelectSingleRadius[testdata,100],"xflavor"-> True]
+stabilityMatrix[SelectSingleRadius[testdata,100],eat,"xflavor"-> True]//MatrixForm
+buildkGrid[SelectSingleRadius[testdata,100],10,"xflavor"-> True]
+
+
+
+kAdapt["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\15Msun_1ms_DO.h5",1,1,20,-1,10,"xflavor"-> False]
