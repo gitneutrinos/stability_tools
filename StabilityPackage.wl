@@ -294,16 +294,11 @@ Return[out] (*Close reap over r*)
 		
 ]
 
-
-getIntialGuessBox[data_,species_]:=Module[{datasr,foc1234,afoc1234,ei,aei,ag,aag,\[Beta]g,\[Chi]g,a\[Beta]g,a\[Chi]g},
-datasr=SelectSingleRadius[data,1];
-foc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freq"][[E+1]]+data["freq"][[E]])) (data["freq"][[E+1]]^3-data["freq"][[E]]^3)) )(datasr["lotsodo"][[1,E,1]] + 3 z datasr["lotsodo"][[1,E,2]]
-+(5/2 (3 (datasr["lotsodo"][[1,E,1]] -datasr["lotsodo"][[1,E,3]] )/2 x^2+3 (datasr["lotsodo"][[1,E,1]] -datasr["lotsodo"][[1,E,3]] )/2 y^2+3 datasr["lotsodo"][[1,E,3]] z^2-datasr["lotsodo"][[1,E,1]] )));
-afoc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freq"][[E+1]]+data["freq"][[E]])) (data["freq"][[E+1]]^3-data["freq"][[E]]^3)) )(datasr["lotsodo"][[2,E,1]] + 3 z datasr["lotsodo"][[2,E,2]]
-+(5/2 (3 (datasr["lotsodo"][[2,E,1]] -datasr["lotsodo"][[2,E,3]] )/2 x^2+3 (datasr["lotsodo"][[2,E,1]] -datasr["lotsodo"][[2,E,3]] )/2 y^2+3 datasr["lotsodo"][[2,E,3]] z^2-datasr["lotsodo"][[2,E,1]] )));
-
-(*Generate intial guesses from the expansion reconstruction of the distribution function. g stands for "guess"*)
-(*review what these are?*)
+eBoxFitSingleRadius[data_,ri_,species_,guesses_]:=Module[{ebox,es1box,es2box,es3box,ne,Fe,Pre,ane,aFe,aPre,datasr,br,ei,aei,ag,aag,\[Beta]g,a\[Beta]g,\[Chi]g,a\[Chi]g,foc1234,afoc1234,g0,ag0},
+datasr=SelectSingleRadius[data,ri];
+(*If this is the first radial bin, generates intial guesses based on the expansion reconstruction of the distribution function for a. \[Beta] and \[Chi] are set to intial guesses based on previous experience.*)
+If[
+ri==1,
 ei[m_]:= Sum[1/3 (datasr["freq"][[f+1]]^3-datasr["freq"][[f]]^3)foc1234[Sin[ArcCos[m]],0,m,f],{f,1,80}];
 aei[m_]:= Sum[1/3 (datasr["freq"][[f+1]]^3-datasr["freq"][[f]]^3)afoc1234[Sin[ArcCos[m]],0,m,f],{f,1,80}];
 ag=1/2 (Abs[ei[1]]+Abs[ei[-1]]);
@@ -312,15 +307,13 @@ aag=1/2 (Abs[aei[1]]+Abs[aei[-1]]);
 \[Chi]g=-5;
 a\[Beta]g=0;
 a\[Chi]g=-5;
+(*returns the appropriate guesses based on the species*)
 Which[
-species==1, Return[{ag,\[Beta]g,\[Chi]g}],
-species==2, Return[{aag,a\[Beta]g,a\[Chi]g}]
-]																
+species==1, g0={ag,\[Beta]g,\[Chi]g},
+species==2, g0={aag,a\[Beta]g,a\[Chi]g}
+]
+,g0=guesses;
 ];
-
-
-eBoxFitSingleRadius[data_,ri_,species_,guesses_]:=Module[{ebox,es1box,es2box,es3box,ne,Fe,Pre,ane,aFe,aPre,datasr,br},
-datasr=SelectSingleRadius[data,ri];
 
 (*Equation of an ellipse in the "box transform" units*)
 ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])
@@ -334,31 +327,30 @@ species==1,
 ne=Sum[ datasr["lotsodo"][[1,f,1]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
 Fe=Sum[ datasr["lotsodo"][[1,f,2]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
 Pre=Sum[ datasr["lotsodo"][[1,f,3]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
-br=FindRoot[{2 Pi es1box[a,\[Beta],\[Chi]]-ne,2 Pi es2box[a,\[Beta],\[Chi]]-Fe,2 Pi es3box[a,\[Beta],\[Chi]]-Pre},{{a,guesses[[1]]},{\[Beta],guesses[[2]]},{\[Chi],guesses[[3]]}},Evaluated->False]
+br=FindRoot[{2 Pi es1box[a,\[Beta],\[Chi]]-ne,2 Pi es2box[a,\[Beta],\[Chi]]-Fe,2 Pi es3box[a,\[Beta],\[Chi]]-Pre},{{a,g0[[1]]},{\[Beta],g0[[2]]},{\[Chi],g0[[3]]}},Evaluated->False]
 ,
 species==2,
 ane=Sum[ datasr["lotsodo"][[2,f,1]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
 
-aFe:=Sum[ datasr["lotsodo"][[2,f,2]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
+aFe=Sum[ datasr["lotsodo"][[2,f,2]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
 
 aPre=Sum[ datasr["lotsodo"][[2,f,3]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
-br=FindRoot[{2 Pi es1box[a,\[Beta],\[Chi]]-ane,2 Pi es2box[a,\[Beta],\[Chi]]-aFe,2 Pi es3box[a,\[Beta],\[Chi]]-aPre},{{a,guesses[[1]]},{\[Beta],guesses[[2]]},{\[Chi],guesses[[3]]}},Evaluated->False]
+br=FindRoot[{2 Pi es1box[a,\[Beta],\[Chi]]-ane,2 Pi es2box[a,\[Beta],\[Chi]]-aFe,2 Pi es3box[a,\[Beta],\[Chi]]-aPre},{{a,g0[[1]]},{\[Beta],g0[[2]]},{\[Chi],g0[[3]]}},Evaluated->False]
 
 ];
 Return[{a/.br,\[Beta]/.br,\[Chi]/.br}]
 ];
 
 
-boxFit[infile_,species_]:=Block[{data,lastguess,ans,s1},
+boxFit[infile_,species_]:=Block[{data,lastguess,ans},
 data=ImportData[infile];
-s1=eBoxFitSingleRadius[data,1,species,getIntialGuessBox[data,species]];
-lastguess=s1l
+lastguess={0.,0.,0.};
 fits=Reap[Do[
 ans=eBoxFitSingleRadius[data,r,species,lastguess];
 Sow[ans];
 lastguess=ans
-,{r,2,384}]][[2,1]];
-Return[Join[s1,fits]]
+,{r,1,384}]][[2,1]];
+Return[fits]
 ]
 
 
