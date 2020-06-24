@@ -19,7 +19,7 @@ kAdapt::usage=
 GDValue::usage=
 	"returns the maximum possible value of the frequency"
 GDdata::usage=
-	"the gd version of kadapt"
+	"Finds the gershgorin limits over a range of radii"
 SelectSingleRadius::usage=
 	"get single radius data"
 makeLocalVariables::usage=
@@ -59,6 +59,7 @@ Com[A_,B_]:=Module[{a=A,b=B},Return[A.B-B.A]];
 
 
 	
+(*Have xflavor option  set the x do to 0 here*)
 
 ImportData[infile_]:=
 Association[
@@ -72,6 +73,7 @@ Association[
 "radius"-> Import[infile,{"Data","r(cm)"}]
 ];
 
+
 SelectSingleRadius[data_,ri_]:=Association[
 "lotsodo"->data["lotsodo"][[ri]] (*distribution functions*),
 "matters"->data["matters"][[ri]], (*densities*)
@@ -80,10 +82,14 @@ SelectSingleRadius[data_,ri_]:=Association[
 "freqmid"->data["freqmid"], (*freq mid points*)
 "muss"->data["muss"], (*Cos\[Theta] grid*)
 "mids"->data["mids"] (*Cos\[Theta] bin midpoints*)
-]
+];
 
-Options[siPotential]={"xflavor"-> False};
-siPotential[data_,OptionsPattern[]]:=Block[{nubardensity,nudensity,nuxdensity,\[Mu],\[Mu]b,\[Mu]x,n,tot},
+
+
+
+
+Options[ndensities]={"xflavor"-> False}
+ndensities[data_,OptionsPattern[]]:=Block[{n,nudensity,nubardensity,nuxdensity,\[Mu],\[Mu]b,\[Mu]x},
 n=Length[data["mids"]];
 
 nudensity[dt_]:= Sum[Sum[data["lotsodo"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
@@ -95,31 +101,27 @@ nuxdensity[dt_]:= Sum[Sum[0.25 data["lotsodo"][[3,f,dt,dp]]/ (h (data["freqmid"]
 nuxdensity[dt_]:=0.
 ];
 
-
 \[Mu]=munits Table[nudensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
 \[Mu]b=munits Table[nubardensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
 \[Mu]x=munits Table[nuxdensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
 
+Return[{\[Mu],\[Mu]b,\[Mu]x}]
+];
 
-tot=(Tr[\[Mu]]+Tr[\[Mu]b]+2Tr[\[Mu]x]);
+
+Options[siPotential]={"xflavor"-> False};
+siPotential[data_,OptionsPattern]:=Block[{tot,m},
+m=ndensities[data,"xflavor"-> OptionValue["xflavor"]];
+tot=(Tr[m[[1]]]+Tr[m[[2]]]+2Tr[m[[3]]]);
 Return[tot]
 ]
 
 (*This function finds the asymetry factor between the electron (anti)neutrinos and the x (anti)neutrinos *)
-Bfactor[data_]:=Block[{n,nudensity,nubardensity,nuxdensity,\[Mu],\[Mu]b,\[Mu]x,B,Bb},
-n=Length[data["mids"]];
-
-nudensity[dt_]:= Sum[Sum[data["lotsodo"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
-nubardensity[dt_]:= Sum[Sum[data["lotsodo"][[2,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
-nuxdensity[dt_]:= Sum[Sum[0.25 data["lotsodo"][[3,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
-
-\[Mu]=munits Table[nudensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
-\[Mu]b=munits Table[nubardensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
-\[Mu]x=munits Table[nuxdensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
-
-B=Tr[\[Mu]x]/Tr[\[Mu]];
-Bb=Tr[\[Mu]x]/Tr[\[Mu]b];
-
+Options[Bfactor]={"xflavor"-> False};
+Bfactor[data_]:=Block[{B,Bb},
+m=ndensities[data,"xflavor"-> OptionValue["xflavor"]];
+B=Tr[m[[3]]]/Tr[m[[1]]];
+Bb=Tr[m[[3]]]/Tr[m[[2]]];
 Return[{B,Bb}];
 ];
 
@@ -131,8 +133,8 @@ Returns 9 arguments with index,
 2,4,6,8 = Hb,\[Rho]b,Ab,\[Delta]Hb
 9=HsiRadial
 *)
-Options[buildHamiltonians]={"dh"-> True,"xflavor"-> False};
-buildHamiltonians[data_,testE_,hi_,OptionsPattern[]]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,\[Mu]x,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,nudensity,nubardensity,nuxdensity,Ve,\[Omega],HsiRad,dhswitch},(
+Options[buildHamiltonians]={"xflavor"-> False};
+buildHamiltonians[data_,testE_,hi_,OptionsPattern[]]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,\[Mu]x,m,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,Ve,\[Omega],HsiRad,dhswitch},(
 
 Ve=munits/mp *data["Yes"]  *data["matters"];
 \[Omega]=\[Omega]EMev[testE];
@@ -153,24 +155,13 @@ Ab[i]={{0,ToExpression[StringJoin["Ab",name12,ToString[i]]]},{ToExpression[Strin
 ,{i,1,n}];
 
 
-nudensity[dt_]:= Sum[Sum[data["lotsodo"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
-nubardensity[dt_]:= Sum[Sum[data["lotsodo"][[2,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
-
-(*To include the x flavor neutrinos, set option "xflavor-> True"*)
-If[OptionValue["xflavor"],
-nuxdensity[dt_]:= Sum[Sum[0.25 data["lotsodo"][[3,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}]
-,
-nuxdensity[dt_]:=0.
-];
-
 Hm={{Ve,0.},{0.,0.}};
 Hvac=hi{{-\[Omega]/2,0.},{0.,\[Omega]/2}};
-\[Mu]=munits Table[nudensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
-\[Mu]b=munits Table[nubardensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
-\[Mu]x=munits Table[nuxdensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
+m=ndensities[data,"xflavor"-> OptionValue["xflavor"]];
+\[Mu]=m[[1]];
+\[Mu]b=m[[2]];
+\[Mu]x=m[[3]];
 
-(*To turn off the perturbation to H, set option "dh"\[Rule] False *)
-If[OptionValue["dh"],dhswitch=IdentityMatrix[2],dhswitch={{0.,0.},{0.,0.}}];
 
 Do[
 Hsi[j]=Sum[\[Mu][[k,j]]\[Rho][k](2Pi)(1-Cos[\[Theta][[j]]]Cos[\[Theta][[k]]]),{k,1,n}]+Sum[-\[Mu]b[[k,j]]\[Rho]b[k](2Pi)(1-Cos[\[Theta][[j]]]Cos[\[Theta][[k]]]),{k,1,n}];
@@ -194,9 +185,9 @@ Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb}]
  2,4 = Antineutrino equations of motion, Ab
  5=HsiRadial
  *)
-Options[getEquations]={"dh"-> True,"xflavor"-> False};
+Options[getEquations]={"xflavor"-> False};
 getEquations[data_,testE_,hi_,k_,OptionsPattern[]]:=Module[{n,\[Theta],eqn,eqnb,hs},
-hs=buildHamiltonians[data,testE,hi,"dh"-> OptionValue["dh"],"xflavor"-> OptionValue["xflavor"]];
+hs=buildHamiltonians[data,testE,hi,"xflavor"-> OptionValue["xflavor"]];
 n=Length[data["mids"]];
 \[Theta]=ArcCos[data["mids"]];
 
@@ -215,16 +206,12 @@ Return[{eqn,eqnb,A,Ab}]
 
 
 (*Substitution rules to change "named" density matrix components with initial flavor state*)
-Options[rules]={"xflavor"-> False};
+Options[rules]={"xflavor"-> False}; (*this is not needed as b will come back 0. if no x, and no option is needed noir is the data*)
 rules[data_,OptionsPattern[]]:=Block[{r1,r2,r3,r4,rb1,rb2,rb3,rb4,rrules,n,B,Bb},
 n=Length[data["mids"]];
-If[OptionValue["xflavor"],
-B=Bfactor[data][[1]];
-Bb=Bfactor[data][[2]];
-,
-B=0.;
-Bb=0.;
-];
+B=Bfactor[data,"xflavor"-> OptionValue["xflavor"]][[1]];
+Bb=Bfactor[data,"xflavor"-> OptionValue["xflavor"]][[2]];
+
 
 r1=Table[ToExpression["\[Rho]ee"<>ToString[i]]-> 1./(1.+B),{i,1,n}];
 r2=Table[ToExpression["\[Rho]ex"<>ToString[i]] -> 0.,{i,1,n}];
@@ -294,14 +281,14 @@ Return[kgrid];
 
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
-Options[kAdapt]={"dh"-> True,"xflavor"-> False,"ktarget"-> 0.,"krange"-> {10.^-3,10.}};
+Options[kAdapt]={"xflavor"-> False,"ktarget"-> 0.,"krange"-> {10.^-3,10.}};
 kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,OptionsPattern[]]:= Block[{kl,evout,data,singleRadiusData,ea,kvar,evals,pot,S},
 data=ImportData[infile];
 evout=
 Reap[
 	Do[
 		singleRadiusData = SelectSingleRadius[data,rx];
-		ea=getEquations[singleRadiusData,testE,hi,kvar,"dh"-> OptionValue["dh"],"xflavor"-> OptionValue["xflavor"]];
+		ea=getEquations[singleRadiusData,testE,hi,kvar,"xflavor"-> OptionValue["xflavor"]];
 		S=stabilityMatrix[data,ea,"xflavor"-> OptionValue["xflavor"]];
 		kl=buildkGrid[singleRadiusData,nstep,"ktarget"-> OptionValue["ktarget"],"krange"-> OptionValue["krange"],"xflavor"-> OptionValue["xflavor"]];
 		Do[
@@ -352,12 +339,8 @@ Reap[
 Return[out] (*Close reap over r*)
 		
 ]
-
-eBoxFitSingleRadius[data_,ri_,species_,guesses_]:=Module[{ebox,es1box,es2box,es3box,ne,Fe,Pre,ane,aFe,aPre,datasr,br,ei,aei,ag,aag,\[Beta]g,a\[Beta]g,\[Chi]g,a\[Chi]g,foc1234,afoc1234,g0,ag0},
-datasr=SelectSingleRadius[data,ri];
-(*If this is the first radial bin, generates intial guesses based on the expansion reconstruction of the distribution function for a. \[Beta] and \[Chi] are set to intial guesses based on previous experience.*)
-If[
-ri==1,
+getIntialGuess[data_,species_]:=Block[{ei,aei,ag,aag,\[Beta]g,a\[Beta]g,a\[Chi]g,\[Chi]g,g0,datasr,foc1234,afoc1234},
+datasr=SelectSingleRadius[data,1];
 ei[m_]:= Sum[1/3 (datasr["freq"][[f+1]]^3-datasr["freq"][[f]]^3)foc1234[Sin[ArcCos[m]],0,m,f],{f,1,80}];
 aei[m_]:= Sum[1/3 (datasr["freq"][[f+1]]^3-datasr["freq"][[f]]^3)afoc1234[Sin[ArcCos[m]],0,m,f],{f,1,80}];
 ag=1/2 (Abs[ei[1]]+Abs[ei[-1]]);
@@ -370,7 +353,16 @@ a\[Chi]g=-5;
 Which[
 species==1, g0={ag,\[Beta]g,\[Chi]g},
 species==2, g0={aag,a\[Beta]g,a\[Chi]g}
+];
+Return[g0];
 ]
+
+eBoxFitSingleRadius[data_,ri_,species_,guesses_]:=Module[{ebox,es1box,es2box,es3box,ne,Fe,Pre,ane,aFe,aPre,datasr,br,g0},
+datasr=SelectSingleRadius[data,ri];
+(*If this is the first radial bin, generates intial guesses based on the expansion reconstruction of the distribution function for a. \[Beta] and \[Chi] are set to intial guesses based on previous experience.*)
+If[
+ri== 1,
+g0=getInitialGuess[data,species],
 ,g0=guesses;
 ];
 
@@ -421,23 +413,6 @@ EndPackage[]
 
 
 
-testdata=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\15Msun_1ms_DO.h5"];
-Bfactor[SelectSingleRadius[testdata,100]]
-
-
-siPotential[SelectSingleRadius[testdata,100],"xflavor"-> True]
-
-
-buildkGrid[SelectSingleRadius[testdata,100],10]//Length
-
-
-buildHamiltonians[SelectSingleRadius[testdata,100],20,-1.,"xflavor"-> True]
-eat=getEquations[SelectSingleRadius[testdata,100],20,-1.,0.,"xflavor"-> True]
-rules[SelectSingleRadius[testdata,100]]
-rules[SelectSingleRadius[testdata,100],"xflavor"-> True]
-stabilityMatrix[SelectSingleRadius[testdata,100],eat,"xflavor"-> True]//MatrixForm
-buildkGrid[SelectSingleRadius[testdata,100],10,"xflavor"-> True]
 
 
 
-kAdapt["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\15Msun_1ms_DO.h5",1,1,20,-1,10,"xflavor"-> False]

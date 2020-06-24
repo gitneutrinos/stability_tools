@@ -126,7 +126,7 @@ data2b=
 ]
 ];
 build2bMatrix[]:=Block[{fakeEn,S2ba,S2b},
-fakeEn=6.080273099999999`*^-22; (*MeV input, output in ergs*)
+fakeEn=6.080273099999999`*^-22; (*MeV input, output in ergs*) (*This is the energy in MeV that gives a vacuum frequency of 0.1 *)
 S2ba=stabilityMatrix[get2bdata[],getEquations[get2bdata[],fakeEn,-1,0.]];
 S2b={{S2ba[[1,1]],S2ba[[1,4]]},{S2ba[[4,1]],S2ba[[4,4]]}};
 Return[S2b]
@@ -137,7 +137,7 @@ evtest=Eigenvalues[build2bMatrix[]/.{a-> 0.1}][[2]];
 vt=VerificationTest[
 Abs[Im[\[CapitalOmega]ch[0.,N[2.0929595558280123`*^-21/2],0.1,0.1]]]-Abs[Im[evtest]]<10^-3
 ,TestID-> "2 Beam Growth Rate"]
-
+(*The hard coded number 2 10 ^21 is the "common factor" chakraborty calls \[Mu] for this matrix *)
 
 
 
