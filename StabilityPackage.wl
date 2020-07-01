@@ -34,6 +34,10 @@ rules::usage=
 "replacement rules for density matrix values"
 siPotential::usage=
 "get SI potential for k targets"
+evecscale::usage = 
+"finds eigenvectors while scaling the matrix to reasonable numbers"
+ndensities::usage = 
+"finds the neutrino number densities for a species, and returns the matrix of densities in an angular bin"
 
 
 
@@ -74,7 +78,8 @@ Association[
 ];
 
 
-SelectSingleRadius[data_,ri_]:=Association[
+SelectSingleRadius[data_,ri_]:=
+Association[
 "lotsodo"->data["lotsodo"][[ri]] (*distribution functions*),
 "matters"->data["matters"][[ri]], (*densities*)
 "Yes"->data["Yes"][[ri]], (*electron fractions *)
@@ -88,8 +93,8 @@ SelectSingleRadius[data_,ri_]:=Association[
 
 
 
-Options[ndensities]={"xflavor"-> False}
-ndensities[data_,OptionsPattern[]]:=Block[{n,nudensity,nubardensity,nuxdensity,\[Mu],\[Mu]b,\[Mu]x},
+Options[ndensities]={"xflavor"-> True};
+ndensities[data_,OptionsPattern[]]:=Module[{n,nudensity,nubardensity,nuxdensity,\[Mu],\[Mu]b,\[Mu]x},
 n=Length[data["mids"]];
 
 nudensity[dt_]:= Sum[Sum[data["lotsodo"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
@@ -105,20 +110,21 @@ nuxdensity[dt_]:=0.
 \[Mu]b=munits Table[nubardensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
 \[Mu]x=munits Table[nuxdensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
 
+
 Return[{\[Mu],\[Mu]b,\[Mu]x}]
 ];
 
 
-Options[siPotential]={"xflavor"-> False};
-siPotential[data_,OptionsPattern]:=Block[{tot,m},
+Options[siPotential]={"xflavor"-> True};
+siPotential[data_,OptionsPattern[]]:=Module[{tot,m},
 m=ndensities[data,"xflavor"-> OptionValue["xflavor"]];
-tot=(Tr[m[[1]]]+Tr[m[[2]]]+2Tr[m[[3]]]);
+tot=(Tr[m[[1]]]+Tr[m[[2]]]+2 Tr[m[[3]]]);
 Return[tot]
 ]
 
 (*This function finds the asymetry factor between the electron (anti)neutrinos and the x (anti)neutrinos *)
-Options[Bfactor]={"xflavor"-> False};
-Bfactor[data_]:=Block[{B,Bb},
+Options[Bfactor]={"xflavor"-> True};
+Bfactor[data_,OptionsPattern[]]:=Module[{B,Bb,m},
 m=ndensities[data,"xflavor"-> OptionValue["xflavor"]];
 B=Tr[m[[3]]]/Tr[m[[1]]];
 Bb=Tr[m[[3]]]/Tr[m[[2]]];
@@ -133,8 +139,8 @@ Returns 9 arguments with index,
 2,4,6,8 = Hb,\[Rho]b,Ab,\[Delta]Hb
 9=HsiRadial
 *)
-Options[buildHamiltonians]={"xflavor"-> False};
-buildHamiltonians[data_,testE_,hi_,OptionsPattern[]]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,\[Mu]x,m,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,Ve,\[Omega],HsiRad,dhswitch},(
+Options[buildHamiltonians]={"xflavor"-> True};
+buildHamiltonians[data_,testE_,hi_,OptionsPattern[]]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,\[Mu]x,m,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,Ve,\[Omega]},(
 
 Ve=munits/mp *data["Yes"]  *data["matters"];
 \[Omega]=\[Omega]EMev[testE];
@@ -169,8 +175,8 @@ Hsi[j]=Sum[\[Mu][[k,j]]\[Rho][k](2Pi)(1-Cos[\[Theta][[j]]]Cos[\[Theta][[k]]]),{k
 Do[
 H[i]=Hvac+Hm+Hsi[i];
 Hb[i]=Hvac-Hm-Hsi[i];
-\[Delta]H[i]=dhswitch.Sum[((D[H[i][[1,2]],\[Rho][j][[1,2]]]) A[j])+((D[H[i][[1,2]],\[Rho]b[j][[1,2]]])Ab[j]),{j,1,n}];
-\[Delta]Hb[i]=dhswitch.Sum[((D[Hb[i][[1,2]],\[Rho][j][[1,2]]])A[j])+((D[Hb[i][[1,2]],\[Rho]b[j][[1,2]]])Ab[j]),{j,1,n}];
+\[Delta]H[i]=Sum[((D[H[i][[1,2]],\[Rho][j][[1,2]]]) A[j])+((D[H[i][[1,2]],\[Rho]b[j][[1,2]]])Ab[j]),{j,1,n}];
+\[Delta]Hb[i]=Sum[((D[Hb[i][[1,2]],\[Rho][j][[1,2]]])A[j])+((D[Hb[i][[1,2]],\[Rho]b[j][[1,2]]])Ab[j]),{j,1,n}];
 ,{i,1,n}];
 Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb}]
 )
@@ -185,7 +191,7 @@ Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb}]
  2,4 = Antineutrino equations of motion, Ab
  5=HsiRadial
  *)
-Options[getEquations]={"xflavor"-> False};
+Options[getEquations]={"xflavor"-> True};
 getEquations[data_,testE_,hi_,k_,OptionsPattern[]]:=Module[{n,\[Theta],eqn,eqnb,hs},
 hs=buildHamiltonians[data,testE,hi,"xflavor"-> OptionValue["xflavor"]];
 n=Length[data["mids"]];
@@ -206,8 +212,8 @@ Return[{eqn,eqnb,A,Ab}]
 
 
 (*Substitution rules to change "named" density matrix components with initial flavor state*)
-Options[rules]={"xflavor"-> False}; (*this is not needed as b will come back 0. if no x, and no option is needed noir is the data*)
-rules[data_,OptionsPattern[]]:=Block[{r1,r2,r3,r4,rb1,rb2,rb3,rb4,rrules,n,B,Bb},
+Options[rules]={"xflavor"-> True}; (*this is not needed as b will come back 0. if no x, and no option is needed noir is the data*)
+rules[data_,OptionsPattern[]]:=Module[{r1,r2,r3,r4,rb1,rb2,rb3,rb4,rrules,n,B,Bb},
 n=Length[data["mids"]];
 B=Bfactor[data,"xflavor"-> OptionValue["xflavor"]][[1]];
 Bb=Bfactor[data,"xflavor"-> OptionValue["xflavor"]][[2]];
@@ -232,7 +238,7 @@ Returns 2 arguments,
 1=Stability Matrix
 2=HsiRadial
 *)
-Options[stabilityMatrix]={"xflavor"-> False};
+Options[stabilityMatrix]={"xflavor"-> True};
 stabilityMatrix[data_,ea_,OptionsPattern[]]:=Module[{S1,S2,S3,S4,S,n}, 
 
 n=Length[data["mids"]];
@@ -261,11 +267,20 @@ as=\[Epsilon] Eigenvalues[N[As]/.kxs->kx0s];
 Return[as]
 ];
 
+evecscale[ktest_,S_,kx_]:=Module[{\[Epsilon],As,kx0s,as,kxs},
+\[Epsilon]=$MachineEpsilon/2;
+As=Expand[(S/\[Epsilon])/.kx->\[Epsilon] kxs];
+kx0s=ktest/\[Epsilon];
+as= \[Epsilon] Eigenvectors[N[As]/.kxs->kx0s];
+(*bs=\[Epsilon] Eigenvalues[As]/.kxs\[Rule]kx0s;*)
+Return[as]
+];
+
 
 (*Constructs a nstep sized log spaced k grid based on the target k associated with the infile at radial bin r.  Currently the limits are 2 orders of magnitude above and below the target value, ignoring negatives for the moment *)
 
-Options[buildkGrid]={"ktarget"-> 0.,"krange"-> {10.^-3,10.},"xflavor"-> False};
-buildkGrid[data_,nstep_,OptionsPattern[]]:=Block[{kgrid,fSpace,ktarget,kblow,kbhigh},
+Options[buildkGrid]={"ktarget"-> 0.,"krange"-> {10.^-3,10.},"xflavor"-> True};
+buildkGrid[data_,nstep_,OptionsPattern[]]:=Module[{kgrid,fSpace,ktarget,kblow,kbhigh},
 If[OptionValue["ktarget"]== 0.,
 ktarget=siPotential[data,"xflavor"-> OptionValue["xflavor"]]
 ,
@@ -281,8 +296,8 @@ Return[kgrid];
 
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
-Options[kAdapt]={"xflavor"-> False,"ktarget"-> 0.,"krange"-> {10.^-3,10.}};
-kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,OptionsPattern[]]:= Block[{kl,evout,data,singleRadiusData,ea,kvar,evals,pot,S},
+Options[kAdapt]={"xflavor"-> True,"ktarget"-> 0.,"krange"-> {10.^-3,10.},"eigenvectors"-> False};
+kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,OptionsPattern[]]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,eout,pot,S},
 data=ImportData[infile];
 evout=
 Reap[
@@ -292,9 +307,12 @@ Reap[
 		S=stabilityMatrix[data,ea,"xflavor"-> OptionValue["xflavor"]];
 		kl=buildkGrid[singleRadiusData,nstep,"ktarget"-> OptionValue["ktarget"],"krange"-> OptionValue["krange"],"xflavor"-> OptionValue["xflavor"]];
 		Do[
-			evals=Sort[Im[evscale[kl[[kx]],S,kvar]],Greater];
+			If[OptionValue["eigenvectors"],
+			eout=evecscale[kl[[kx]],S,kvar],
+			eout=Sort[Im[evscale[kl[[kx]],S,kvar]],Greater][[1]]
+			];
 			pot=siPotential[singleRadiusData,"xflavor"-> OptionValue["xflavor"]];
-			Sow[{data["radius"][[rx]],kl[[kx]],evals[[1]],pot}]; 
+			Sow[{data["radius"][[rx]],kl[[kx]],eout,pot}]; 
 		,{kx,1,Length[kl]}] (*close do over ktargets*)
 	,{rx,rstr,rend}] (*close do over r*)
 ][[2,1]];
@@ -305,7 +323,7 @@ Return[evout] (*Close reap over r*)
 
 
 
-GDValue[tm_]:=Block[{cs,rrow,rcol,drow,dcol,mv,reg,\[Epsilon],tms},
+GDValue[tm_]:=Module[{cs,rrow,rcol,drow,dcol,mv,reg,\[Epsilon],tms},
 \[Epsilon]=$MachineEpsilon;
 tms=Expand[(tm/\[Epsilon])];
 cs=Diagonal[tms];
@@ -339,12 +357,24 @@ Reap[
 Return[out] (*Close reap over r*)
 		
 ]
-getIntialGuess[data_,species_]:=Block[{ei,aei,ag,aag,\[Beta]g,a\[Beta]g,a\[Chi]g,\[Chi]g,g0,datasr,foc1234,afoc1234},
+getIntialGuess[data_,species_]:=Module[{ei,aei,ag,aag,\[Beta]g,a\[Beta]g,a\[Chi]g,\[Chi]g,g0,datasr,foc1234,afoc1234,xfoc1234,xag,xei},
 datasr=SelectSingleRadius[data,1];
+
+foc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freq"][[E+1]]+data["freq"][[E]])) (data["freq"][[E+1]]^3-data["freq"][[E]]^3)) )(datasr["lotsodo"][[1,E,1]] 
++ 3 z datasr["lotsodo"][[1,E,2]]+(5/2 (3 (datasr["lotsodo"][[1,E,1]] -datasr["lotsodo"][[1,E,3]] )/2 x^2+3 (datasr["lotsodo"][[1,E,1]] -datasr["lotsodo"][[1,E,3]] )/2 y^2+3 datasr["lotsodo"][[1,E,3]] z^2-datasr["lotsodo"][[1,E,1]])));
+
+afoc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freq"][[E+1]]+data["freq"][[E]])) (data["freq"][[E+1]]^3-data["freq"][[E]]^3)) )(datasr["lotsodo"][[2,E,1]] + 3 z datasr["lotsodo"][[2,E,2]]
++(5/2 (3 (datasr["lotsodo"][[2,E,1]] -datasr["lotsodo"][[2,E,3]] )/2 x^2+3 (datasr["lotsodo"][[2,E,1]] -datasr["lotsodo"][[2,E,3]] )/2 y^2+3 datasr["lotsodo"][[2,E,3]] z^2-datasr["lotsodo"][[2,E,1]] )));
+
+xfoc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freq"][[E+1]]+data["freq"][[E]])) (data["freq"][[E+1]]^3-data["freq"][[E]]^3)) )(0.25 datasr["lotsodo"][[3,E,1]] + 3 z 0.25 datasr["lotsodo"][[3,E,2]]
++(5/2 (3 (0.25 datasr["lotsodo"][[3,E,1]] - 0.25 datasr["lotsodo"][[3,E,3]] )/2 x^2+3 (0.25 datasr["lotsodo"][[3,E,1]] - 0.25 datasr["lotsodo"][[3,E,3]] )/2 y^2+3 0.25 datasr["lotsodo"][[3,E,3]] z^2- 0.25 datasr["lotsodo"][[3,E,1]] )));
+
 ei[m_]:= Sum[1/3 (datasr["freq"][[f+1]]^3-datasr["freq"][[f]]^3)foc1234[Sin[ArcCos[m]],0,m,f],{f,1,80}];
 aei[m_]:= Sum[1/3 (datasr["freq"][[f+1]]^3-datasr["freq"][[f]]^3)afoc1234[Sin[ArcCos[m]],0,m,f],{f,1,80}];
+xei[m_]:= Sum[1/3 (datasr["freq"][[f+1]]^3-datasr["freq"][[f]]^3)xfoc1234[Sin[ArcCos[m]],0,m,f],{f,1,80}];
 ag=1/2 (Abs[ei[1]]+Abs[ei[-1]]);
 aag=1/2 (Abs[aei[1]]+Abs[aei[-1]]);
+xag = 1/2 (Abs[xei[1]]+Abs[xei[-1]]);
 \[Beta]g=0;
 \[Chi]g=-5;
 a\[Beta]g=0;
@@ -352,7 +382,8 @@ a\[Chi]g=-5;
 (*returns the appropriate guesses based on the species*)
 Which[
 species==1, g0={ag,\[Beta]g,\[Chi]g},
-species==2, g0={aag,a\[Beta]g,a\[Chi]g}
+species==2, g0={aag,a\[Beta]g,a\[Chi]g},
+species==3, g0={xag,\[Beta]g,\[Chi]g}
 ];
 Return[g0];
 ]
@@ -387,13 +418,18 @@ aFe=Sum[ datasr["lotsodo"][[2,f,2]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[
 
 aPre=Sum[ datasr["lotsodo"][[2,f,3]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
 br=FindRoot[{2 Pi es1box[a,\[Beta],\[Chi]]-ane,2 Pi es2box[a,\[Beta],\[Chi]]-aFe,2 Pi es3box[a,\[Beta],\[Chi]]-aPre},{{a,g0[[1]]},{\[Beta],g0[[2]]},{\[Chi],g0[[3]]}},Evaluated->False]
-
+,
+species==3,
+ne=Sum[ 0.25 datasr["lotsodo"][[3,f,1]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
+Fe=Sum[ 0.25 datasr["lotsodo"][[3,f,2]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
+Pre=Sum[ 0.25 datasr["lotsodo"][[3,f,3]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
+br=FindRoot[{2 Pi es1box[a,\[Beta],\[Chi]]-ne,2 Pi es2box[a,\[Beta],\[Chi]]-Fe,2 Pi es3box[a,\[Beta],\[Chi]]-Pre},{{a,g0[[1]]},{\[Beta],g0[[2]]},{\[Chi],g0[[3]]}},Evaluated->False]
 ];
 Return[{a/.br,\[Beta]/.br,\[Chi]/.br}]
 ];
 
 
-boxFit[infile_,species_]:=Block[{data,lastguess,ans},
+boxFit[infile_,species_]:=Module[{data,lastguess,ans},
 data=ImportData[infile];
 lastguess={0.,0.,0.};
 fits=Reap[Do[
@@ -416,3 +452,6 @@ EndPackage[]
 
 
 
+
+
+?stabilityMatrix
