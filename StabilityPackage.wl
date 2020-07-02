@@ -299,13 +299,18 @@ Return[kgrid];
 Options[kAdapt]={"xflavor"-> True,"ktarget"-> 0.,"krange"-> {10.^-3,10.},"eigenvectors"-> False};
 kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,OptionsPattern[]]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,eout,pot,S},
 data=ImportData[infile];
+Print["pre-loop"];
 evout=
 Reap[
 	Do[
 		singleRadiusData = SelectSingleRadius[data,rx];
+		Print["single r"];
 		ea=getEquations[singleRadiusData,testE,hi,kvar,"xflavor"-> OptionValue["xflavor"]];
-		S=stabilityMatrix[data,ea,"xflavor"-> OptionValue["xflavor"]];
+		Print["got equations"];
+		S=stabilityMatrix[singleRadiusData,ea,"xflavor"-> OptionValue["xflavor"]];
+		Print["got S"];
 		kl=buildkGrid[singleRadiusData,nstep,"ktarget"-> OptionValue["ktarget"],"krange"-> OptionValue["krange"],"xflavor"-> OptionValue["xflavor"]];
+		Print["loop 1 imports"];
 		Do[
 			If[OptionValue["eigenvectors"],
 			eout=evecscale[kl[[kx]],S,kvar],
@@ -454,4 +459,22 @@ EndPackage[]
 
 
 
-?stabilityMatrix
+dat=SelectSingleRadius[ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\15Msun_100ms_DO.h5"],100];
+
+
+stabilityMatrix[dat,getEquations[dat,20,-1.,10^-17]]//MatrixForm
+
+
+?kAdapt
+
+
+kAdapt["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\15Msun_100ms_DO.h5",99,101,20,-1,30]
+
+
+
+
+
+?buildkGrid
+
+
+buildkGrid[dat,30]
