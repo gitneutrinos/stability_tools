@@ -10,10 +10,12 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
+
 NotebookDataLength[    149728,       3500]
 NotebookOptionsPosition[    147569,       3457]
 NotebookOutlinePosition[    147969,       3473]
 CellTagsIndexPosition[    147926,       3470]
+
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -1961,8 +1963,6 @@ Cell["Checks:", "Subsubsection",
   3.8013144127207947`*^9}},ExpressionUUID->"f0af4d1c-7ee4-454c-ab7b-\
 e2dd47595ba0"],
 
-Cell[CellGroupData[{
-
 Cell[BoxData[
  RowBox[{"\n", 
   RowBox[{
@@ -2719,7 +2719,12 @@ Cell[BoxData[
         RowBox[{"(*", 
          RowBox[{
           RowBox[{"MeV", " ", "input"}], ",", " ", 
-          RowBox[{"output", " ", "in", " ", "ergs"}]}], "*)"}], "\n", 
+          RowBox[{"output", " ", "in", " ", "ergs"}]}], "*)"}], " ", 
+        RowBox[{"(*", 
+         RowBox[{
+         "This", " ", "is", " ", "the", " ", "energy", " ", "in", " ", "MeV", 
+          " ", "that", " ", "gives", " ", "a", " ", "vacuum", " ", 
+          "frequency", " ", "of", " ", "0.1"}], " ", "*)"}], "\n", 
         RowBox[{"S2ba", "=", 
          RowBox[{"stabilityMatrix", "[", 
           RowBox[{
@@ -2797,7 +2802,12 @@ Cell[BoxData[
        SuperscriptBox["10", 
         RowBox[{"-", "3"}]]}], "\[IndentingNewLine]", ",", 
       RowBox[{"TestID", "\[Rule]", " ", "\"\<2 Beam Growth Rate\>\""}]}], 
-     "]"}]}], "\n", "\n"}]}]], "Code",
+     "]"}]}], "\n", 
+   RowBox[{"(*", 
+    RowBox[{"The", " ", "hard", " ", "coded", " ", "number", " ", "2", " ", 
+     RowBox[{"10", " ", "^", "21"}], " ", "is", " ", "the", " ", 
+     "\"\<common factor\>\"", " ", "chakraborty", " ", "calls", " ", "\[Mu]", 
+     " ", "for", " ", "this", " ", "matrix"}], " ", "*)"}], "\n"}]}]], "Code",
  CellChangeTimes->{{3.80028160423571*^9, 3.8002816047648273`*^9}, 
    3.800284555211878*^9, 3.800614819183078*^9, {3.80061504795415*^9, 
    3.800615048204206*^9}, {3.8006235010533705`*^9, 3.80062350957418*^9}, {
@@ -2823,6 +2833,7 @@ Cell[BoxData[
    3.801824031878535*^9, 3.801824034475089*^9}, {3.8018241142721415`*^9, 
    3.8018241166156416`*^9}, {3.801825387847642*^9, 3.801825389583007*^9}, {
    3.8018260496160307`*^9, 3.801826056127421*^9}, 3.801827258059784*^9, {
+
    3.802687362795643*^9, 3.802687379531231*^9}},
  CellLabel->"In[27]:=",ExpressionUUID->"03ce031f-4669-4bca-9be0-24e3076301b2"],
 
@@ -3061,6 +3072,7 @@ JbY2MZNUgf3Zel+j//dHzXMjXeOI/wXkNyWQ
        0.}}}}]]], "Output",
  CellChangeTimes->{{3.802687407886407*^9, 3.8026874192028866`*^9}},
  CellLabel->"Out[29]=",ExpressionUUID->"4a7342b7-92b0-439c-ba2d-d517025f4f26"],
+
 
 Cell[BoxData[
  InterpretationBox[
@@ -3456,7 +3468,9 @@ Cell[BoxData[
 }, Closed]]
 },
 WindowSize->{1920, 997},
+
 WindowMargins->{{-8, Automatic}, {Automatic, -8}},
+
 FrontEndVersion->"12.1 for Microsoft Windows (64-bit) (March 18, 2020)",
 StyleDefinitions->"Default.nb",
 ExpressionUUID->"f56712fa-03f2-4ec6-a2fa-16ad4c94a45f"
@@ -3479,6 +3493,7 @@ Cell[4753, 123, 329, 7, 64, "Input",ExpressionUUID->"bdb6e7cd-c239-47d9-b167-de1
  InitializationCell->True],
 Cell[5085, 132, 243, 3, 32, "Output",ExpressionUUID->"f87d5745-1387-4fb7-b797-d7a30f7b5dd9"]
 }, Open  ]],
+
 Cell[CellGroupData[{
 Cell[5365, 140, 324, 5, 67, "Input",ExpressionUUID->"bdd8f3fb-c826-41e0-b21f-cb454beab10c"],
 Cell[5692, 147, 20332, 455, 93, "Output",ExpressionUUID->"58dae729-40ee-4b97-8053-12743b10e800"],
@@ -3500,6 +3515,7 @@ Cell[130594, 3064, 9009, 190, 69, "Output",ExpressionUUID->"10533b92-b5d8-478f-8
 Cell[CellGroupData[{
 Cell[139652, 3260, 167, 3, 67, "Section",ExpressionUUID->"778aca77-84ec-42b0-a8fa-8f72e30637b7"],
 Cell[139822, 3265, 7731, 189, 512, "Input",ExpressionUUID->"e6cd1b60-7959-440e-bb2d-f6c8db8172c3",
+
  InitializationCell->True]
 }, Closed]]
 }

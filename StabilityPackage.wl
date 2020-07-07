@@ -78,8 +78,10 @@ Association[
 ];
 
 
+
 SelectSingleRadius[data_,ri_]:=
 Association[
+
 "lotsodo"->data["lotsodo"][[ri]] (*distribution functions*),
 "matters"->data["matters"][[ri]], (*densities*)
 "Yes"->data["Yes"][[ri]], (*electron fractions *)
@@ -90,11 +92,9 @@ Association[
 ];
 
 
-
-
-
 Options[ndensities]={"xflavor"-> True};
 ndensities[data_,OptionsPattern[]]:=Module[{n,nudensity,nubardensity,nuxdensity,\[Mu],\[Mu]b,\[Mu]x},
+
 n=Length[data["mids"]];
 
 nudensity[dt_]:= Sum[Sum[data["lotsodo"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
@@ -119,10 +119,12 @@ Options[siPotential]={"xflavor"-> True};
 siPotential[data_,OptionsPattern[]]:=Module[{tot,m},
 m=ndensities[data,"xflavor"-> OptionValue["xflavor"]];
 tot=(Tr[m[[1]]]+Tr[m[[2]]]+2 Tr[m[[3]]]);
+
 Return[tot]
 ]
 
 (*This function finds the asymetry factor between the electron (anti)neutrinos and the x (anti)neutrinos *)
+
 Options[Bfactor]={"xflavor"-> True};
 Bfactor[data_,OptionsPattern[]]:=Module[{B,Bb,m},
 m=ndensities[data,"xflavor"-> OptionValue["xflavor"]];
@@ -139,6 +141,7 @@ Returns 9 arguments with index,
 2,4,6,8 = Hb,\[Rho]b,Ab,\[Delta]Hb
 9=HsiRadial
 *)
+
 Options[buildHamiltonians]={"xflavor"-> True};
 buildHamiltonians[data_,testE_,hi_,OptionsPattern[]]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,\[Mu]x,m,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,Ve,\[Omega]},(
 
@@ -191,7 +194,9 @@ Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb}]
  2,4 = Antineutrino equations of motion, Ab
  5=HsiRadial
  *)
+
 Options[getEquations]={"xflavor"-> True};
+
 getEquations[data_,testE_,hi_,k_,OptionsPattern[]]:=Module[{n,\[Theta],eqn,eqnb,hs},
 hs=buildHamiltonians[data,testE,hi,"xflavor"-> OptionValue["xflavor"]];
 n=Length[data["mids"]];
@@ -212,6 +217,7 @@ Return[{eqn,eqnb,A,Ab}]
 
 
 (*Substitution rules to change "named" density matrix components with initial flavor state*)
+
 Options[rules]={"xflavor"-> True}; (*this is not needed as b will come back 0. if no x, and no option is needed noir is the data*)
 rules[data_,OptionsPattern[]]:=Module[{r1,r2,r3,r4,rb1,rb2,rb3,rb4,rrules,n,B,Bb},
 n=Length[data["mids"]];
@@ -296,15 +302,19 @@ Return[kgrid];
 
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
+
 Options[kAdapt]={"xflavor"-> True,"ktarget"-> 0.,"krange"-> {10.^-3,10.},"eigenvectors"-> False};
 kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,OptionsPattern[]]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,eout,pot,S},
+
 data=ImportData[infile];
 evout=
 Reap[
 	Do[
 		singleRadiusData = SelectSingleRadius[data,rx];
 		ea=getEquations[singleRadiusData,testE,hi,kvar,"xflavor"-> OptionValue["xflavor"]];
+
 		S=stabilityMatrix[singleRadiusData,ea,"xflavor"-> OptionValue["xflavor"]];
+
 		kl=buildkGrid[singleRadiusData,nstep,"ktarget"-> OptionValue["ktarget"],"krange"-> OptionValue["krange"],"xflavor"-> OptionValue["xflavor"]];
 		Do[
 			If[OptionValue["eigenvectors"],
@@ -357,6 +367,7 @@ Reap[
 Return[out] (*Close reap over r*)
 		
 ]
+
 getIntialGuess[data_,species_]:=Module[{ei,aei,ag,aag,\[Beta]g,a\[Beta]g,a\[Chi]g,\[Chi]g,g0,datasr,foc1234,afoc1234,xfoc1234,xag,xei},
 datasr=SelectSingleRadius[data,1];
 
@@ -368,6 +379,7 @@ afoc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freq"][[E+1]]+data["freq"][[
 
 xfoc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freq"][[E+1]]+data["freq"][[E]])) (data["freq"][[E+1]]^3-data["freq"][[E]]^3)) )(0.25 datasr["lotsodo"][[3,E,1]] + 3 z 0.25 datasr["lotsodo"][[3,E,2]]
 +(5/2 (3 (0.25 datasr["lotsodo"][[3,E,1]] - 0.25 datasr["lotsodo"][[3,E,3]] )/2 x^2+3 (0.25 datasr["lotsodo"][[3,E,1]] - 0.25 datasr["lotsodo"][[3,E,3]] )/2 y^2+3 0.25 datasr["lotsodo"][[3,E,3]] z^2- 0.25 datasr["lotsodo"][[3,E,1]] )));
+
 
 ei[m_]:= Sum[1/3 (datasr["freq"][[f+1]]^3-datasr["freq"][[f]]^3)foc1234[Sin[ArcCos[m]],0,m,f],{f,1,80}];
 aei[m_]:= Sum[1/3 (datasr["freq"][[f+1]]^3-datasr["freq"][[f]]^3)afoc1234[Sin[ArcCos[m]],0,m,f],{f,1,80}];
@@ -382,8 +394,10 @@ a\[Chi]g=-5;
 (*returns the appropriate guesses based on the species*)
 Which[
 species==1, g0={ag,\[Beta]g,\[Chi]g},
+
 species==2, g0={aag,a\[Beta]g,a\[Chi]g},
 species==3, g0={xag,\[Beta]g,\[Chi]g}
+
 ];
 Return[g0];
 ]

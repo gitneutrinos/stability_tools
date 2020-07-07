@@ -137,7 +137,7 @@ evtest=Eigenvalues[build2bMatrix[]/.{a-> 0.1}][[2]];
 vt=VerificationTest[
 Abs[Im[\[CapitalOmega]ch[0.,N[2.0929595558280123`*^-21/2],0.1,0.1]]]-Abs[Im[evtest]]<10^-3
 ,TestID-> "2 Beam Growth Rate"]
-
+(*The hard coded number 2 10 ^21 is the "common factor" chakraborty calls \[Mu] for this matrix *)
 
 
 
