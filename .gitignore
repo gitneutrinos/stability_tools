@@ -3,3 +3,5 @@ RunStuffTrial1.nb
 RunStuffTrial1.m
 RunStuffTrial2.m
 RunStuffTrial2.nb
+*.nb
+RunStuffTrial3(xflavor).m
