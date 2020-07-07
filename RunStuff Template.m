@@ -126,8 +126,8 @@ data2b=
 ]
 ];
 build2bMatrix[]:=Block[{fakeEn,S2ba,S2b},
-fakeEn=6.080273099999999`*^-22; (*MeV input, output in ergs*) (*This is the energy in MeV that gives a vacuum frequency of 0.1 *)
-S2ba=stabilityMatrix[get2bdata[],getEquations[get2bdata[],fakeEn,-1,0.]];
+fakeEn=6.080273099999999`*^-22; (*MeV input, output in ergs*)
+S2ba=stabilityMatrix[get2bdata[],getEquations[get2bdata[],fakeEn,-1,0.,"xflavor"-> False],"xflavor"-> False];
 S2b={{S2ba[[1,1]],S2ba[[1,4]]},{S2ba[[4,1]],S2ba[[4,4]]}};
 Return[S2b]
 ];
