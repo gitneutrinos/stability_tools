@@ -38,6 +38,10 @@ evecscale::usage =
 "finds eigenvectors while scaling the matrix to reasonable numbers"
 ndensities::usage = 
 "finds the neutrino number densities for a species, and returns the matrix of densities in an angular bin"
+dispersionCheck::usage=
+"check if the dispersion relation holds"
+esysscale::usage=
+"returns the real and imaginary parts of eigenvalues and associated eigenvectors"
 
 
 
@@ -282,6 +286,14 @@ as= \[Epsilon] Eigenvectors[N[As]/.kxs->kx0s];
 Return[as]
 ];
 
+esysscale[ktest_,S_,kx_]:=Module[{\[Epsilon],As,kx0s,as,kxs,evecs,evals},
+\[Epsilon]=$MachineEpsilon/2;
+As=Expand[(S/\[Epsilon])/.kx->\[Epsilon] kxs];
+kx0s=ktest/\[Epsilon];
+{evals,evecs}=\[Epsilon] Eigensystem[N[As]/.kxs-> kx0s];
+Return[{Re[evals],Im[evals],evecs}]
+];
+
 
 (*Constructs a nstep sized log spaced k grid based on the target k associated with the infile at radial bin r.  Currently the limits are 2 orders of magnitude above and below the target value, ignoring negatives for the moment *)
 
@@ -301,6 +313,9 @@ Return[kgrid];
 
 
 
+eigenSystemSorter[]
+
+
 (*Run buildkGrid and SCalcScale for several radial bins.*)
 
 Options[kAdapt]={"xflavor"-> True,"ktarget"-> 0.,"krange"-> {10.^-3,10.},"eigenvectors"-> False};
@@ -318,7 +333,7 @@ Reap[
 		kl=buildkGrid[singleRadiusData,nstep,"ktarget"-> OptionValue["ktarget"],"krange"-> OptionValue["krange"],"xflavor"-> OptionValue["xflavor"]];
 		Do[
 			If[OptionValue["eigenvectors"],
-			eout=evecscale[kl[[kx]],S,kvar],
+			eout=esysscale[kl[[kx]],S,kvar],
 			eout=Sort[Im[evscale[kl[[kx]],S,kvar]],Greater][[1]]
 			];
 			pot=siPotential[singleRadiusData,"xflavor"-> OptionValue["xflavor"]];
@@ -326,6 +341,7 @@ Reap[
 		,{kx,1,Length[kl]}] (*close do over ktargets*)
 	,{rx,rstr,rend}] (*close do over r*)
 ][[2,1]];
+
 Return[evout] (*Close reap over r*)
 ]; (*close module*)
 
@@ -371,38 +387,20 @@ Return[out] (*Close reap over r*)
 getIntialGuess[data_,species_]:=Module[{ei,aei,ag,aag,\[Beta]g,a\[Beta]g,a\[Chi]g,\[Chi]g,g0,datasr,foc1234,afoc1234,xfoc1234,xag,xei},
 datasr=SelectSingleRadius[data,1];
 
-foc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freq"][[E+1]]+data["freq"][[E]])) (data["freq"][[E+1]]^3-data["freq"][[E]]^3)) )(datasr["lotsodo"][[1,E,1]] 
-+ 3 z datasr["lotsodo"][[1,E,2]]+(5/2 (3 (datasr["lotsodo"][[1,E,1]] -datasr["lotsodo"][[1,E,3]] )/2 x^2+3 (datasr["lotsodo"][[1,E,1]] -datasr["lotsodo"][[1,E,3]] )/2 y^2+3 datasr["lotsodo"][[1,E,3]] z^2-datasr["lotsodo"][[1,E,1]])));
-
-afoc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freq"][[E+1]]+data["freq"][[E]])) (data["freq"][[E+1]]^3-data["freq"][[E]]^3)) )(datasr["lotsodo"][[2,E,1]] + 3 z datasr["lotsodo"][[2,E,2]]
-+(5/2 (3 (datasr["lotsodo"][[2,E,1]] -datasr["lotsodo"][[2,E,3]] )/2 x^2+3 (datasr["lotsodo"][[2,E,1]] -datasr["lotsodo"][[2,E,3]] )/2 y^2+3 datasr["lotsodo"][[2,E,3]] z^2-datasr["lotsodo"][[2,E,1]] )));
-
-xfoc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freq"][[E+1]]+data["freq"][[E]])) (data["freq"][[E+1]]^3-data["freq"][[E]]^3)) )(0.25 datasr["lotsodo"][[3,E,1]] + 3 z 0.25 datasr["lotsodo"][[3,E,2]]
-+(5/2 (3 (0.25 datasr["lotsodo"][[3,E,1]] - 0.25 datasr["lotsodo"][[3,E,3]] )/2 x^2+3 (0.25 datasr["lotsodo"][[3,E,1]] - 0.25 datasr["lotsodo"][[3,E,3]] )/2 y^2+3 0.25 datasr["lotsodo"][[3,E,3]] z^2- 0.25 datasr["lotsodo"][[3,E,1]] )));
-
+foc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freq"][[E+1]]+data["freq"][[E]])) (data["freq"][[E+1]]^3-data["freq"][[E]]^3)) )(datasr["lotsodo"][[species,E,1]] 
++ 3 z datasr["lotsodo"][[1,E,2]]+(5/2 (3 (datasr["lotsodo"][[1,E,1]] -datasr["lotsodo"][[species,E,3]] )/2 x^2+3 (datasr["lotsodo"][[species,E,1]] -datasr["lotsodo"][[species,E,3]] )/2 y^2+3 datasr["lotsodo"][[species,E,3]] z^2-datasr["lotsodo"][[species,E,1]])));
 
 ei[m_]:= Sum[1/3 (datasr["freq"][[f+1]]^3-datasr["freq"][[f]]^3)foc1234[Sin[ArcCos[m]],0,m,f],{f,1,80}];
-aei[m_]:= Sum[1/3 (datasr["freq"][[f+1]]^3-datasr["freq"][[f]]^3)afoc1234[Sin[ArcCos[m]],0,m,f],{f,1,80}];
-xei[m_]:= Sum[1/3 (datasr["freq"][[f+1]]^3-datasr["freq"][[f]]^3)xfoc1234[Sin[ArcCos[m]],0,m,f],{f,1,80}];
-ag=1/2 (Abs[ei[1]]+Abs[ei[-1]]);
-aag=1/2 (Abs[aei[1]]+Abs[aei[-1]]);
-xag = 1/2 (Abs[xei[1]]+Abs[xei[-1]]);
-\[Beta]g=0;
-\[Chi]g=-5;
-a\[Beta]g=0;
-a\[Chi]g=-5;
-(*returns the appropriate guesses based on the species*)
-Which[
-species==1, g0={ag,\[Beta]g,\[Chi]g},
 
-species==2, g0={aag,a\[Beta]g,a\[Chi]g},
-species==3, g0={xag,\[Beta]g,\[Chi]g}
+ag=0.5(Abs[ei[1]]+Abs[ei[-1]]);
+\[Beta]g=0.;
+\[Chi]g=-5.;
 
-];
-Return[g0];
+Return[{ag,\[Beta]g,\[Chi]g}]
 ]
 
-eBoxFitSingleRadius[data_,ri_,species_,guesses_]:=Module[{ebox,es1box,es2box,es3box,ne,Fe,Pre,ane,aFe,aPre,datasr,br,g0},
+
+eBoxFitSingleRadius[data_,ri_,species_,guesses_]:=Module[{ebox,es1box,es2box,es3box,ne,Fe,Pre,ane,aFe,aPre,datasr,br,g0,moments,esbox},
 datasr=SelectSingleRadius[data,ri];
 (*If this is the first radial bin, generates intial guesses based on the expansion reconstruction of the distribution function for a. \[Beta] and \[Chi] are set to intial guesses based on previous experience.*)
 If[
@@ -418,27 +416,12 @@ es1box[a_,\[Beta]_,\[Chi]_]:=1/c^3 NIntegrate[ebox[a,\[Beta],\[Chi],m],{m,-1.,1.
 es2box[a_,\[Beta]_,\[Chi]_]:=1/c^3 NIntegrate[m ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->13];
 es3box[a_,\[Beta]_,\[Chi]_]:=1/c^3 NIntegrate[ m^2 ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->13];
 
-Which[
-species==1,
-ne=Sum[ datasr["lotsodo"][[1,f,1]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
-Fe=Sum[ datasr["lotsodo"][[1,f,2]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
-Pre=Sum[ datasr["lotsodo"][[1,f,3]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
-br=FindRoot[{2 Pi es1box[a,\[Beta],\[Chi]]-ne,2 Pi es2box[a,\[Beta],\[Chi]]-Fe,2 Pi es3box[a,\[Beta],\[Chi]]-Pre},{{a,g0[[1]]},{\[Beta],g0[[2]]},{\[Chi],g0[[3]]}},Evaluated->False]
-,
-species==2,
-ane=Sum[ datasr["lotsodo"][[2,f,1]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
+esbox[a_,\[Beta]_,\[Chi]_,mom_]:=1/c^3 NIntegrate[m^(mom-1) ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->13];
 
-aFe=Sum[ datasr["lotsodo"][[2,f,2]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
+moments[mom_]:=Sum[ datasr["lotsodo"][[species,f,mom]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
 
-aPre=Sum[ datasr["lotsodo"][[2,f,3]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
-br=FindRoot[{2 Pi es1box[a,\[Beta],\[Chi]]-ane,2 Pi es2box[a,\[Beta],\[Chi]]-aFe,2 Pi es3box[a,\[Beta],\[Chi]]-aPre},{{a,g0[[1]]},{\[Beta],g0[[2]]},{\[Chi],g0[[3]]}},Evaluated->False]
-,
-species==3,
-ne=Sum[ 0.25 datasr["lotsodo"][[3,f,1]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
-Fe=Sum[ 0.25 datasr["lotsodo"][[3,f,2]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
-Pre=Sum[ 0.25 datasr["lotsodo"][[3,f,3]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
-br=FindRoot[{2 Pi es1box[a,\[Beta],\[Chi]]-ne,2 Pi es2box[a,\[Beta],\[Chi]]-Fe,2 Pi es3box[a,\[Beta],\[Chi]]-Pre},{{a,g0[[1]]},{\[Beta],g0[[2]]},{\[Chi],g0[[3]]}},Evaluated->False]
-];
+br=FindRoot[{2 Pi esbox[a,\[Beta],\[Chi],1]-moments[1],2 Pi esbox[a,\[Beta],\[Chi],2]-moments[2],2 Pi esbox[a,\[Beta],\[Chi],3]-moments[3]},{{a,g0[[1]]},{\[Beta],g0[[2]]},{\[Chi],g0[[3]]}},Evaluated->False];
+
 Return[{a/.br,\[Beta]/.br,\[Chi]/.br}]
 ];
 
@@ -453,6 +436,31 @@ lastguess=ans
 ,{r,1,384}]][[2,1]];
 Return[fits]
 ]
+
+
+dispersionCheck[data_,\[CapitalOmega]_,k_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,check,Idis},
+\[Theta]=data["mids"];
+
+(*Defined in Gail's Blue equation 30 and 31 *)
+\[Phi]0=Sum[ndensities[data,"xflavor"-> False][[1,i,i]]-ndensities[data,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
+\[Phi]1=Sum[(ndensities[data,"xflavor"-> False][[1,i,i]]-ndensities[data,"xflavor"-> False][[2,i,i]])\[Theta][[i]],{i,1,Length[\[Theta]]}];
+
+(* "Shifted" Eigenvalue and k*)
+\[CapitalOmega]p=N[\[CapitalOmega]-((munits/mp) *data["Yes"] *data["matters"])-\[Phi]0];
+kp=k-\[Phi]1;
+
+(*Definition of I from Gail's equation (41)*)
+Idis[n_]:=Sum[((ndensities[data,"xflavor"-> False][[1]][[i,i]]-ndensities[data,"xflavor"-> False][[2]][[i,i]])/(\[CapitalOmega]p-(kp \[Theta][[i]]))) \[Theta][[i]]^n,{i,1,10}];
+
+(*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
+
+check=(Idis[0]+1)(Idis[2]-1)-(Idis[1] Conjugate[Idis[1]]);
+
+Return[{check,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,Idis[0],Idis[1],Idis[2]}]
+];
+
+
+
 
 
 End[]
