@@ -107,7 +107,7 @@ ListLogPlot[{Transpose@{kdebug[[All,2]],kdebug[[All,3]]},OldData},ImageSize-> Sc
 
 
 (*2x2 matrix check*)
-get2bdata[]:=Block[{S2ba,S2b,data2b,fakeEn,c,h,hbar,Gf,everg,Geverg,munits},
+get2bdata[]:=Module[{S2ba,S2b,data2b,fakeEn,c,h,hbar,Gf,everg,Geverg,munits},
 c=2.99792458 10^10; (* cm/s*)
 h=6.6260755 10^-27; (*erg s*)
 hbar = h/(2 Pi); (*erg s*)
@@ -128,14 +128,14 @@ data2b=
 ]
 ];
 
-build2bMatrix[]:=Block[{fakeEn,S2ba,S2b},
+build2bMatrix[]:=Module[{fakeEn,S2ba,S2b},
 fakeEn=10^9; (*MeV input, output in ergs*)
 S2ba=stabilityMatrix[get2bdata[],getEquations[get2bdata[],Infinity,-1.,2.,"xflavor"-> False],"xflavor"-> False];
 S2b={{S2ba[[1,1]],S2ba[[1,4]]},{S2ba[[4,1]],S2ba[[4,4]]}};
 Return[S2b]
 ];
 
-build4bMatrix[]:=Block[{fakeEn,S2ba,S2b},
+build4bMatrix[]:=Module[{fakeEn,S2ba,S2b},
 fakeEn=10^9; (*MeV input, output in ergs*)
 S2ba=stabilityMatrix[get2bdata[],getEquations[get2bdata[],Infinity,-1.,0,"xflavor"-> False],"xflavor"-> False];
 S2b={{S2ba[[1,1]],S2ba[[1,4]]},{S2ba[[4,1]],S2ba[[4,4]]}};
