@@ -71,7 +71,7 @@ Com[A_,B_]:=Module[{a=A,b=B},Return[A.B-B.A]];
 
 ImportData[infile_]:=
 Association[
-"lotsodo"->Import[infile,{"Data","distribution(erg|ccm,lab)"}] (*distribution functions*),
+"Endensity"->Import[infile,{"Data","distribution(erg|ccm,lab)"}] (*distribution functions*),
 "matters"->Import[infile,{"Data","rho(g|ccm,com)"}], (*densities*)
 "Yes"->Import[infile,{"Data","Ye"}], (*electron fractions *)
 "freqs"->Import[infile,{"Data", "distribution_frequency_grid(Hz,lab)"}], (*freq grid in hz*)
@@ -86,7 +86,7 @@ Association[
 SelectSingleRadius[data_,ri_]:=
 Association[
 
-"lotsodo"->data["lotsodo"][[ri]] (*distribution functions*),
+"Endensity"->data["Endensity"][[ri]] (*distribution functions*),
 "matters"->data["matters"][[ri]], (*densities*)
 "Yes"->data["Yes"][[ri]], (*electron fractions *)
 "freqs"->data["freqs"], (*freq grid in hz*)
@@ -101,11 +101,11 @@ ndensities[data_,OptionsPattern[]]:=Module[{n,nudensity,nubardensity,nuxdensity,
 
 n=Length[data["mids"]];
 
-nudensity[dt_]:= Sum[Sum[data["lotsodo"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
-nubardensity[dt_]:= Sum[Sum[data["lotsodo"][[2,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
+nudensity[dt_]:= Sum[Sum[data["Endensity"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
+nubardensity[dt_]:= Sum[Sum[data["Endensity"][[2,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
 
 If[OptionValue["xflavor"],
-nuxdensity[dt_]:= Sum[Sum[0.25 data["lotsodo"][[3,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}]
+nuxdensity[dt_]:= Sum[Sum[0.25 data["Endensity"][[3,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}]
 ,
 nuxdensity[dt_]:=0.
 ];
@@ -384,8 +384,8 @@ Return[out] (*Close reap over r*)
 getIntialGuess[data_,species_]:=Module[{ei,aei,ag,aag,\[Beta]g,a\[Beta]g,a\[Chi]g,\[Chi]g,g0,datasr,foc1234,afoc1234,xfoc1234,xag,xei},
 datasr=SelectSingleRadius[data,1];
 
-foc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freq"][[E+1]]+data["freq"][[E]])) (data["freq"][[E+1]]^3-data["freq"][[E]]^3)) )(datasr["lotsodo"][[species,E,1]] 
-+ 3 z datasr["lotsodo"][[1,E,2]]+(5/2 (3 (datasr["lotsodo"][[1,E,1]] -datasr["lotsodo"][[species,E,3]] )/2 x^2+3 (datasr["lotsodo"][[species,E,1]] -datasr["lotsodo"][[species,E,3]] )/2 y^2+3 datasr["lotsodo"][[species,E,3]] z^2-datasr["lotsodo"][[species,E,1]])));
+foc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freq"][[E+1]]+data["freq"][[E]])) (data["freq"][[E+1]]^3-data["freq"][[E]]^3)) )(datasr["Endensity"][[species,E,1]] 
++ 3 z datasr["Endensity"][[1,E,2]]+(5/2 (3 (datasr["Endensity"][[1,E,1]] -datasr["Endensity"][[species,E,3]] )/2 x^2+3 (datasr["Endensity"][[species,E,1]] -datasr["Endensity"][[species,E,3]] )/2 y^2+3 datasr["Endensity"][[species,E,3]] z^2-datasr["Endensity"][[species,E,1]])));
 
 ei[m_]:= Sum[1/3 (datasr["freq"][[f+1]]^3-datasr["freq"][[f]]^3)foc1234[Sin[ArcCos[m]],0,m,f],{f,1,80}];
 
@@ -413,7 +413,7 @@ ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) 
 
 esbox[a_,\[Beta]_,\[Chi]_,mom_]:=1/c^3 NIntegrate[m^(mom-1) ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->13];
 
-moments[mom_]:=Sum[ datasr["lotsodo"][[species,f,mom]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
+moments[mom_]:=Sum[ datasr["Endensity"][[species,f,mom]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
 
 br=FindRoot[{2 Pi esbox[a,\[Beta],\[Chi],1]-moments[1],2 Pi esbox[a,\[Beta],\[Chi],2]-moments[2],2 Pi esbox[a,\[Beta],\[Chi],3]-moments[3]},{{a,g0[[1]]},{\[Beta],g0[[2]]},{\[Chi],g0[[3]]}},Evaluated->False];
 
