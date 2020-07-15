@@ -52,6 +52,8 @@ outfolder = outpath<>filename;
 <<"StabilityPackage`"
 
 
+(*Test on kAdapt. Comparing to old data (below). Generates a plot which should look similar (different exact k values tested*)
+
 OldData={{2.61019*10^-17, 1.12835*10^-18}, {2.8674*10^-17, 
   7.11518*10^-19}, {3.14996*10^-17, 1.13532*10^-21}, {3.46036*10^-17, 
   1.12664*10^-21}, {3.80135*10^-17, 1.11669*10^-21}, {4.17594*10^-17, 
@@ -107,6 +109,8 @@ ListLogPlot[{Transpose@{kdebug[[All,2]],kdebug[[All,3]]},OldData},ImageSize-> Sc
 
 
 (*2x2 matrix check*)
+
+(*Artifical data set which defines 2 beams only, with 2 angular bins, and have chakraborty asymmetry parameters "a" *)
 get2bdata[]:=Module[{S2ba,S2b,data2b,fakeEn,c,h,hbar,Gf,everg,Geverg,munits},
 c=2.99792458 10^10; (* cm/s*)
 h=6.6260755 10^-27; (*erg s*)
@@ -128,6 +132,7 @@ data2b=
 ]
 ];
 
+(*builds a 4x4 matrix with the two beam data, then reduces the size of the matrix *)
 build2bMatrix[]:=Module[{fakeEn,S2ba,S2b},
 fakeEn=10^9; (*MeV input, output in ergs*)
 S2ba=stabilityMatrix[get2bdata[],getEquations[get2bdata[],Infinity,-1.,2.,"xflavor"-> False],"xflavor"-> False];
@@ -135,6 +140,7 @@ S2b={{S2ba[[1,1]],S2ba[[1,4]]},{S2ba[[4,1]],S2ba[[4,4]]}};
 Return[S2b]
 ];
 
+(* the full 4x4 matrix*)
 build4bMatrix[]:=Module[{fakeEn,S2ba,S2b},
 fakeEn=10^9; (*MeV input, output in ergs*)
 S2ba=stabilityMatrix[get2bdata[],getEquations[get2bdata[],Infinity,-1.,0,"xflavor"-> False],"xflavor"-> False];
@@ -142,29 +148,11 @@ S2b={{S2ba[[1,1]],S2ba[[1,4]]},{S2ba[[4,1]],S2ba[[4,4]]}};
 Return[S2ba]
 ];
 
+(*Chakraborty's analytic expression for the 2x2 case, and a verification test that they're the same within one part in 1000*)
 \[CapitalOmega]ch[k_,\[Mu]ch_,a_,\[Omega]_]=2 a \[Mu]ch+Sqrt[(2 a \[Mu]ch)^2+(\[Omega]+k)((\[Omega]+k)-4 \[Mu]ch)];
 evtest=Eigenvalues[build2bMatrix[]/.{a-> 0.1}][[2]];
 vt=VerificationTest[
 Abs[Im[\[CapitalOmega]ch[0.,m,0.1,0.1]]]-Abs[Im[evtest]]<10^-3
 ,TestID-> "2 Beam Growth Rate"]
 (*The hard coded number 2 10 ^21 is the "common factor" chakraborty calls \[Mu] for this matrix *)
-
-
-
-tester[]:=Module[{c,h,hbar,Gf,everg,ergev,mp,munits,Geverg,Meverg,ergmev,\[CapitalDelta]m12sq},
-c=2.99792458 10^10; (* cm/s*)
-h=6.6260755 10^-27; (*erg s*)
-hbar = h/(2 Pi); (*erg s*)
-Gf=1.1663787 10^-5; (*GeV^-2*)
-everg=1.60218 10^-12; (* convert eV to ergs*)
-Geverg = everg*10^9; (* convert GeV to ergs *)
-Meverg = everg*10^6; (*convert Mev to erg*) 
-ergev=1.0/everg; (*convert ergs to eV*)
-ergmev=ergev/10^6; (*convert erg to MeV*)
-mp=1.6726219 10^-24; (*Proton mass in g*) 
-munits=Sqrt[2] (Gf/Geverg^2 )(hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
-\[CapitalDelta]m12sq=(7.59 10^-5) everg^2;
-\[Omega]EMev[En_]:=(\[CapitalDelta]m12sq)/(2 (En Meverg));
-Return[\[Omega]EMev[Infinity]]
-]
 
