@@ -45,21 +45,24 @@ esysscale::usage=
 
 
 
+
+c=2.99792458 10^10; (* cm/s*)
+h=6.6260755 10^-27; (*erg s*)
+hbar =h/(2 Pi); (*erg s*)
+Gf=1.1663787 10^-5; (*GeV^-2*)
+everg=1.60218 10^-12; (* convert eV to ergs*)
+Geverg = everg*10^9; (* convert GeV to ergs *)
+Meverg = everg*10^6; (*convert Mev to erg*) 
+ergev=1.0/everg; (*convert ergs to eV*)
+ergmev=ergev/10^6; (*convert erg to MeV*)
+mp=1.6726219 10^-24; (*Proton mass in g*) 
+munits=Sqrt[2] (Gf/Geverg^2 )(hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
+\[CapitalDelta]m12sq=(7.59 10^-5) everg^2;
+\[Omega]EMev[En_]:=(\[CapitalDelta]m12sq)/(2 (En Meverg));
+
 Begin["`Private`"]
 
-Global`c=2.99792458 10^10; (* cm/s*)
-Global`h=6.6260755 10^-27; (*erg s*)
-Global`hbar = h/(2 Pi); (*erg s*)
-Global`Gf=1.1663787 10^-5; (*GeV^-2*)
-Global`everg=1.60218 10^-12; (* convert eV to ergs*)
-Global`Geverg = everg*10^9; (* convert GeV to ergs *)
-Global`Meverg = everg*10^6; (*convert Mev to erg*) 
-Global`ergev=1.0/everg; (*convert ergs to eV*)
-Global`ergmev=ergev/10^6; (*convert erg to MeV*)
-Global`mp=1.6726219 10^-24; (*Proton mass in g*) 
-Global`munits=Sqrt[2] (Gf/Geverg^2 )(hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
-Global`\[CapitalDelta]m12sq=(7.59 10^-5) everg^2;
-\[Omega]EMev[En_]:=(\[CapitalDelta]m12sq)/(2 (En Meverg));
+
 Com[A_,B_]:=Module[{a=A,b=B},Return[A.B-B.A]];
 
 
@@ -85,7 +88,6 @@ Association[
 
 SelectSingleRadius[data_,ri_]:=
 Association[
-
 "Endensity"->data["Endensity"][[ri]] (*distribution functions*),
 "matters"->data["matters"][[ri]], (*densities*)
 "Yes"->data["Yes"][[ri]], (*electron fractions *)
