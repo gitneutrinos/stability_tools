@@ -99,7 +99,7 @@ kdebug=Block[{data,ri=200,testE=20,hi=-1,k=0,kvar},
 file=inpath<>"1D_withV_withPairBrems_DO.h5";
 (*SCalcScale[ImportData[inpath<>file<>".h5"],ri,testE,hi,0][[3]]//MatrixForm*)
 (*buildkGrid[ImportData[inpath<>file<>".h5"],ri,testE,hi,40]*)
-kAdapt[file,ri,ri,testE,hi,10]
+kAdapt[file,ri,ri,testE,hi,10,"xflavor"-> False]
 ];
 ListLogPlot[{Transpose@{kdebug[[All,2]],kdebug[[All,3]]},OldData},ImageSize-> Scaled[0.65]]
 
