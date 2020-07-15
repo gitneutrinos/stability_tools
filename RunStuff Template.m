@@ -103,6 +103,9 @@ kAdapt[file,ri,ri,testE,hi,10,"xflavor"-> False]
 ];
 ListLogPlot[{Transpose@{kdebug[[All,2]],kdebug[[All,3]]},OldData},ImageSize-> Scaled[0.65]]
 
+
+
+
 (*2x2 matrix check*)
 get2bdata[]:=Block[{S2ba,S2b,data2b,fakeEn,c,h,hbar,Gf,everg,Geverg,munits},
 c=2.99792458 10^10; (* cm/s*)
