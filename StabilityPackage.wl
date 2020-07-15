@@ -99,31 +99,31 @@ Association[
 
 
 Options[ndensities]={"xflavor"-> True};
-ndensities[data_,OptionsPattern[]]:=Module[{n,nudensity,nubardensity,nuxdensity,\[Mu],\[Mu]b,\[Mu]x},
+ndensities[data_,OptionsPattern[]]:=Module[{n,nudensity,nubardensity,nuxdensity,nd,ndb,ndx},
 
 n=Length[data["mids"]];
 
-nudensity[dt_]:= Sum[Sum[data["Endensity"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
-nubardensity[dt_]:= Sum[Sum[data["Endensity"][[2,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
+nudensity[dt_]:= Sum[Sum[data["Endensity"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]])) ,{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
+nubardensity[dt_]:= Sum[Sum[data["Endensity"][[2,f,dt,dp]]/ (h (data["freqmid"][[f]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
 
 If[OptionValue["xflavor"],
-nuxdensity[dt_]:= Sum[Sum[0.25 data["Endensity"][[3,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}]
+nuxdensity[dt_]:= Sum[Sum[0.25 data["Endensity"][[3,f,dt,dp]]/ (h (data["freqmid"][[f]]) ),{f,1,Length[data["freqs"]]-1}],{dp,1,2}]
 ,
 nuxdensity[dt_]:=0.
 ];
 
-\[Mu]=munits Table[nudensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
-\[Mu]b=munits Table[nubardensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
-\[Mu]x=munits Table[nuxdensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
+nd= Table[nudensity[i],{i,1,n},{j,1,n}];
+ndb= Table[nubardensity[i],{i,1,n},{j,1,n}];
+ndx=Table[nuxdensity[i],{i,1,n},{j,1,n}];
 
 
-Return[{\[Mu],\[Mu]b,\[Mu]x}]
+Return[{nd,ndb,ndx}]
 ];
 
 
 Options[siPotential]={"xflavor"-> True};
 siPotential[data_,OptionsPattern[]]:=Module[{tot,m},
-m=ndensities[data,"xflavor"-> OptionValue["xflavor"]];
+m=munits ndensities[data,"xflavor"-> OptionValue["xflavor"]];
 tot=(Tr[m[[1]]]+Tr[m[[2]]]+2 Tr[m[[3]]]);
 
 Return[tot]
@@ -133,7 +133,7 @@ Return[tot]
 
 Options[Bfactor]={"xflavor"-> True};
 Bfactor[data_,OptionsPattern[]]:=Module[{B,Bb,m},
-m=ndensities[data,"xflavor"-> OptionValue["xflavor"]];
+m=munits ndensities[data,"xflavor"-> OptionValue["xflavor"]];
 B=Tr[m[[3]]]/Tr[m[[1]]];
 Bb=Tr[m[[3]]]/Tr[m[[2]]];
 Return[{B,Bb}];
@@ -172,7 +172,7 @@ Ab[i]={{0,ToExpression[StringJoin["Ab",name12,ToString[i]]]},{ToExpression[Strin
 
 Hm={{Ve,0.},{0.,0.}};
 Hvac=hi{{-\[Omega]/2,0.},{0.,\[Omega]/2}};
-m=ndensities[data,"xflavor"-> OptionValue["xflavor"]];
+m=munits ndensities[data,"xflavor"-> OptionValue["xflavor"]];
 \[Mu]=m[[1]];
 \[Mu]b=m[[2]];
 \[Mu]x=m[[3]];
@@ -439,15 +439,15 @@ dispersionCheck[data_,\[CapitalOmega]_,k_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOme
 \[Theta]=data["mids"];
 
 (*Defined in Gail's Blue equation 30 and 31 *)
-\[Phi]0=Sum[ndensities[data,"xflavor"-> False][[1,i,i]]-ndensities[data,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
-\[Phi]1=Sum[(ndensities[data,"xflavor"-> False][[1,i,i]]-ndensities[data,"xflavor"-> False][[2,i,i]])\[Theta][[i]],{i,1,Length[\[Theta]]}];
+\[Phi]0=Sum[munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
+\[Phi]1=Sum[(munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]])\[Theta][[i]],{i,1,Length[\[Theta]]}];
 
 (* "Shifted" Eigenvalue and k*)
 \[CapitalOmega]p=N[\[CapitalOmega]-((munits/mp) *data["Yes"] *data["matters"])-\[Phi]0];
 kp=k-\[Phi]1;
 
 (*Definition of I from Gail's equation (41)*)
-Idis[n_]:=Sum[((ndensities[data,"xflavor"-> False][[1]][[i,i]]-ndensities[data,"xflavor"-> False][[2]][[i,i]])/(\[CapitalOmega]p-(kp \[Theta][[i]]))) \[Theta][[i]]^n,{i,1,10}];
+Idis[n_]:=Sum[((munits ndensities[data,"xflavor"-> False][[1]][[i,i]]-munits ndensities[data,"xflavor"-> False][[2]][[i,i]])/(\[CapitalOmega]p-(kp \[Theta][[i]]))) \[Theta][[i]]^n,{i,1,10}];
 
 (*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
 
