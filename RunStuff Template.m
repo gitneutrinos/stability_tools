@@ -174,3 +174,6 @@ Return[{check,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,Idis[0],Idis[1],Idis[2]}]
 ];
 
 
+
+
+(*Place here: function to check that A and A bar are the same for some test case where \[Omega]\[Rule] 0*)
