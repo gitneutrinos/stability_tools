@@ -27,6 +27,7 @@ id=ChoiceDialog[
  Which[id=="Sam",
  inpath="G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\";
  outpath="G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\stability_data\\";
+SetDirectory["C:\\Users\\Sam\\Documents\\GitHub\\stability_tools"];
  ,
  id=="Sherwood",
  inpath="/mnt/data/SamFlynn/lotsadata/";
@@ -48,9 +49,7 @@ outfolder = outpath<>filename;
 
 
 (* ::Input::Initialization:: *)
-SetDirectory["C:\\Users\\Sam\\Documents\\GitHub\\stability_tools"]
 <<"StabilityPackage`"
-
 
 
 OldData={{2.61019*10^-17, 1.12835*10^-18}, {2.8674*10^-17, 

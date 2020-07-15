@@ -313,9 +313,6 @@ Return[kgrid];
 
 
 
-eigenSystemSorter[]
-
-
 (*Run buildkGrid and SCalcScale for several radial bins.*)
 
 Options[kAdapt]={"xflavor"-> True,"ktarget"-> 0.,"krange"-> {10.^-3,10.},"eigenvectors"-> False};
@@ -412,9 +409,7 @@ g0=getInitialGuess[data,species],
 (*Equation of an ellipse in the "box transform" units*)
 ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])
 +a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2+1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
-es1box[a_,\[Beta]_,\[Chi]_]:=1/c^3 NIntegrate[ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->13];
-es2box[a_,\[Beta]_,\[Chi]_]:=1/c^3 NIntegrate[m ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->13];
-es3box[a_,\[Beta]_,\[Chi]_]:=1/c^3 NIntegrate[ m^2 ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->13];
+
 
 esbox[a_,\[Beta]_,\[Chi]_,mom_]:=1/c^3 NIntegrate[m^(mom-1) ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->13];
 
