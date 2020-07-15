@@ -151,42 +151,6 @@ Abs[Im[\[CapitalOmega]ch[0.,m,0.1,0.1]]]-Abs[Im[evtest]]<10^-3
 
 
 
-(* ::Input::Initialization:: *)
-conplot[pts_,title_,klower_,kupper_,export_]:=Block[{ppts,plotout},
-ppts=Transpose@{pts[[All,1]]/10^5,pts[[All,2]]/pts[[All,4]],pts[[All,3]]/pts[[All,4]]};
-plotout=ListContourPlot[ppts,PlotLegends-> Automatic,PlotRange-> {All,{klower,kupper},All},MaxPlotPoints-> Infinity,FrameLabel->{"Radius (km)","k/\[Mu]",None,"\[CapitalOmega]/\[Mu]"},PlotLabel-> title,ImageSize-> Scaled[0.4]];
-If[export==1,Export[outpath<>title<>"_contourplot.pdf",plotout]];
-Return[plotout];
-];
-
-conplotauto[pts_,title_,export_]:=Block[{ppts,plotout},
-ppts=Transpose@{pts[[All,1]]/10^5,pts[[All,2]]/pts[[All,4]],pts[[All,3]]/pts[[All,4]]};
-plotout=ListContourPlot[ppts,PlotLegends-> Automatic,PlotRange-> {All,All,All},MaxPlotPoints-> Infinity,FrameLabel->{"Radius (km)","k/\[Mu]",None,"\[CapitalOmega]/\[Mu]"},PlotLabel-> title,ImageSize-> Scaled[0.4]];
-If[export==1,Export[outpath<>title<>"_contourplot.pdf",plotout]];
-Return[plotout];
-];
-
-pointplot[pts_,title_,export_]:=Block[{ppts,plotout},
-ppts=Transpose@{pts[[All,1]],pts[[All,2]],pts[[All,3]]/pts[[All,4]]};
-plotout=ListPointPlot3D[ppts,AxesLabel-> {"radius (cm)","k (erg)","Im[\[CapitalOmega]] (erg)"},PlotLabel-> title,PlotRange->{All,All,All},ImageSize->Scaled[0.8],TicksStyle-> Directive[16],LabelStyle-> Directive[18],ColorFunction-> "Rainbow",PlotLegends-> Automatic,PlotLabel-> title];
-If[export==1,Export[outpath<>title<>"_pointplot.pdf",plotout]];
-Return[plotout];
-];
-
-
-(* ::InheritFromParent:: *)
-(**)
-
-
-\[CapitalOmega]test[k_,\[Mu]ch_,a_,\[Omega]_]:=+2 a \[Mu]ch+Sqrt[(2 a \[Mu]ch)^2+\[Omega](\[Omega]-4 \[Mu]ch)];
-
-
-\[CapitalOmega]test[0.,N[12.5664/2],0.1,0.1]
-
-
-Eigenvalues[build2bMatrix[]/.a-> 0]
-
-
 tester[]:=Module[{c,h,hbar,Gf,everg,ergev,mp,munits,Geverg,Meverg,ergmev,\[CapitalDelta]m12sq},
 c=2.99792458 10^10; (* cm/s*)
 h=6.6260755 10^-27; (*erg s*)
@@ -204,32 +168,3 @@ munits=Sqrt[2] (Gf/Geverg^2 )(hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
 Return[\[Omega]EMev[Infinity]]
 ]
 
-
-
-tester[]
-
-
-getEquations[get2bdata[],Infinity,-1.,0,"xflavor"-> False][[1]]
-
-
-chmat[k_,\[Mu]_,a_,\[Omega]_]:=Module[{},
-Return[{{\[Omega]+k,0},{0,-\[Omega]-k}}+2 \[Mu]{{-1+a,1-a},{-1-a,1+a}}]
-];
-chmat[2,1,0,0]//Eigenvalues
-
-
-ndensities[get2bdata[]][[1]]//Simplify//MatrixForm
-ndensities[get2bdata[]][[2]]//Simplify//MatrixForm
-
-
-
-
-
-build2bMatrix[]/.a-> 0.//MatrixForm
-
-
-
-?dispersioncheck
-
-
-N[68/(2 Pi)]
