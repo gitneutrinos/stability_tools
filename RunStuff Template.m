@@ -97,7 +97,7 @@ OldData={{2.61019*10^-17, 1.12835*10^-18}, {2.8674*10^-17,
   1.06762*10^-21}, {-1.60748*10^-15, 
   1.06586*10^-21}, {-2.04837*10^-15, 
   1.06448*10^-21}, {-2.61019*10^-15, 1.06339*10^-21}};
-kdebug=Block[{data,ri=200,testE=20,hi=-1,k=0,kvar},
+kdebug=Module[{data,ri=200,testE=20,hi=-1,k=0,kvar},
 file=inpath<>"1D_withV_withPairBrems_DO.h5";
 (*SCalcScale[ImportData[inpath<>file<>".h5"],ri,testE,hi,0][[3]]//MatrixForm*)
 (*buildkGrid[ImportData[inpath<>file<>".h5"],ri,testE,hi,40]*)
@@ -119,7 +119,7 @@ data2b=
 "Yes"-> 0.,
 "mids"-> {-Pi,Pi},
 "freqs"->{0,2},
-"lotsodo"-> {{{{ (1+a)/3.0645536554031526`*^-23,0.},{0.,0.}}},{{{0.,0.},{ (1-a)/3.0645536554031526`*^-23,0.}}}},
+"Endensity"-> {{{{ (1+a)/3.0645536554031526`*^-23,0.},{0.,0.}}},{{{0.,0.},{ (1-a)/3.0645536554031526`*^-23,0.}}}},
  "freqmid"-> {1},
  "munits"-> munits
 ]
