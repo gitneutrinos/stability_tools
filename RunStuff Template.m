@@ -112,13 +112,6 @@ ListLogPlot[{Transpose@{kdebug[[All,2]],kdebug[[All,3]]},OldData},ImageSize-> Sc
 
 (*Artifical data set which defines 2 beams only, with 2 angular bins, and have chakraborty asymmetry parameters "a" *)
 get2bdata[]:=Module[{S2ba,S2b,data2b,fakeEn,c,h,hbar,Gf,everg,Geverg,munits},
-c=2.99792458 10^10; (* cm/s*)
-h=6.6260755 10^-27; (*erg s*)
-hbar = h/(2 Pi); (*erg s*)
-Gf=1.1663787 10^-5; (*GeV^-2*)
-everg=1.60218 10^-12; (* convert eV to ergs*)
-Geverg = everg*10^9; (* convert GeV to ergs *)
-munits=Sqrt[2] (Gf/Geverg^2 )(hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
 data2b=
  Association[
 "muss"-> {-1,0,1},
@@ -155,4 +148,29 @@ vt=VerificationTest[
 Abs[Im[\[CapitalOmega]ch[0.,m,0.1,0.1]]]-Abs[Im[evtest]]<10^-3
 ,TestID-> "2 Beam Growth Rate"]
 (*The hard coded number 2 10 ^21 is the "common factor" chakraborty calls \[Mu] for this matrix *)
+
+
+
+(*Check the dispersion relation from Gail's paper*)
+dispersionCheck[data_,\[CapitalOmega]_,k_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,check,Idis},
+\[Theta]=data["mids"];
+
+(*Defined in Gail's Blue equation 30 and 31 *)
+\[Phi]0=Sum[ndensities[data,"xflavor"-> False][[1,i,i]]-ndensities[data,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
+\[Phi]1=Sum[(ndensities[data,"xflavor"-> False][[1,i,i]]-ndensities[data,"xflavor"-> False][[2,i,i]])\[Theta][[i]],{i,1,Length[\[Theta]]}];
+
+(* "Shifted" Eigenvalue and k*)
+\[CapitalOmega]p=N[\[CapitalOmega]-((munits/mp) *data["Yes"] *data["matters"])-\[Phi]0];
+kp=k-\[Phi]1;
+
+(*Definition of I from Gail's equation (41)*)
+Idis[n_]:=Sum[((ndensities[data,"xflavor"-> False][[1]][[i,i]]-ndensities[data,"xflavor"-> False][[2]][[i,i]])/(\[CapitalOmega]p-(kp \[Theta][[i]]))) \[Theta][[i]]^n,{i,1,10}];
+
+(*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
+
+check=(Idis[0]+1)(Idis[2]-1)-(Idis[1] Conjugate[Idis[1]]);
+
+Return[{check,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,Idis[0],Idis[1],Idis[2]}]
+];
+
 
