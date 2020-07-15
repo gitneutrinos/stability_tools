@@ -135,7 +135,7 @@ data2b=
 (*builds a 4x4 matrix with the two beam data, then reduces the size of the matrix *)
 build2bMatrix[]:=Module[{fakeEn,S2ba,S2b},
 fakeEn=10^9; (*MeV input, output in ergs*)
-S2ba=stabilityMatrix[get2bdata[],getEquations[get2bdata[],Infinity,-1.,2.,"xflavor"-> False],"xflavor"-> False];
+S2ba=stabilityMatrix[get2bdata[],getEquations[get2bdata[],Infinity,-1.,0.,"xflavor"-> False],"xflavor"-> False];
 S2b={{S2ba[[1,1]],S2ba[[1,4]]},{S2ba[[4,1]],S2ba[[4,4]]}};
 Return[S2b]
 ];
