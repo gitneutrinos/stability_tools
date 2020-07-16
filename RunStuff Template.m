@@ -103,7 +103,7 @@ file=inpath<>"1D_withV_withPairBrems_DO.h5";
 (*buildkGrid[ImportData[inpath<>file<>".h5"],ri,testE,hi,40]*)
 kAdapt[file,ri,ri,testE,hi,10,"xflavor"-> False]
 ];
-ListLogPlot[{Transpose@{kdebug[[All,2]],kdebug[[All,3]]},OldData},ImageSize-> Scaled[0.65]]
+ListLogPlot[{Transpose@{kdebug[[All,2]],kdebug[[All,3]]},OldData},ImageSize-> Scaled[0.25]]
 
 
 
@@ -111,43 +111,37 @@ ListLogPlot[{Transpose@{kdebug[[All,2]],kdebug[[All,3]]},OldData},ImageSize-> Sc
 (*2x2 matrix check*)
 
 (*Artifical data set which defines 2 beams only, with 2 angular bins, and have chakraborty asymmetry parameters "a" *)
-get2bdata[]:=Module[{S2ba,S2b,data2b,fakeEn,c,h,hbar,Gf,everg,Geverg,munits},
+get2bdata[]:=Module[{S2ba,S2b,data2b},
 data2b=
  Association[
 "muss"-> {-1,0,1},
 "matters"-> 0.,
 "Yes"-> 0.,
-"mids"-> {-Pi,Pi},
+"mids"-> {-1,1},
 "freqs"->{0,2},
-"Endensity"-> {{{{ (1+a)/3.0645536554031526`*^-23,0.},{0.,0.}}},{{{0.,0.},{ (1-a)/3.0645536554031526`*^-23,0.}}}},
+"Endensity"-> {{{{ (1+a)/(munits/h),0.},{0.,0.}}},{{{0.,0.},{ (1-a)/(munits/h),0.}}}},
  "freqmid"-> {1},
  "munits"-> munits
 ]
 ];
 
 (*builds a 4x4 matrix with the two beam data, then reduces the size of the matrix *)
-build2bMatrix[]:=Module[{fakeEn,S2ba,S2b},
-fakeEn=10^9; (*MeV input, output in ergs*)
-S2ba=stabilityMatrix[get2bdata[],getEquations[get2bdata[],Infinity,-1.,0.,"xflavor"-> False],"xflavor"-> False];
+build2bMatrix[En_,k_]:=Module[{fakeEn,S2ba,S2b},
+S2ba=stabilityMatrix[get2bdata[],getEquations[get2bdata[],En,-1.,k,"xflavor"-> False],"xflavor"-> False];
 S2b={{S2ba[[1,1]],S2ba[[1,4]]},{S2ba[[4,1]],S2ba[[4,4]]}};
 Return[S2b]
 ];
 
-(* the full 4x4 matrix*)
-build4bMatrix[]:=Module[{fakeEn,S2ba,S2b},
-fakeEn=10^9; (*MeV input, output in ergs*)
-S2ba=stabilityMatrix[get2bdata[],getEquations[get2bdata[],Infinity,-1.,0,"xflavor"-> False],"xflavor"-> False];
-S2b={{S2ba[[1,1]],S2ba[[1,4]]},{S2ba[[4,1]],S2ba[[4,4]]}};
-Return[S2ba]
-];
 
 (*Chakraborty's analytic expression for the 2x2 case, and a verification test that they're the same within one part in 1000*)
+
 \[CapitalOmega]ch[k_,\[Mu]ch_,a_,\[Omega]_]=2 a \[Mu]ch+Sqrt[(2 a \[Mu]ch)^2+(\[Omega]+k)((\[Omega]+k)-4 \[Mu]ch)];
-evtest=Eigenvalues[build2bMatrix[]/.{a-> 0.1}][[2]];
+evtest=Eigenvalues[build2bMatrix[Infinity,0.]/.{a-> 0.1}][[2]];
 vt=VerificationTest[
-Abs[Im[\[CapitalOmega]ch[0.,m,0.1,0.1]]]-Abs[Im[evtest]]<10^-3
+Abs[Im[\[CapitalOmega]ch[0.,1,0.1,0]]]-Abs[Im[evtest]]<10^-3
 ,TestID-> "2 Beam Growth Rate"]
 (*The hard coded number 2 10 ^21 is the "common factor" chakraborty calls \[Mu] for this matrix *)
+
 
 
 
