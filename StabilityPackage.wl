@@ -435,31 +435,6 @@ Return[fits]
 ]
 
 
-dispersionCheck[data_,\[CapitalOmega]_,k_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,check,Idis},
-\[Theta]=data["mids"];
-
-(*Defined in Gail's Blue equation 30 and 31 *)
-\[Phi]0=Sum[munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
-\[Phi]1=Sum[(munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]])\[Theta][[i]],{i,1,Length[\[Theta]]}];
-
-(* "Shifted" Eigenvalue and k*)
-\[CapitalOmega]p=N[\[CapitalOmega]-((munits/mp) *data["Yes"] *data["matters"])-\[Phi]0];
-kp=k-\[Phi]1;
-
-(*Definition of I from Gail's equation (41)*)
-Idis[n_]:=Sum[((munits ndensities[data,"xflavor"-> False][[1]][[i,i]]-munits ndensities[data,"xflavor"-> False][[2]][[i,i]])/(\[CapitalOmega]p-(kp \[Theta][[i]]))) \[Theta][[i]]^n,{i,1,10}];
-
-(*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
-
-check=(Idis[0]+1)(Idis[2]-1)-(Idis[1] Conjugate[Idis[1]]);
-
-Return[{check,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,Idis[0],Idis[1],Idis[2]}]
-];
-
-
-
-
-
 End[]
 
 EndPackage[]
