@@ -1,6 +1,11 @@
 (* ::Package:: *)
 
+
+
+
 BeginPackage["StabililtyPackage`"]
+
+ClearAll["StabililtyPackage`", "StabililtyPackage`"]
 
 ImportData::usage =
 	"ImportData[file] reads in the data from file."
@@ -22,8 +27,6 @@ GDdata::usage=
 	"Finds the gershgorin limits over a range of radii"
 SelectSingleRadius::usage=
 	"get single radius data"
-makeLocalVariables::usage=
-"[],Imports the variables definitions used in the package to the local notebook. Useful for analysis"
 boxFit::usage=
 "[infile,species=1,2]. Box fits a file."
 evscale::usage=
@@ -38,16 +41,20 @@ evecscale::usage =
 "finds eigenvectors while scaling the matrix to reasonable numbers"
 ndensities::usage = 
 "finds the neutrino number densities for a species, and returns the matrix of densities in an angular bin"
-dispersionCheck::usage=
-"check if the dispersion relation holds"
 esysscale::usage=
 "returns the real and imaginary parts of eigenvalues and associated eigenvectors"
 getInitialGuess::usage=
 "generates Initial Guesses for the first radius from expansion expresssion"
 eboxfitSingleRadius::usage=
 "fit a single radius using the box fit parameters"
+Com::usage=
+"test"
 
 
+
+
+
+ClearAll["StabililtyPackage`", "StabililtyPackage`"]
 
 
 c=2.99792458 10^10; (* cm/s*)
