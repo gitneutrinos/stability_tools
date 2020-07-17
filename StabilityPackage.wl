@@ -42,6 +42,10 @@ dispersionCheck::usage=
 "check if the dispersion relation holds"
 esysscale::usage=
 "returns the real and imaginary parts of eigenvalues and associated eigenvectors"
+getInitialGuess::usage=
+"generates Initial Guesses for the first radius from expansion expresssion"
+eboxfitSingleRadius::usage=
+"fit a single radius using the box fit parameters"
 
 
 
