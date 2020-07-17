@@ -49,7 +49,8 @@ outfolder = outpath<>filename;
 
 
 (* ::Input::Initialization:: *)
-<<"StabilityPackage`"
+Get["StabilityPackage`",Path->"."]
+Names["StabililtyPackage`*"]//MatrixForm (*Prints all functions and variables made available by the package. This can act as a check to make sure it has updated correctly, for instance when a new function is added*)
 
 
 (*Test on kAdapt. Comparing to old data (below). Generates a plot which should look similar (different exact k values tested*)
@@ -168,9 +169,6 @@ Return[{check,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,Idis[0],Idis[1],Idis[2]}]
 ];
 
 
-
-
-dispersionCheck[]
 
 
 (*Place here: function to check that A and A bar are the same for some test case where \[Omega]\[Rule] 0*)
