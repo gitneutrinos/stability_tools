@@ -386,10 +386,10 @@ Return[out] (*Close reap over r*)
 getIntialGuess[data_,species_]:=Module[{ei,aei,ag,aag,\[Beta]g,a\[Beta]g,a\[Chi]g,\[Chi]g,g0,datasr,foc1234,afoc1234,xfoc1234,xag,xei},
 datasr=SelectSingleRadius[data,1];
 
-foc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freq"][[E+1]]+data["freq"][[E]])) (data["freq"][[E+1]]^3-data["freq"][[E]]^3)) )(datasr["Endensity"][[species,E,1]] 
+foc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freqs"][[E+1]]+data["freqs"][[E]])) (data["freqs"][[E+1]]^3-data["freqs"][[E]]^3)) )(datasr["Endensity"][[species,E,1]] 
 + 3 z datasr["Endensity"][[1,E,2]]+(5/2 (3 (datasr["Endensity"][[1,E,1]] -datasr["Endensity"][[species,E,3]] )/2 x^2+3 (datasr["Endensity"][[species,E,1]] -datasr["Endensity"][[species,E,3]] )/2 y^2+3 datasr["Endensity"][[species,E,3]] z^2-datasr["Endensity"][[species,E,1]])));
 
-ei[m_]:= Sum[1/3 (datasr["freq"][[f+1]]^3-datasr["freq"][[f]]^3)foc1234[Sin[ArcCos[m]],0,m,f],{f,1,80}];
+ei[m_]:= Sum[1/3 (datasr["freqs"][[f+1]]^3-datasr["freqs"][[f]]^3)foc1234[Sin[ArcCos[m]],0,m,f],{f,1,80}];
 
 ag=0.5(Abs[ei[1]]+Abs[ei[-1]]);
 \[Beta]g=0.;
@@ -415,7 +415,7 @@ ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) 
 
 esbox[a_,\[Beta]_,\[Chi]_,mom_]:=1/c^3 NIntegrate[m^(mom-1) ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->13];
 
-moments[mom_]:=Sum[ datasr["Endensity"][[species,f,mom]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
+moments[mom_]:=Sum[ datasr["Endensity"][[species,f,mom]]/( h (1/2 (data["freqs"][[f+1]]+data["freqs"][[f]]))),{f,1,80}];
 
 br=FindRoot[{2 Pi esbox[a,\[Beta],\[Chi],1]-moments[1],2 Pi esbox[a,\[Beta],\[Chi],2]-moments[2],2 Pi esbox[a,\[Beta],\[Chi],3]-moments[3]},{{a,g0[[1]]},{\[Beta],g0[[2]]},{\[Chi],g0[[3]]}},Evaluated->False];
 
