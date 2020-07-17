@@ -171,4 +171,32 @@ Return[{check,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,Idis[0],Idis[1],Idis[2]}]
 
 
 
+(*Ellipse Check Section*)
+ellipseCheck[]:=Module[{rr,rspecies,data,datasr,ebox,esbox,moments,testfit,error,test},
+
+(*rr=RandomInteger[{80,250}];*)
+rr=1;
+rspecies=RandomInteger[{1,2}];
+
+data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
+datasr=SelectSingleRadius[data,rr];
+
+ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])
++a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2+1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
+
+esbox[a_,\[Beta]_,\[Chi]_,mom_]:=1/c^3 NIntegrate[m^(mom-1) ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->13];
+
+moments[mom_]:=Sum[ datasr["Endensity"][[rspecies,f,mom]]/( h (1/2 (data["freqs"][[f+1]]+data["freqs"][[f]]))),{f,1,80}];
+
+
+testfit=eboxfitSingleRadius[data,rr,rspecies,getInitialGuess[data,1]];
+
+error[mom_]:= Abs[((2 Pi)esbox[testfit[[1]],testfit[[2]],testfit[[3]],mom]-moments[mom])/moments[mom]];
+
+test=VerificationTest[error[1]< 10^5 && error[2]< 10^5 && error[3]< 10^5,TestID-> "Ellipse fitting test"]
+Return[{error[1],error[2],error[3]}]
+
+];
+
+
 (*Place here: function to check that A and A bar are the same for some test case where \[Omega]\[Rule] 0*)
