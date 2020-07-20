@@ -1,8 +1,5 @@
 (* ::Package:: *)
 
-
-
-
 BeginPackage["StabililtyPackage`"]
 
 ClearAll["StabililtyPackage`", "StabililtyPackage`"]
@@ -44,8 +41,8 @@ ndensities::usage =
 esysscale::usage=
 "returns the real and imaginary parts of eigenvalues and associated eigenvectors"
 getInitialGuess::usage=
-"generates Initial Guesses for the first radius from expansion expresssion"
-eboxfitSingleRadius::usage=
+"[file,species]generates Initial Guesses for the first radius from expansion expresssion"
+eBoxFitSingleRadius::usage=
 "fit a single radius using the box fit parameters"
 Com::usage=
 "test"
@@ -392,9 +389,10 @@ Reap[
 ][[2,1]];
 Return[out] (*Close reap over r*)
 		
-]
+];
 
-getIntialGuess[data_,species_]:=Module[{ei,aei,ag,aag,\[Beta]g,a\[Beta]g,a\[Chi]g,\[Chi]g,g0,datasr,foc1234,afoc1234,xfoc1234,xag,xei},
+getInitialGuess[file_,species_]:=Module[{ei,aei,ag,aag,\[Beta]g,a\[Beta]g,a\[Chi]g,\[Chi]g,g0,datasr,foc1234,afoc1234,xfoc1234,xag,xei,data},
+data=ImportData[file];
 datasr=SelectSingleRadius[data,1];
 
 foc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freqs"][[E+1]]+data["freqs"][[E]])) (data["freqs"][[E+1]]^3-data["freqs"][[E]]^3)) )(datasr["Endensity"][[species,E,1]] 
@@ -406,8 +404,8 @@ ag=0.5(Abs[ei[1]]+Abs[ei[-1]]);
 \[Beta]g=0.;
 \[Chi]g=-5.;
 
-Return[{ag,\[Beta]g,\[Chi]g}]
-]
+Return[{{ag,\[Beta]g,\[Chi]g}}]
+];
 
 
 eBoxFitSingleRadius[data_,ri_,species_,guesses_]:=Module[{ebox,es1box,es2box,es3box,ne,Fe,Pre,ane,aFe,aPre,datasr,br,g0,moments,esbox},
