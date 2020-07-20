@@ -172,13 +172,14 @@ Return[{check,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,Idis[0],Idis[1],Idis[2]}]
 
 
 (*Ellipse Check Section*)
-ellipseCheck[]:=Module[{rr,rspecies,data,datasr,ebox,esbox,moments,testfit,error,test},
+ellipseCheck[]:=Module[{rr,rspecies,data,datasr,ebox,esbox,moments,testfit,error,test,file},
 
 (*rr=RandomInteger[{80,250}];*)
 rr=1;
 rspecies=RandomInteger[{1,2}];
 
-data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
+file="G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5";
+data=ImportData[file];
 datasr=SelectSingleRadius[data,rr];
 
 ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])
@@ -197,6 +198,9 @@ test=VerificationTest[error[1]< 10^5 && error[2]< 10^5 && error[3]< 10^5,TestID-
 Return[{error[1],error[2],error[3]}]
 
 ];
+
+
+?getInitialGuess
 
 
 (*Place here: function to check that A and A bar are the same for some test case where \[Omega]\[Rule] 0*)
