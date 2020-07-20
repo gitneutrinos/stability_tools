@@ -1,6 +1,11 @@
 (* ::Package:: *)
 
+
+
+
 BeginPackage["StabililtyPackage`"]
+
+ClearAll["StabililtyPackage`", "StabililtyPackage`"]
 
 ImportData::usage =
 	"ImportData[file] reads in the data from file."
@@ -22,8 +27,6 @@ GDdata::usage=
 	"Finds the gershgorin limits over a range of radii"
 SelectSingleRadius::usage=
 	"get single radius data"
-makeLocalVariables::usage=
-"[],Imports the variables definitions used in the package to the local notebook. Useful for analysis"
 boxFit::usage=
 "[infile,species=1,2]. Box fits a file."
 evscale::usage=
@@ -38,12 +41,20 @@ evecscale::usage =
 "finds eigenvectors while scaling the matrix to reasonable numbers"
 ndensities::usage = 
 "finds the neutrino number densities for a species, and returns the matrix of densities in an angular bin"
-dispersionCheck::usage=
-"check if the dispersion relation holds"
 esysscale::usage=
 "returns the real and imaginary parts of eigenvalues and associated eigenvectors"
+getInitialGuess::usage=
+"generates Initial Guesses for the first radius from expansion expresssion"
+eboxfitSingleRadius::usage=
+"fit a single radius using the box fit parameters"
+Com::usage=
+"test"
 
 
+
+
+
+ClearAll["StabililtyPackage`", "StabililtyPackage`"]
 
 
 c=2.99792458 10^10; (* cm/s*)
@@ -99,31 +110,31 @@ Association[
 
 
 Options[ndensities]={"xflavor"-> True};
-ndensities[data_,OptionsPattern[]]:=Module[{n,nudensity,nubardensity,nuxdensity,\[Mu],\[Mu]b,\[Mu]x},
+ndensities[data_,OptionsPattern[]]:=Module[{n,nudensity,nubardensity,nuxdensity,nd,ndb,ndx},
 
 n=Length[data["mids"]];
 
-nudensity[dt_]:= Sum[Sum[data["Endensity"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
-nubardensity[dt_]:= Sum[Sum[data["Endensity"][[2,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
+nudensity[dt_]:= Sum[Sum[data["Endensity"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]])) ,{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
+nubardensity[dt_]:= Sum[Sum[data["Endensity"][[2,f,dt,dp]]/ (h (data["freqmid"][[f]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}];
 
 If[OptionValue["xflavor"],
-nuxdensity[dt_]:= Sum[Sum[0.25 data["Endensity"][[3,f,dt,dp]]/ (h (data["freqmid"][[f]]) (Abs[data["muss"][[dt+1]]-data["muss"][[dt]]])),{f,1,Length[data["freqs"]]-1}],{dp,1,2}]
+nuxdensity[dt_]:= Sum[Sum[0.25 data["Endensity"][[3,f,dt,dp]]/ (h (data["freqmid"][[f]]) ),{f,1,Length[data["freqs"]]-1}],{dp,1,2}]
 ,
 nuxdensity[dt_]:=0.
 ];
 
-\[Mu]=munits Table[nudensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
-\[Mu]b=munits Table[nubardensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
-\[Mu]x=munits Table[nuxdensity[i]*(data["muss"][[i+1]]-data["muss"][[i]]),{i,1,n},{j,1,n}];
+nd= Table[nudensity[i],{i,1,n},{j,1,n}];
+ndb= Table[nubardensity[i],{i,1,n},{j,1,n}];
+ndx=Table[nuxdensity[i],{i,1,n},{j,1,n}];
 
 
-Return[{\[Mu],\[Mu]b,\[Mu]x}]
+Return[{nd,ndb,ndx}]
 ];
 
 
 Options[siPotential]={"xflavor"-> True};
 siPotential[data_,OptionsPattern[]]:=Module[{tot,m},
-m=ndensities[data,"xflavor"-> OptionValue["xflavor"]];
+m=munits ndensities[data,"xflavor"-> OptionValue["xflavor"]];
 tot=(Tr[m[[1]]]+Tr[m[[2]]]+2 Tr[m[[3]]]);
 
 Return[tot]
@@ -133,7 +144,7 @@ Return[tot]
 
 Options[Bfactor]={"xflavor"-> True};
 Bfactor[data_,OptionsPattern[]]:=Module[{B,Bb,m},
-m=ndensities[data,"xflavor"-> OptionValue["xflavor"]];
+m=munits ndensities[data,"xflavor"-> OptionValue["xflavor"]];
 B=Tr[m[[3]]]/Tr[m[[1]]];
 Bb=Tr[m[[3]]]/Tr[m[[2]]];
 Return[{B,Bb}];
@@ -172,7 +183,7 @@ Ab[i]={{0,ToExpression[StringJoin["Ab",name12,ToString[i]]]},{ToExpression[Strin
 
 Hm={{Ve,0.},{0.,0.}};
 Hvac=hi{{-\[Omega]/2,0.},{0.,\[Omega]/2}};
-m=ndensities[data,"xflavor"-> OptionValue["xflavor"]];
+m=munits ndensities[data,"xflavor"-> OptionValue["xflavor"]];
 \[Mu]=m[[1]];
 \[Mu]b=m[[2]];
 \[Mu]x=m[[3]];
@@ -386,10 +397,10 @@ Return[out] (*Close reap over r*)
 getIntialGuess[data_,species_]:=Module[{ei,aei,ag,aag,\[Beta]g,a\[Beta]g,a\[Chi]g,\[Chi]g,g0,datasr,foc1234,afoc1234,xfoc1234,xag,xei},
 datasr=SelectSingleRadius[data,1];
 
-foc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freq"][[E+1]]+data["freq"][[E]])) (data["freq"][[E+1]]^3-data["freq"][[E]]^3)) )(datasr["Endensity"][[species,E,1]] 
+foc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freqs"][[E+1]]+data["freqs"][[E]])) (data["freqs"][[E+1]]^3-data["freqs"][[E]]^3)) )(datasr["Endensity"][[species,E,1]] 
 + 3 z datasr["Endensity"][[1,E,2]]+(5/2 (3 (datasr["Endensity"][[1,E,1]] -datasr["Endensity"][[species,E,3]] )/2 x^2+3 (datasr["Endensity"][[species,E,1]] -datasr["Endensity"][[species,E,3]] )/2 y^2+3 datasr["Endensity"][[species,E,3]] z^2-datasr["Endensity"][[species,E,1]])));
 
-ei[m_]:= Sum[1/3 (datasr["freq"][[f+1]]^3-datasr["freq"][[f]]^3)foc1234[Sin[ArcCos[m]],0,m,f],{f,1,80}];
+ei[m_]:= Sum[1/3 (datasr["freqs"][[f+1]]^3-datasr["freqs"][[f]]^3)foc1234[Sin[ArcCos[m]],0,m,f],{f,1,80}];
 
 ag=0.5(Abs[ei[1]]+Abs[ei[-1]]);
 \[Beta]g=0.;
@@ -415,7 +426,7 @@ ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) 
 
 esbox[a_,\[Beta]_,\[Chi]_,mom_]:=1/c^3 NIntegrate[m^(mom-1) ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->13];
 
-moments[mom_]:=Sum[ datasr["Endensity"][[species,f,mom]]/( h (1/2 (data["freq"][[f+1]]+data["freq"][[f]]))),{f,1,80}];
+moments[mom_]:=Sum[ datasr["Endensity"][[species,f,mom]]/( h (1/2 (data["freqs"][[f+1]]+data["freqs"][[f]]))),{f,1,80}];
 
 br=FindRoot[{2 Pi esbox[a,\[Beta],\[Chi],1]-moments[1],2 Pi esbox[a,\[Beta],\[Chi],2]-moments[2],2 Pi esbox[a,\[Beta],\[Chi],3]-moments[3]},{{a,g0[[1]]},{\[Beta],g0[[2]]},{\[Chi],g0[[3]]}},Evaluated->False];
 
@@ -433,31 +444,6 @@ lastguess=ans
 ,{r,1,384}]][[2,1]];
 Return[fits]
 ]
-
-
-dispersionCheck[data_,\[CapitalOmega]_,k_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,check,Idis},
-\[Theta]=data["mids"];
-
-(*Defined in Gail's Blue equation 30 and 31 *)
-\[Phi]0=Sum[ndensities[data,"xflavor"-> False][[1,i,i]]-ndensities[data,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
-\[Phi]1=Sum[(ndensities[data,"xflavor"-> False][[1,i,i]]-ndensities[data,"xflavor"-> False][[2,i,i]])\[Theta][[i]],{i,1,Length[\[Theta]]}];
-
-(* "Shifted" Eigenvalue and k*)
-\[CapitalOmega]p=N[\[CapitalOmega]-((munits/mp) *data["Yes"] *data["matters"])-\[Phi]0];
-kp=k-\[Phi]1;
-
-(*Definition of I from Gail's equation (41)*)
-Idis[n_]:=Sum[((ndensities[data,"xflavor"-> False][[1]][[i,i]]-ndensities[data,"xflavor"-> False][[2]][[i,i]])/(\[CapitalOmega]p-(kp \[Theta][[i]]))) \[Theta][[i]]^n,{i,1,10}];
-
-(*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
-
-check=(Idis[0]+1)(Idis[2]-1)-(Idis[1] Conjugate[Idis[1]]);
-
-Return[{check,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,Idis[0],Idis[1],Idis[2]}]
-];
-
-
-
 
 
 End[]

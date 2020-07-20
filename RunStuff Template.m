@@ -49,7 +49,8 @@ outfolder = outpath<>filename;
 
 
 (* ::Input::Initialization:: *)
-<<"StabilityPackage`"
+Get["StabilityPackage`",Path->"."]
+Names["StabililtyPackage`*"]//MatrixForm (*Prints all functions and variables made available by the package. This can act as a check to make sure it has updated correctly, for instance when a new function is added*)
 
 
 (*Test on kAdapt. Comparing to old data (below). Generates a plot which should look similar (different exact k values tested*)
@@ -103,7 +104,7 @@ file=inpath<>"1D_withV_withPairBrems_DO.h5";
 (*buildkGrid[ImportData[inpath<>file<>".h5"],ri,testE,hi,40]*)
 kAdapt[file,ri,ri,testE,hi,10,"xflavor"-> False]
 ];
-ListLogPlot[{Transpose@{kdebug[[All,2]],kdebug[[All,3]]},OldData},ImageSize-> Scaled[0.65]]
+ListLogPlot[{Transpose@{kdebug[[All,2]],kdebug[[All,3]]},OldData},ImageSize-> Scaled[0.25]]
 
 
 
@@ -111,43 +112,37 @@ ListLogPlot[{Transpose@{kdebug[[All,2]],kdebug[[All,3]]},OldData},ImageSize-> Sc
 (*2x2 matrix check*)
 
 (*Artifical data set which defines 2 beams only, with 2 angular bins, and have chakraborty asymmetry parameters "a" *)
-get2bdata[]:=Module[{S2ba,S2b,data2b,fakeEn,c,h,hbar,Gf,everg,Geverg,munits},
+get2bdata[]:=Module[{S2ba,S2b,data2b},
 data2b=
  Association[
 "muss"-> {-1,0,1},
 "matters"-> 0.,
 "Yes"-> 0.,
-"mids"-> {-Pi,Pi},
+"mids"-> {-1,1},
 "freqs"->{0,2},
-"Endensity"-> {{{{ (1+a)/3.0645536554031526`*^-23,0.},{0.,0.}}},{{{0.,0.},{ (1-a)/3.0645536554031526`*^-23,0.}}}},
+"Endensity"-> {{{{ (1+a)/(munits/h),0.},{0.,0.}}},{{{0.,0.},{ (1-a)/(munits/h),0.}}}},
  "freqmid"-> {1},
  "munits"-> munits
 ]
 ];
 
 (*builds a 4x4 matrix with the two beam data, then reduces the size of the matrix *)
-build2bMatrix[]:=Module[{fakeEn,S2ba,S2b},
-fakeEn=10^9; (*MeV input, output in ergs*)
-S2ba=stabilityMatrix[get2bdata[],getEquations[get2bdata[],Infinity,-1.,0.,"xflavor"-> False],"xflavor"-> False];
+build2bMatrix[En_,k_]:=Module[{fakeEn,S2ba,S2b},
+S2ba=stabilityMatrix[get2bdata[],getEquations[get2bdata[],En,-1.,k,"xflavor"-> False],"xflavor"-> False];
 S2b={{S2ba[[1,1]],S2ba[[1,4]]},{S2ba[[4,1]],S2ba[[4,4]]}};
 Return[S2b]
 ];
 
-(* the full 4x4 matrix*)
-build4bMatrix[]:=Module[{fakeEn,S2ba,S2b},
-fakeEn=10^9; (*MeV input, output in ergs*)
-S2ba=stabilityMatrix[get2bdata[],getEquations[get2bdata[],Infinity,-1.,0,"xflavor"-> False],"xflavor"-> False];
-S2b={{S2ba[[1,1]],S2ba[[1,4]]},{S2ba[[4,1]],S2ba[[4,4]]}};
-Return[S2ba]
-];
 
 (*Chakraborty's analytic expression for the 2x2 case, and a verification test that they're the same within one part in 1000*)
+
 \[CapitalOmega]ch[k_,\[Mu]ch_,a_,\[Omega]_]=2 a \[Mu]ch+Sqrt[(2 a \[Mu]ch)^2+(\[Omega]+k)((\[Omega]+k)-4 \[Mu]ch)];
-evtest=Eigenvalues[build2bMatrix[]/.{a-> 0.1}][[2]];
+evtest=Eigenvalues[build2bMatrix[Infinity,0.]/.{a-> 0.1}][[2]];
 vt=VerificationTest[
-Abs[Im[\[CapitalOmega]ch[0.,m,0.1,0.1]]]-Abs[Im[evtest]]<10^-3
+Abs[Im[\[CapitalOmega]ch[0.,1,0.1,0]]]-Abs[Im[evtest]]<10^-3
 ,TestID-> "2 Beam Growth Rate"]
 (*The hard coded number 2 10 ^21 is the "common factor" chakraborty calls \[Mu] for this matrix *)
+
 
 
 
@@ -156,15 +151,15 @@ dispersionCheck[data_,\[CapitalOmega]_,k_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOme
 \[Theta]=data["mids"];
 
 (*Defined in Gail's Blue equation 30 and 31 *)
-\[Phi]0=Sum[ndensities[data,"xflavor"-> False][[1,i,i]]-ndensities[data,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
-\[Phi]1=Sum[(ndensities[data,"xflavor"-> False][[1,i,i]]-ndensities[data,"xflavor"-> False][[2,i,i]])\[Theta][[i]],{i,1,Length[\[Theta]]}];
+\[Phi]0=Sum[munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
+\[Phi]1=Sum[(munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]])\[Theta][[i]],{i,1,Length[\[Theta]]}];
 
 (* "Shifted" Eigenvalue and k*)
 \[CapitalOmega]p=N[\[CapitalOmega]-((munits/mp) *data["Yes"] *data["matters"])-\[Phi]0];
 kp=k-\[Phi]1;
 
 (*Definition of I from Gail's equation (41)*)
-Idis[n_]:=Sum[((ndensities[data,"xflavor"-> False][[1]][[i,i]]-ndensities[data,"xflavor"-> False][[2]][[i,i]])/(\[CapitalOmega]p-(kp \[Theta][[i]]))) \[Theta][[i]]^n,{i,1,10}];
+Idis[n_]:=Sum[((munits ndensities[data,"xflavor"-> False][[1]][[i,i]]-munits ndensities[data,"xflavor"-> False][[2]][[i,i]])/(\[CapitalOmega]p-(kp \[Theta][[i]]))) \[Theta][[i]]^n,{i,1,10}];
 
 (*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
 
@@ -174,6 +169,34 @@ Return[{check,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,Idis[0],Idis[1],Idis[2]}]
 ];
 
 
+
+
+(*Ellipse Check Section*)
+ellipseCheck[]:=Module[{rr,rspecies,data,datasr,ebox,esbox,moments,testfit,error,test},
+
+(*rr=RandomInteger[{80,250}];*)
+rr=1;
+rspecies=RandomInteger[{1,2}];
+
+data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
+datasr=SelectSingleRadius[data,rr];
+
+ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])
++a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2+1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
+
+esbox[a_,\[Beta]_,\[Chi]_,mom_]:=1/c^3 NIntegrate[m^(mom-1) ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->13];
+
+moments[mom_]:=Sum[ datasr["Endensity"][[rspecies,f,mom]]/( h (1/2 (data["freqs"][[f+1]]+data["freqs"][[f]]))),{f,1,80}];
+
+
+testfit=eboxfitSingleRadius[data,rr,rspecies,getInitialGuess[data,1]];
+
+error[mom_]:= Abs[((2 Pi)esbox[testfit[[1]],testfit[[2]],testfit[[3]],mom]-moments[mom])/moments[mom]];
+
+test=VerificationTest[error[1]< 10^5 && error[2]< 10^5 && error[3]< 10^5,TestID-> "Ellipse fitting test"]
+Return[{error[1],error[2],error[3]}]
+
+];
 
 
 (*Place here: function to check that A and A bar are the same for some test case where \[Omega]\[Rule] 0*)
