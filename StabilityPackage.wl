@@ -396,15 +396,16 @@ data=ImportData[file];
 datasr=SelectSingleRadius[data,1];
 
 foc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freqs"][[E+1]]+data["freqs"][[E]])) (data["freqs"][[E+1]]^3-data["freqs"][[E]]^3)) )(datasr["Endensity"][[species,E,1]] 
-+ 3 z datasr["Endensity"][[1,E,2]]+(5/2 (3 (datasr["Endensity"][[1,E,1]] -datasr["Endensity"][[species,E,3]] )/2 x^2+3 (datasr["Endensity"][[species,E,1]] -datasr["Endensity"][[species,E,3]] )/2 y^2+3 datasr["Endensity"][[species,E,3]] z^2-datasr["Endensity"][[species,E,1]])));
++ 3 z datasr["Endensity"][[1,E,2]]
++(5/2 (3 (datasr["Endensity"][[1,E,1]] -datasr["Endensity"][[species,E,3]] )/2 x^2+3 (datasr["Endensity"][[species,E,1]] -datasr["Endensity"][[species,E,3]] )/2 y^2+3 datasr["Endensity"][[species,E,3]] z^2-datasr["Endensity"][[species,E,1]])));
 
-ei[m_]:= Sum[1/3 (datasr["freqs"][[f+1]]^3-datasr["freqs"][[f]]^3)foc1234[Sin[ArcCos[m]],0,m,f],{f,1,80}];
+ei[m_]:= Sum[1/3 (datasr["freqs"][[f+1]]^3-datasr["freqs"][[f]]^3)foc1234[Sin[ArcCos[m]],0,m,f],{f,1,Length[datasr["freqs"]]-1}];
 
 ag=0.5(Abs[ei[1]]+Abs[ei[-1]]);
 \[Beta]g=0.;
 \[Chi]g=-5.;
 
-Return[{{ag,\[Beta]g,\[Chi]g}}]
+Return[{ag,\[Beta]g,\[Chi]g}]
 ];
 
 
