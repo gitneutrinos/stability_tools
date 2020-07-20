@@ -28,14 +28,17 @@ id=ChoiceDialog[
  inpath="G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\";
  outpath="G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\stability_data\\";
 SetDirectory["C:\\Users\\Sam\\Documents\\GitHub\\stability_tools"];
+Get["StabilityPackage`",Path->"."];
  ,
  id=="Sherwood",
  inpath="/mnt/data/SamFlynn/lotsadata/";
  outpath="/mnt/data/SamFlynn/stability_data/";
+Get["StabilityPackage`"];
  ,
  id=="Other",
  inpath = SystemDialogInput["Directory",WindowTitle-> "Choose the folder containing the data set"];
  outpath = inpath<>"out\\";
+Get["StabilityPackage`"];
  ];
  (*Want to implements toggle grid here to pick between the mass models and time slices.  It's easy, but definitely not a priority*)
 (*
@@ -46,11 +49,6 @@ outfolder = outpath<>filename;
 (*Note: this used to contain a variable called "out_path". Be careful with the underscores; in Mathematica they are either function inputs or patterns.  If the font turn green, that's why.*)
 (*Constants*)
 
-
-
-(* ::Input::Initialization:: *)
-Get["StabilityPackage`",Path->"."]
-Names["StabililtyPackage`*"]//MatrixForm (*Prints all functions and variables made available by the package. This can act as a check to make sure it has updated correctly, for instance when a new function is added*)
 
 
 (*Test on kAdapt. Comparing to old data (below). Generates a plot which should look similar (different exact k values tested*)
@@ -198,9 +196,6 @@ test=VerificationTest[error[1]< 10^5 && error[2]< 10^5 && error[3]< 10^5,TestID-
 Return[{error[1],error[2],error[3]}]
 
 ];
-
-
-?getInitialGuess
 
 
 (*Place here: function to check that A and A bar are the same for some test case where \[Omega]\[Rule] 0*)
