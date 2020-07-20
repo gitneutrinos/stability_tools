@@ -29,6 +29,12 @@ id=ChoiceDialog[
  outpath="G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\stability_data\\";
 SetDirectory["C:\\Users\\Sam\\Documents\\GitHub\\stability_tools"];
 Get["StabilityPackage`",Path->"."];
+SetOptions[EvaluationNotebook[],
+DockedCells-> 
+Cell[BoxData[ToBoxes[
+Grid[{{Item[Style["Stability Tools",FontFamily->"Helvetica",12,Bold],Alignment->Left],Item[ButtonBar[{Style["Refresh Package",10]:>Get["StabilityPackage`",Path->"."],Style["Abort Evaluation",10]:>FrontEndTokenExecute["EvaluatorAbort"],Style["Quit Kernel",10]:>FrontEndTokenExecute["EvaluatorQuit"]}],Alignment->Right]}},ItemSize->{{Scaled[0.3],Scaled[0.7]}}]
+]],"DockedCell",Background->LightBlue]
+];
  ,
  id=="Sherwood",
  inpath="/mnt/data/SamFlynn/lotsadata/";
