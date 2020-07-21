@@ -412,7 +412,7 @@ Return[{ag,\[Beta]g,\[Chi]g}]
 ];
 
 
-eBoxFitSingleRadius[data_,ri_,species_,guesses_]:=Module[{ebox,es1box,es2box,es3box,ne,Fe,Pre,ane,aFe,aPre,datasr,br,g0,moments,esbox},
+eBoxFitSingleRadius[data_,ri_,species_,guesses_]:=Module[{ebox,datasr,br,g0,moments,esbox},
 datasr=SelectSingleRadius[data,ri];
 (*If this is the first radial bin, generates intial guesses based on the expansion reconstruction of the distribution function for a. \[Beta] and \[Chi] are set to intial guesses based on previous experience.*)
 If[
