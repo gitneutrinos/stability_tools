@@ -191,7 +191,7 @@ ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) 
 
 esbox[a_,\[Beta]_,\[Chi]_,mom_]:=1/c^3 NIntegrate[m^(mom-1) ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->13];
 
-moments[mom_]:=Sum[ datasr["Endensity"][[rspecies,f,mom]]/( h (1/2 (data["freqs"][[f+1]]+data["freqs"][[f]]))),{f,1,80}];
+moments[mom_]:=Sum[ Sum[datasr["Endensity"][[rspecies,f,mom,\[Phi]]]/( h (1/2 (data["freqs"][[f+1]]+data["freqs"][[f]]))),{f,1,80}],{\[Phi],1,2}]];
 
 
 testfit=eBoxFitSingleRadius[data,rr,rspecies,getInitialGuess[file,1]];
