@@ -194,7 +194,7 @@ esbox[a_,\[Beta]_,\[Chi]_,mom_]:=1/c^3 NIntegrate[m^(mom-1) ebox[a,\[Beta],\[Chi
 moments[mom_]:=Sum[ datasr["Endensity"][[rspecies,f,mom]]/( h (1/2 (data["freqs"][[f+1]]+data["freqs"][[f]]))),{f,1,80}];
 
 
-testfit=eboxfitSingleRadius[data,rr,rspecies,getInitialGuess[data,1]];
+testfit=eBoxFitSingleRadius[data,rr,rspecies,getInitialGuess[file,1]];
 
 error[mom_]:= Abs[((2 Pi)esbox[testfit[[1]],testfit[[2]],testfit[[3]],mom]-moments[mom])/moments[mom]];
 
@@ -202,6 +202,9 @@ test=VerificationTest[error[1]< 10^5 && error[2]< 10^5 && error[3]< 10^5,TestID-
 Return[{error[1],error[2],error[3]}]
 
 ];
+
+
+ellipseCheck[]
 
 
 (*Place here: function to check that A and A bar are the same for some test case where \[Omega]\[Rule] 0*)
