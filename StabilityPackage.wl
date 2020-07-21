@@ -428,7 +428,7 @@ ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) 
 
 esbox[a_,\[Beta]_,\[Chi]_,mom_]:=1/c^3 NIntegrate[m^(mom-1) ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->13];
 
-moments[mom_]:=Sum[ datasr["Endensity"][[species,f,mom]]/( h (1/2 (data["freqs"][[f+1]]+data["freqs"][[f]]))),{f,1,80}];
+moments[mom_]:=Sum[Sum[ datasr["Endensity"][[species,f,mom,\[Phi]]]/( h (1/2 (data["freqs"][[f+1]]+data["freqs"][[f]]))),{f,1,80}],{\[Phi],1,2}];
 
 br=FindRoot[{2 Pi esbox[a,\[Beta],\[Chi],1]-moments[1],2 Pi esbox[a,\[Beta],\[Chi],2]-moments[2],2 Pi esbox[a,\[Beta],\[Chi],3]-moments[3]},{{a,g0[[1]]},{\[Beta],g0[[2]]},{\[Chi],g0[[3]]}},Evaluated->False];
 
