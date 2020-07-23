@@ -413,20 +413,20 @@ Return[{ag,\[Beta]g,\[Chi]g}]
 
 
 
-ellipseMoments[a_,\[Beta]_,\[Chi]_]:=Module[{ebox,esbox},
+ellipseMoments[af_,\[Beta]f_,\[Chi]f_]:=Module[{ebox,esbox},
 
-ebox[m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])+a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2+1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2 2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
+ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])+a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2+1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2 2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
 
-esbox[mom_]:=(2 Pi)/c^3 NIntegrate[m^(mom) ebox[m],{m,-1.,1.},MaxRecursion->16];
+esbox[mom_]:=(2 Pi)/c^3 Integrate[m^(mom) ebox[af,\[Beta]f,\[Chi]f,m],{m,-1.,1.}];
 
-Return[{esbox[0],esbox[1],esbox[2]}]
+Return[{esbox[0],esbox[2],esbox[2]}]
 
-]
+];
 
 
 (*Given 3 moments, fit parameters a, \[Beta], and \[Chi] so ellipseMoments match*)
 eBoxFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,\[Beta]f,\[Chi]f},
-emoments=ellipseMoments[af,\[Beta]f,\[Chi]f];
+
 
 br=FindRoot[{emoments[[1]]-m0,emoments[[2]]-m1,emoments[[3]]-m2},{{af,g0[[1]]},{\[Beta]f,g0[[2]]},{\[Chi]f,g0[[3]]}},Evaluated->False,MaxIterations-> 500];
 
@@ -442,6 +442,15 @@ EndPackage[]
 
 
 
+
+
+
+
+
+ellipseMoments[af,bf,cf]
+
+
+eBoxFitToMoments[1,0,0,getInitialGuess[1,0,0,10^22]]
 
 
 
