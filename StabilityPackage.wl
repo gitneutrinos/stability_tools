@@ -404,7 +404,9 @@ ag=0.5 (foc1234[Sin[ArcCos[-1.]],0,-1.]+foc1234[Sin[ArcCos[1.]],0,1.]);
 \[Beta]g=5;
 \[Chi]g=-5;
 
-Return[{ag,\[Beta]g,\[Chi]g}]
+Return[foc1234[Sin[ArcCos[-1.]],0,-1.]]
+
+(*Return[{ag,\[Beta]g,\[Chi]g}]*)
 ];
 
 
@@ -416,7 +418,7 @@ ellipseMoments[a_,\[Beta]_,\[Chi]_]:=Module[{ebox,esbox},
 
 ebox[m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])+a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2+1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2 2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
 
-esbox[mom_]:=(2 Pi)/c^3 NIntegrate[m^(mom) ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->16];
+esbox[mom_]:=(2 Pi)/c^3 NIntegrate[m^(mom) ebox[m],{m,-1.,1.},MaxRecursion->16];
 
 Return[{esbox[0],esbox[1],esbox[2]}]
 
@@ -444,6 +446,3 @@ EndPackage[]
 
 
 
-
-
-eBoxFitToMoments[1,0,0,getInitialGuess[1,0,0,]]
