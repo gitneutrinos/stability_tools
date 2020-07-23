@@ -46,7 +46,8 @@ eBoxFitSingleRadius::usage=
 "fit a single radius using the box fit parameters"
 Com::usage=
 "test"
-
+elipseMoments::usage=
+"calculate the moments from an ellipse (box fit) with parameters a, \[Beta], \[Chi]"
 
 
 
@@ -407,6 +408,17 @@ Return[{ag,\[Beta]g,\[Chi]g}]
 
 
 
+
+
+ellipseMoments[a_,\[Beta]_,\[Chi]_]:=Module[{ebox,esbox},
+
+ebox[m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])+a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2+1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2 2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
+
+esbox[mom_]:=(2 Pi)/c^3 NIntegrate[m^(mom) ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->16];
+
+Return[{esbox[0],esbox[1],esbox[2]}]
+
+]
 
 
 eBoxFitSingleRadius[file_,ri_,species_,guesses_]:=Module[{ebox,datasr,br,g0,moments,esbox,data},
