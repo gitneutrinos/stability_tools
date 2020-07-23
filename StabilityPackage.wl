@@ -419,7 +419,7 @@ ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) 
 
 esbox[mom_]:=(2 Pi)/c^3 Integrate[m^(mom) ebox[af,\[Beta]f,\[Chi]f,m],{m,-1.,1.}];
 
-Return[{esbox[0],esbox[2],esbox[2]}]
+Return[{esbox[0],esbox[1],esbox[2]}]
 
 ];
 
@@ -442,15 +442,6 @@ EndPackage[]
 
 
 
-
-
-
-
-
-ellipseMoments[af,bf,cf]
-
-
-eBoxFitToMoments[1,0,0,getInitialGuess[1,0,0,10^22]]
 
 
 
