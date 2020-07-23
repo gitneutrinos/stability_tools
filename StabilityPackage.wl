@@ -398,7 +398,7 @@ Return[out] (*Close reap over r*)
 getInitialGuess[m0_,m1_,m2_,avgE_,species_]:=Module[{foc1234,ag,\[Beta]g,\[Chi]g},
 foc1234[x_,y_,z_]:=((c^3)/(4 Pi h avgE )(m0 + 3 z m1+(5/2 (3 (m0 -m2 )/2 x^2+3 (m0 -m2 )/2 y^2+3 m2 z^2-m0)));
 
-ag=0.5 (foc1234[Sin[ArcCos[-1.]],0,-1.]+foc1234[Sin[ArcCos[1.]],0,1.])
+ag=0.5 (foc1234[Sin[ArcCos[-1.]],0,-1.]+foc1234[Sin[ArcCos[1.]],0,1.]);
 \[Beta]g=5;
 \[Chi]g=-5;
 
@@ -419,6 +419,16 @@ esbox[mom_]:=(2 Pi)/c^3 NIntegrate[m^(mom) ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},M
 Return[{esbox[0],esbox[1],esbox[2]}]
 
 ]
+
+
+(*Given 3 moments, fit parameters a, \[Beta], and \[Chi] so ellipseMoments match*)
+eBoxFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses},
+emoments=ellipseMoments[af,\[Beta]f,\[Chi]f];
+
+br=FindRoot[{emoments[[1]]-m0,emoments[[2]]-m1,emoments[[3]]-m2},{{af,g0[[1]]},{\[Beta]f,g0[[2]]},{\[Chi]f,g0[[3]]}},Evaluated->False,MaxIterations-> 500];
+
+Return[{af/.br,\[Beta]f/.br,\[Chi]f/.br}]
+];
 
 
 eBoxFitSingleRadius[file_,ri_,species_,guesses_]:=Module[{ebox,datasr,br,g0,moments,esbox,data},
