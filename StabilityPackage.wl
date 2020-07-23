@@ -391,25 +391,22 @@ Return[out] (*Close reap over r*)
 		
 ];
 
-getInitialGuess[file_,species_]:=Module[{ei,aei,ag,\[Beta]g,\[Chi]g,datasr,foc1234,data},
-data=ImportData[file];
-datasr=SelectSingleRadius[data,1];
-
-foc1234[x_,y_,z_,E_]:= Sum[((3c^3)/(4 Pi h (1/2 (data["freqs"][[E+1]]+data["freqs"][[E]])) (data["freqs"][[E+1]]^3-data["freqs"][[E]]^3)) )
-(datasr["Endensity"][[species,E,1,\[Phi]]] + 3 z datasr["Endensity"][[species,E,2,\[Phi]]]
-+(5/2 (3 (datasr["Endensity"][[species,E,1,\[Phi]]] -datasr["Endensity"][[species,E,3,\[Phi]]] )/2 x^2+3 (datasr["Endensity"][[species,E,1,\[Phi]]] -datasr["Endensity"][[species,E,3,\[Phi]]] )/2 y^2+3 datasr["Endensity"][[species,E,3,\[Phi]]] z^2-datasr["Endensity"][[species,E,1,\[Phi]]])))
-,{\[Phi],1,2}];
 
 
-ei[m_]:= Sum[1/3 (datasr["freqs"][[f+1]]^3-datasr["freqs"][[f]]^3) foc1234[Sin[ArcCos[m]],0,m,f],{f,1,Length[datasr["freqs"]]-1}];
 
+getInitialGuess[m0_,m1_,m2_,avgE_,species_]:=Module[{foc1234,ag,\[Beta]g,\[Chi]g},
+foc1234[x_,y_,z_]:=((c^3)/(4 Pi h avgE )(m0 + 3 z m1+(5/2 (3 (m0 -m2 )/2 x^2+3 (m0 -m2 )/2 y^2+3 m2 z^2-m0)));
 
-ag=0.5(Abs[ei[1.]]+Abs[ei[-1.]]);
-\[Beta]g=0.;
-\[Chi]g=-5.;
+ag=0.5 (foc1234[Sin[ArcCos[-1.]],0,-1.]+foc1234[Sin[ArcCos[1.]],0,1.])
+\[Beta]g=5;
+\[Chi]g=-5;
 
 Return[{ag,\[Beta]g,\[Chi]g}]
 ];
+
+
+
+
 
 
 eBoxFitSingleRadius[file_,ri_,species_,guesses_]:=Module[{ebox,datasr,br,g0,moments,esbox,data},
@@ -427,11 +424,11 @@ ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) 
 +a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2+1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
 
 
-esbox[a_,\[Beta]_,\[Chi]_,mom_]:=1/c^3 NIntegrate[m^(mom-1) ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->13];
+esbox[a_,\[Beta]_,\[Chi]_,mom_]:=(2 Pi)/c^3 NIntegrate[m^(mom) ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->16];
 
-moments[mom_]:=Sum[Sum[ datasr["Endensity"][[species,f,mom,\[Phi]]]/( h (1/2 (data["freqs"][[f+1]]+data["freqs"][[f]]))),{f,1,Length[data["freqs"]]-1}],{\[Phi],1,2}];
+moments[mom_]:=Sum[Sum[Sum[datasr["Endensity"][[species,f,\[Theta],\[Phi]]]/( h (1/2 (data["freqs"][[f+1]]+data["freqs"][[f]]))) datasr["mids"][[\[Theta]]]^mom,{f,1,Length[data["freqs"]]-1}],{\[Phi],1,2}],{\[Theta],1,Length[datasr["mids"]]}];
 
-br=FindRoot[{2 Pi esbox[a,\[Beta],\[Chi],1]-moments[1],2 Pi esbox[a,\[Beta],\[Chi],2]-moments[2],2 Pi esbox[a,\[Beta],\[Chi],3]-moments[3]},{{a,g0[[1]]},{\[Beta],g0[[2]]},{\[Chi],g0[[3]]}},Evaluated->False];
+br=FindRoot[{ esbox[a,\[Beta],\[Chi],0]-moments[0], esbox[a,\[Beta],\[Chi],1]-moments[1], esbox[a,\[Beta],\[Chi],2]-moments[2]},{{a,g0[[1]]},{\[Beta],g0[[2]]},{\[Chi],g0[[3]]}},Evaluated->False,MaxIterations-> 500];
 
 Return[{a/.br,\[Beta]/.br,\[Chi]/.br}]
 ];
