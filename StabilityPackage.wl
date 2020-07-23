@@ -46,7 +46,7 @@ eBoxFitSingleRadius::usage=
 "fit a single radius using the box fit parameters"
 Com::usage=
 "test"
-elipseMoments::usage=
+ellipseMoments::usage=
 "calculate the moments from an ellipse (box fit) with parameters a, \[Beta], \[Chi]"
 eBoxFitToMoments::usage=
 "given 3 input moments and set of guess parameters, fits ellipse parameters to moments"
@@ -398,7 +398,7 @@ Return[out] (*Close reap over r*)
 
 
 getInitialGuess[m0_,m1_,m2_,avgE_,species_]:=Module[{foc1234,ag,\[Beta]g,\[Chi]g},
-foc1234[x_,y_,z_]:=((c^3)/(4 Pi h avgE )(m0 + 3 z m1+(5/2 (3 (m0 -m2 )/2 x^2+3 (m0 -m2 )/2 y^2+3 m2 z^2-m0)));
+foc1234[x_,y_,z_]:=((c^3)/(4 Pi h avgE) )(m0 + 3 z m1+(5/2 (3 (m0 -m2 )/2 x^2+3 (m0 -m2 )/2 y^2+3 m2 z^2-m0)));
 
 ag=0.5 (foc1234[Sin[ArcCos[-1.]],0,-1.]+foc1234[Sin[ArcCos[1.]],0,1.]);
 \[Beta]g=5;
