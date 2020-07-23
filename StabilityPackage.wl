@@ -427,15 +427,13 @@ Return[{esbox[0],esbox[1],esbox[2]}]
 (*Given 3 moments, fit parameters a, \[Beta], and \[Chi] so ellipseMoments match*)
 eBoxFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,\[Beta]f,\[Chi]f},
 
-emoments=ellipseMoments[af,\[Beta]f,\[Chi]f];
 
-Return[emoments[[1]]-m0]
 
-(*br=FindRoot[{emoments[[1]]-m0,emoments[[2]]-m1,emoments[[3]]-m2},{{af,g0[[1]]},{\[Beta]f,g0[[2]]},{\[Chi]f,g0[[3]]}},Evaluated->False,MaxIterations\[Rule] 500];
+br=FindRoot[{ellipseMoments[af,\[Beta]f,\[Chi]f][[1]]-m0,ellipseMoments[af,\[Beta]f,\[Chi]f][[2]]-m1,ellipseMoments[af,\[Beta]f,\[Chi]f][[3]]-m2},{{af,g0[[1]]},{\[Beta]f,g0[[2]]},{\[Chi]f,g0[[3]]}},Evaluated->False,MaxIterations-> 500];
 
 Return[{af/.br,\[Beta]f/.br,\[Chi]f/.br}]
 
-*)
+
 ];
 
 
