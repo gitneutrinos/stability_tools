@@ -397,10 +397,10 @@ Return[out] (*Close reap over r*)
 
 
 
-getInitialGuess[m0_,m1_,m2_,avgfreq_]:=Module[{foc1234,ag,\[Beta]g,\[Chi]g},
-foc1234[x_,y_,z_]:=((c^3)/(4 Pi h avgfreq) )(m0 + 3 z m1+(5/2 (3 (m0 -m2 )/2 x^2+3 (m0 -m2 )/2 y^2+3 m2 z^2-m0)));
+getInitialGuess[m0_,m1_,m2_]:=Module[{foc1234,ag,\[Beta]g,\[Chi]g},
+foc1234[x_,y_,z_]:=(1/(4 Pi ) )(m0 + 3 z m1+(5/2 (3 (m0 -m2 )/2 x^2+3 (m0 -m2 )/2 y^2+3 m2 z^2-m0)));
 
-ag=0.5 (Abs[foc1234[Sin[ArcCos[-1.]],0,-1.]]+Abs[foc1234[Sin[ArcCos[1.]],0,1.]]);
+ag=0.5 (foc1234[Sin[ArcCos[-1.]],0,-1.]+foc1234[Sin[ArcCos[1.]],0,1.]);
 \[Beta]g=5;
 \[Chi]g=-5;
 
@@ -415,9 +415,9 @@ Return[{ag,\[Beta]g,\[Chi]g}]
 
 ellipseMoments[af_,\[Beta]f_,\[Chi]f_]:=Module[{ebox,esbox},
 
-ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])+a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2+1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2 2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
+ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])+a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2+1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
 
-esbox[mom_]:=(2 Pi)/c^3 Integrate[m^(mom) ebox[af,\[Beta]f,\[Chi]f,m],{m,-1.,1.}];
+esbox[mom_]:=2 Pi NIntegrate[m^(mom) ebox[af,\[Beta]f,\[Chi]f,m],{m,-1.,1.},MaxRecursion->16];
 
 Return[{esbox[0],esbox[1],esbox[2]}]
 
@@ -427,10 +427,15 @@ Return[{esbox[0],esbox[1],esbox[2]}]
 (*Given 3 moments, fit parameters a, \[Beta], and \[Chi] so ellipseMoments match*)
 eBoxFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,\[Beta]f,\[Chi]f},
 
+emoments=ellipseMoments[af,\[Beta]f,\[Chi]f];
 
-br=FindRoot[{emoments[[1]]-m0,emoments[[2]]-m1,emoments[[3]]-m2},{{af,g0[[1]]},{\[Beta]f,g0[[2]]},{\[Chi]f,g0[[3]]}},Evaluated->False,MaxIterations-> 500];
+Return[emoments[[1]]-m0]
+
+(*br=FindRoot[{emoments[[1]]-m0,emoments[[2]]-m1,emoments[[3]]-m2},{{af,g0[[1]]},{\[Beta]f,g0[[2]]},{\[Chi]f,g0[[3]]}},Evaluated->False,MaxIterations\[Rule] 500];
 
 Return[{af/.br,\[Beta]f/.br,\[Chi]f/.br}]
+
+*)
 ];
 
 
