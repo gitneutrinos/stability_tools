@@ -397,16 +397,15 @@ Return[out] (*Close reap over r*)
 
 
 
-getInitialGuess[m0_,m1_,m2_,avgfreq_,species_]:=Module[{foc1234,ag,\[Beta]g,\[Chi]g},
+getInitialGuess[m0_,m1_,m2_,avgfreq_]:=Module[{foc1234,ag,\[Beta]g,\[Chi]g},
 foc1234[x_,y_,z_]:=((c^3)/(4 Pi h avgfreq) )(m0 + 3 z m1+(5/2 (3 (m0 -m2 )/2 x^2+3 (m0 -m2 )/2 y^2+3 m2 z^2-m0)));
 
-ag=0.5 (foc1234[Sin[ArcCos[-1.]],0,-1.]+foc1234[Sin[ArcCos[1.]],0,1.]);
+ag=0.5 (Abs[foc1234[Sin[ArcCos[-1.]],0,-1.]]+Abs[foc1234[Sin[ArcCos[1.]],0,1.]]);
 \[Beta]g=5;
 \[Chi]g=-5;
 
-Return[foc1234[Sin[ArcCos[-1.]],0,-1.]]
 
-(*Return[{ag,\[Beta]g,\[Chi]g}]*)
+Return[{ag,\[Beta]g,\[Chi]g}]
 ];
 
 
