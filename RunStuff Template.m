@@ -178,7 +178,7 @@ Return[{check,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,Idis[0],Idis[1],Idis[2]}]
 (*Ellipse Check Section*)
 ellipseCheck[]:=Module[{},
 m0=1.;
-m1=0.;
+m1=10^-8;
 m2=1/3;
 
 fits=eBoxFitToMoments[m0,m1,m2,getInitialGuess[m0,m1,m2]];
@@ -187,12 +187,12 @@ er0=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[1]]-m0)/m0;
 er1=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[2]]-m1)/m1;
 er2=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[3]]-m2)/m2;
 
-return[VerificationTest[er0<10^-5 && er1< 10^-5&& er2< 10^-5,TestID-> "Ellipse error check"]]
+Return[{VerificationTest[er0<10^-5 && er1< 10^-5&& er2< 10^-5,TestID-> "Ellipse error check"],er0,er1,er2}]
 
 ];
 
 
-ellipseCheck[]
+ellipseCheck[]//Quiet
 
 
 (*Place here: function to check that A and A bar are the same for some test case where \[Omega]\[Rule] 0*)
