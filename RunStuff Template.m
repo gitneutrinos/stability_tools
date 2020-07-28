@@ -163,7 +163,7 @@ dispersionCheck[data_,\[CapitalOmega]_,k_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOme
 kp=k-\[Phi]1;
 
 (*Definition of I from Gail's equation (41)*)
-Idis[n_]:=Sum[((munits ndensities[data,"xflavor"-> False][[1]][[i,i]]-munits ndensities[data,"xflavor"-> False][[2]][[i,i]])/(\[CapitalOmega]p-(kp \[Theta][[i]])))\[Theta][[i]]^n,{i,1,10}];
+Idis[n_]:=Sum[((munits ndensities[data,"xflavor"-> False][[1]][[i,i]]-munits ndensities[data,"xflavor"-> False][[2]][[i,i]])/(\[CapitalOmega]p-(kp \[Theta][[i]])))\[Theta][[i]]^n,{i,1,Length[\[Theta]]}];
 
 (*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
 
@@ -171,6 +171,15 @@ check=(Idis[0]+1)(Idis[2]-1)-(Idis[1] Conjugate[Idis[1]]);
 
 Return[{check,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,Idis[0],Idis[1],Idis[2]}]
 ];
+
+
+
+
+build2bMatrix[Infinity,2.]/.a-> 0.1//Eigenvalues
+
+
+dispersionCheck[get2bdata[]/.a-> 0.1,8.72956,2.]
+
 
 
 
