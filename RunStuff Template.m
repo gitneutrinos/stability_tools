@@ -124,7 +124,7 @@ data2b=
 "Yes"-> 0.,
 "mids"-> {-1,1},
 "freqs"->{0,2},
-"Endensity"-> {{{{0., 0.},{(1+a)/(munits/h),0.}}},{{{(1-a)/(munits/h),0.},{0.,0.}}}},
+"Endensity"-> {{{{0.},{(1+a)/(munits/h)}}},{{{(1-a)/(munits/h)},{0.}}}},
  "freqmid"-> {1},
  "munits"-> munits
 ]
@@ -182,9 +182,6 @@ check=(Idis[0]+1)(Idis[2]-1)-(Idis[1] Conjugate[Idis[1]]);
 
 Return[{check,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,Idis[0],Idis[1],Idis[2]}]
 ];
-
-
-
 
 
 
