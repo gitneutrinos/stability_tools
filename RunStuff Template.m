@@ -124,7 +124,7 @@ data2b=
 "Yes"-> 0.,
 "mids"-> {-1,1},
 "freqs"->{0,2},
-"Endensity"-> {{{{ (1+a)/(munits/h),0.},{0.,0.}}},{{{0.,0.},{ (1-a)/(munits/h),0.}}}},
+"Endensity"-> {{{{0., 0.},{(1+a)/(munits/h),0.}}},{{{(1-a)/(munits/h),0.},{0.,0.}}}},
  "freqmid"-> {1},
  "munits"-> munits
 ]
@@ -133,18 +133,29 @@ data2b=
 (*builds a 4x4 matrix with the two beam data, then reduces the size of the matrix *)
 build2bMatrix[En_,k_]:=Module[{fakeEn,S2ba,S2b},
 S2ba=stabilityMatrix[get2bdata[],getEquations[get2bdata[],En,-1.,k,"xflavor"-> False],"xflavor"-> False];
-S2b={{S2ba[[1,1]],S2ba[[1,4]]},{S2ba[[4,1]],S2ba[[4,4]]}};
+S2b={{S2ba[[2,2]],S2ba[[2,3]]},{S2ba[[3,2]],S2ba[[3,3]]}};
 Return[S2b]
 ];
 
 
 (*Chakraborty's analytic expression for the 2x2 case, and a verification test that they're the same within one part in 1000*)
 
-\[CapitalOmega]ch[k_,\[Mu]ch_,a_,\[Omega]_]=2 a \[Mu]ch+Sqrt[(2 a \[Mu]ch)^2+(\[Omega]+k)((\[Omega]+k)-4 \[Mu]ch)];
-evtest=Eigenvalues[build2bMatrix[Infinity,0.]/.{a-> 0.1}][[2]];
-vt=VerificationTest[
-Abs[Im[\[CapitalOmega]ch[0.,1,0.1,0]]]-Abs[Im[evtest]]<10^-3
-,TestID-> "2 Beam Growth Rate"]
+\[CapitalOmega]ch[k_,\[Mu]ch_,a_,\[Omega]_]:=Sort[{2 a \[Mu]ch+Sqrt[(2 a \[Mu]ch)^2+(\[Omega]+k)((\[Omega]+k)-4 \[Mu]ch)],2 a \[Mu]ch-Sqrt[(2 a \[Mu]ch)^2+(\[Omega]+k)((\[Omega]+k)-4 \[Mu]ch)]}];
+cm[k_,\[Mu]ch_,w_]:=DiagonalMatrix[{w+k,-w-k,w-k,-w+k}]+2 \[Mu]ch{{l+lb,-lb,-l,0.},{-r,r+rb,0,-rb},{-r,0,r+rb,-rb},{0.,-lb,-l,l+lb}};
+cma[k_,\[Mu]ch_,a_,w_]:=cm[k,\[Mu]ch,w]/.{rb-> 0.,l-> 0.,r-> (1+a),lb-> -(1-a)};
+evtest=Sort[Eigenvalues[build2bMatrix[Infinity,2.]/.{a-> 0.}]]//Chop;
+
+VerificationTest[
+Re[\[CapitalOmega]ch[2.,2 Pi//N,0.,0]]===Re[evtest] 
+,TestID-> "2 Beam Growth Rate (Real part)"]
+
+VerificationTest[
+Im[\[CapitalOmega]ch[2.,2 Pi//N,0.,0]]=== Im[evtest]
+,TestID-> "2 Beam Growth Rate (Imaginary part)"]
+
+Print[Re[\[CapitalOmega]ch[2.,2 Pi//N,0.,0]],Re[evtest]];
+Print[Im[\[CapitalOmega]ch[2.,2 Pi//N,0.,0]],Im[evtest]];
+
 (*The hard coded number 2 10 ^21 is the "common factor" chakraborty calls \[Mu] for this matrix *)
 
 
@@ -175,12 +186,6 @@ Return[{check,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,Idis[0],Idis[1],Idis[2]}]
 
 
 
-build2bMatrix[Infinity,2.]/.a-> 0.1//Eigenvalues
-
-
-dispersionCheck[get2bdata[]/.a-> 0.1,8.72956,2.]
-
-
 
 
 
@@ -196,7 +201,7 @@ er0=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[1]]-m0)/m0;
 er1=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[2]]-m1)/m1;
 er2=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[3]]-m2)/m2;
 
-Return[{VerificationTest[er0<10^-5 && er1< 10^-5&& er2< 10^-5,TestID-> "Ellipse error check"],er0,er1,er2}]
+Return[{VerificationTest[er0<10^-5 && er1< 10^-5 && er2< 10^-5,TestID-> "Ellipse error check"],er0,er1,er2}]
 
 ];
 
