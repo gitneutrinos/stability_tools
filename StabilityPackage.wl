@@ -94,7 +94,8 @@ Association[
 "freqmid"->Import[infile,{"Data", "distribution_frequency_mid(Hz,lab)"}], (*freq mid points*)
 "muss"->Import[infile,{"Data", "distribution_costheta_grid(lab)"}], (*Cos\[Theta] grid*)
 "mids"->Import[infile,{"Data", "distribution_costheta_mid(lab)"}], (*Cos\[Theta] bin midpoints*)
-"radius"-> Import[infile,{"Data","r(cm)"}]
+"radius"-> Import[infile,{"Data","r(cm)"}],
+"phis"-> Import[infile,{"Data","/distribution_phi_grid(radians,lab)"}] (*"phi bin edges"*)
 ];
 
 
