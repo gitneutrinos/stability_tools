@@ -50,6 +50,8 @@ ellipseMoments::usage=
 "calculate the moments from an ellipse (box fit) with parameters a, \[Beta], \[Chi]"
 eBoxFitToMoments::usage=
 "given 3 input moments and set of guess parameters, fits ellipse parameters to moments"
+getMoments::usage=
+"takes moments out of moment data for a given file, radius, species. Energy integrated"
 
 
 
@@ -395,6 +397,14 @@ Return[out] (*Close reap over r*)
 ];
 
 
+
+
+getMoments[file_,r_,species_]:= Module[{data,datasr,moments},
+data=ImportData[file];
+datasr=SelectSingleRadius[data,r];
+moments={Sum[datasr["Endensity"][[species,E,1]],{E,1,Length[data["freqs"]]-1}],Sum[datasr["Endensity"][[species,E,2]],{E,1,Length[data["freqs"]]-1}],Sum[datasr["Endensity"][[species,E,3]],{E,1,Length[data["freqs"]]-1}]};
+Return[moments];
+];
 
 
 getInitialGuess[m0_,m1_,m2_]:=Module[{foc1234,ag,\[Beta]g,\[Chi]g},
