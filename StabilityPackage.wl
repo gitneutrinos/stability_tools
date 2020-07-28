@@ -1,8 +1,5 @@
 (* ::Package:: *)
 
-
-
-
 BeginPackage["StabililtyPackage`"]
 
 ClearAll["StabililtyPackage`", "StabililtyPackage`"]
@@ -44,12 +41,17 @@ ndensities::usage =
 esysscale::usage=
 "returns the real and imaginary parts of eigenvalues and associated eigenvectors"
 getInitialGuess::usage=
-"generates Initial Guesses for the first radius from expansion expresssion"
-eboxfitSingleRadius::usage=
+"[file,species]generates Initial Guesses for the first radius from expansion expresssion"
+eBoxFitSingleRadius::usage=
 "fit a single radius using the box fit parameters"
 Com::usage=
 "test"
-
+ellipseMoments::usage=
+"calculate the moments from an ellipse (box fit) with parameters a, \[Beta], \[Chi]"
+eBoxFitToMoments::usage=
+"given 3 input moments and set of guess parameters, fits ellipse parameters to moments"
+getMoments::usage=
+"takes moments out of moment data for a given file, radius, species. Energy integrated"
 
 
 
@@ -392,58 +394,57 @@ Reap[
 ][[2,1]];
 Return[out] (*Close reap over r*)
 		
-]
+];
 
-getIntialGuess[data_,species_]:=Module[{ei,aei,ag,aag,\[Beta]g,a\[Beta]g,a\[Chi]g,\[Chi]g,g0,datasr,foc1234,afoc1234,xfoc1234,xag,xei},
-datasr=SelectSingleRadius[data,1];
 
-foc1234[x_,y_,z_,E_]:= ((3c^3)/(4 Pi h (1/2 (data["freqs"][[E+1]]+data["freqs"][[E]])) (data["freqs"][[E+1]]^3-data["freqs"][[E]]^3)) )(datasr["Endensity"][[species,E,1]] 
-+ 3 z datasr["Endensity"][[1,E,2]]+(5/2 (3 (datasr["Endensity"][[1,E,1]] -datasr["Endensity"][[species,E,3]] )/2 x^2+3 (datasr["Endensity"][[species,E,1]] -datasr["Endensity"][[species,E,3]] )/2 y^2+3 datasr["Endensity"][[species,E,3]] z^2-datasr["Endensity"][[species,E,1]])));
 
-ei[m_]:= Sum[1/3 (datasr["freqs"][[f+1]]^3-datasr["freqs"][[f]]^3)foc1234[Sin[ArcCos[m]],0,m,f],{f,1,80}];
 
-ag=0.5(Abs[ei[1]]+Abs[ei[-1]]);
-\[Beta]g=0.;
-\[Chi]g=-5.;
+getMoments[file_,r_,species_]:= Module[{data,datasr,moments},
+data=ImportData[file];
+datasr=SelectSingleRadius[data,r];
+moments={Sum[datasr["Endensity"][[species,E,1]],{E,1,Length[data["freqs"]]-1}],Sum[datasr["Endensity"][[species,E,2]],{E,1,Length[data["freqs"]]-1}],Sum[datasr["Endensity"][[species,E,3]],{E,1,Length[data["freqs"]]-1}]};
+Return[moments];
+];
+
+
+getInitialGuess[m0_,m1_,m2_]:=Module[{foc1234,ag,\[Beta]g,\[Chi]g},
+foc1234[x_,y_,z_]:=(1/(4 Pi ) )(m0 + 3 z m1+(5/2 (3 (m0 -m2 )/2 x^2+3 (m0 -m2 )/2 y^2+3 m2 z^2-m0)));
+
+ag=0.5 (foc1234[Sin[ArcCos[-1.]],0,-1.]+foc1234[Sin[ArcCos[1.]],0,1.]);
+\[Beta]g=5;
+\[Chi]g=-5;
+
 
 Return[{ag,\[Beta]g,\[Chi]g}]
-]
-
-
-eBoxFitSingleRadius[data_,ri_,species_,guesses_]:=Module[{ebox,es1box,es2box,es3box,ne,Fe,Pre,ane,aFe,aPre,datasr,br,g0,moments,esbox},
-datasr=SelectSingleRadius[data,ri];
-(*If this is the first radial bin, generates intial guesses based on the expansion reconstruction of the distribution function for a. \[Beta] and \[Chi] are set to intial guesses based on previous experience.*)
-If[
-ri== 1,
-g0=getInitialGuess[data,species],
-,g0=guesses;
-];
-
-(*Equation of an ellipse in the "box transform" units*)
-ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])
-+a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2+1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
-
-
-esbox[a_,\[Beta]_,\[Chi]_,mom_]:=1/c^3 NIntegrate[m^(mom-1) ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->13];
-
-moments[mom_]:=Sum[ datasr["Endensity"][[species,f,mom]]/( h (1/2 (data["freqs"][[f+1]]+data["freqs"][[f]]))),{f,1,80}];
-
-br=FindRoot[{2 Pi esbox[a,\[Beta],\[Chi],1]-moments[1],2 Pi esbox[a,\[Beta],\[Chi],2]-moments[2],2 Pi esbox[a,\[Beta],\[Chi],3]-moments[3]},{{a,g0[[1]]},{\[Beta],g0[[2]]},{\[Chi],g0[[3]]}},Evaluated->False];
-
-Return[{a/.br,\[Beta]/.br,\[Chi]/.br}]
 ];
 
 
-boxFit[infile_,species_]:=Module[{data,lastguess,ans},
-data=ImportData[infile];
-lastguess={0.,0.,0.};
-fits=Reap[Do[
-ans=eBoxFitSingleRadius[data,r,species,lastguess];
-Sow[ans];
-lastguess=ans
-,{r,1,384}]][[2,1]];
-Return[fits]
-]
+
+
+
+
+ellipseMoments[af_,\[Beta]f_,\[Chi]f_]:=Module[{ebox,esbox},
+
+ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])+a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2+1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
+
+esbox[mom_]:=2 Pi NIntegrate[m^(mom) ebox[af,\[Beta]f,\[Chi]f,m],{m,-1.,1.},MaxRecursion->16];
+
+Return[{esbox[0],esbox[1],esbox[2]}]
+
+];
+
+
+(*Given 3 moments, fit parameters a, \[Beta], and \[Chi] so ellipseMoments match*)
+eBoxFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,\[Beta]f,\[Chi]f},
+
+
+
+br=FindRoot[{ellipseMoments[af,\[Beta]f,\[Chi]f][[1]]-m0,ellipseMoments[af,\[Beta]f,\[Chi]f][[2]]-m1,ellipseMoments[af,\[Beta]f,\[Chi]f][[3]]-m2},{{af,g0[[1]]},{\[Beta]f,g0[[2]]},{\[Chi]f,g0[[3]]}},Evaluated->False,MaxIterations-> 500];
+
+Return[{af/.br,\[Beta]f/.br,\[Chi]f/.br}]
+
+
+];
 
 
 End[]

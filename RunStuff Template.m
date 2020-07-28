@@ -28,14 +28,23 @@ id=ChoiceDialog[
  inpath="G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\";
  outpath="G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\stability_data\\";
 SetDirectory["C:\\Users\\Sam\\Documents\\GitHub\\stability_tools"];
+Get["StabilityPackage`",Path->"."];
+SetOptions[EvaluationNotebook[],
+DockedCells-> 
+Cell[BoxData[ToBoxes[
+Grid[{{Item[Style["Stability Tools",FontFamily->"Helvetica",12,Bold],Alignment->Left],Item[ButtonBar[{Style["Refresh Package",10]:>Get["StabilityPackage`",Path->"."],Style["Abort Evaluation",10]:>FrontEndTokenExecute["EvaluatorAbort"],Style["Quit Kernel",10]:>FrontEndTokenExecute["EvaluatorQuit"]}],Alignment->Right]}},ItemSize->{{Scaled[0.3],Scaled[0.7]}}]
+]],"DockedCell",Background->LightBlue]
+];
  ,
  id=="Sherwood",
  inpath="/mnt/data/SamFlynn/lotsadata/";
  outpath="/mnt/data/SamFlynn/stability_data/";
+Get["StabilityPackage`"];
  ,
  id=="Other",
  inpath = SystemDialogInput["Directory",WindowTitle-> "Choose the folder containing the data set"];
  outpath = inpath<>"out\\";
+Get["StabilityPackage`"];
  ];
  (*Want to implements toggle grid here to pick between the mass models and time slices.  It's easy, but definitely not a priority*)
 (*
@@ -46,11 +55,6 @@ outfolder = outpath<>filename;
 (*Note: this used to contain a variable called "out_path". Be careful with the underscores; in Mathematica they are either function inputs or patterns.  If the font turn green, that's why.*)
 (*Constants*)
 
-
-
-(* ::Input::Initialization:: *)
-Get["StabilityPackage`",Path->"."]
-Names["StabililtyPackage`*"]//MatrixForm (*Prints all functions and variables made available by the package. This can act as a check to make sure it has updated correctly, for instance when a new function is added*)
 
 
 (*Test on kAdapt. Comparing to old data (below). Generates a plot which should look similar (different exact k values tested*)
@@ -159,7 +163,7 @@ dispersionCheck[data_,\[CapitalOmega]_,k_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOme
 kp=k-\[Phi]1;
 
 (*Definition of I from Gail's equation (41)*)
-Idis[n_]:=Sum[((munits ndensities[data,"xflavor"-> False][[1]][[i,i]]-munits ndensities[data,"xflavor"-> False][[2]][[i,i]])/(\[CapitalOmega]p-(kp \[Theta][[i]]))) \[Theta][[i]]^n,{i,1,10}];
+Idis[n_]:=Sum[((munits ndensities[data,"xflavor"-> False][[1]][[i,i]]-munits ndensities[data,"xflavor"-> False][[2]][[i,i]])/(\[CapitalOmega]p-(kp \[Theta][[i]])))\[Theta][[i]]^n,{i,1,10}];
 
 (*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
 
@@ -172,31 +176,48 @@ Return[{check,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,Idis[0],Idis[1],Idis[2]}]
 
 
 (*Ellipse Check Section*)
-ellipseCheck[]:=Module[{rr,rspecies,data,datasr,ebox,esbox,moments,testfit,error,test},
+ellipseCheck[]:=Module[{m0,m1,m2,er0,er1,er2,fits},
+m0=1.;
+m1=10^-8;
+m2=1/3;
 
-(*rr=RandomInteger[{80,250}];*)
-rr=1;
-rspecies=RandomInteger[{1,2}];
+fits=eBoxFitToMoments[m0,m1,m2,getInitialGuess[m0,m1,m2]];
 
-data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
-datasr=SelectSingleRadius[data,rr];
+er0=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[1]]-m0)/m0;
+er1=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[2]]-m1)/m1;
+er2=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[3]]-m2)/m2;
 
-ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])
-+a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2+1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
-
-esbox[a_,\[Beta]_,\[Chi]_,mom_]:=1/c^3 NIntegrate[m^(mom-1) ebox[a,\[Beta],\[Chi],m],{m,-1.,1.},MaxRecursion->13];
-
-moments[mom_]:=Sum[ datasr["Endensity"][[rspecies,f,mom]]/( h (1/2 (data["freqs"][[f+1]]+data["freqs"][[f]]))),{f,1,80}];
-
-
-testfit=eboxfitSingleRadius[data,rr,rspecies,getInitialGuess[data,1]];
-
-error[mom_]:= Abs[((2 Pi)esbox[testfit[[1]],testfit[[2]],testfit[[3]],mom]-moments[mom])/moments[mom]];
-
-test=VerificationTest[error[1]< 10^5 && error[2]< 10^5 && error[3]< 10^5,TestID-> "Ellipse fitting test"]
-Return[{error[1],error[2],error[3]}]
+Return[{VerificationTest[er0<10^-5 && er1< 10^-5&& er2< 10^-5,TestID-> "Ellipse error check"],er0,er1,er2}]
 
 ];
+
+
+dataEllipseCheck[]:=Module[{m0,m1,m2,er0,er1,er2,fits,moms,file},
+
+file="G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\4timesHigh_1D_withV_withPairBrems_MC_moments.h5";
+
+moms=getMoments[file,1,1];
+
+m0=moms[[1]];
+m1=moms[[2]];
+m2=moms[[3]];
+
+fits=eBoxFitToMoments[m0,m1,m2,getInitialGuess[m0,m1,m2]];
+
+er0=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[1]]-m0)/m0;
+er1=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[2]]-m1)/m1;
+er2=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[3]]-m2)/m2;
+
+Return[{VerificationTest[er0<10^-5 && er1< 10^-5 && er2< 10^-5,TestID-> "Ellipse Data error check"],er0,er1,er2}]
+
+];
+
+
+ellipseCheck[]//Quiet
+dataEllipseCheck[]//Quiet
+
+
+
 
 
 (*Place here: function to check that A and A bar are the same for some test case where \[Omega]\[Rule] 0*)
