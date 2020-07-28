@@ -108,7 +108,8 @@ Association[
 "freqs"->data["freqs"], (*freq grid in hz*)
 "freqmid"->data["freqmid"], (*freq mid points*)
 "muss"->data["muss"], (*Cos\[Theta] grid*)
-"mids"->data["mids"] (*Cos\[Theta] bin midpoints*)
+"mids"->data["mids"],
+"phis"-> data["phis"] (*"phi bin edges"*) (*Cos\[Theta] bin midpoints*)
 ];
 
 
