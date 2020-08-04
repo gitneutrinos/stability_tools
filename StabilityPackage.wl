@@ -426,9 +426,10 @@ Return[{ag,\[Beta]g,\[Chi]g}]
 
 ellipseMoments[af_,\[Beta]f_,\[Chi]f_]:=Module[{ebox,esbox},
 
-ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])+a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2+1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
+ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])+a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2
++1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
 
-esbox[mom_]:=2 Pi NIntegrate[m^(mom) ebox[af,\[Beta]f,\[Chi]f,m],{m,-1.,1.},MaxRecursion->16];
+esbox[mom_]:=2 Pi NIntegrate[m^mom ebox[af,\[Beta]f,\[Chi]f,m],{m,-1.,1.},MaxRecursion->16];
 
 Return[{esbox[0],esbox[1],esbox[2]}]
 
