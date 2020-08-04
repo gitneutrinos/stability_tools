@@ -185,8 +185,22 @@ Return[{check,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,Idis[0],Idis[1],Idis[2]}]
 
 
 
+allDispersions[]:=Module[{data,dc2,dc4,dcdata,datasr},
+
+dc2=dispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[build2bMatrix[Infinity,2.]/.a-> 0.][[1]],2.];
+
+dc4=dispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[stabilityMatrix[get2bdata[],getEquations[get2bdata[],Infinity,-1.,2.,"xflavor"-> False],"xflavor"-> False]/.a-> 0.][[1]],2.];
+
+data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
+datasr=SelectSingleRadius[data,200];
+
+dcdata=dispersionCheck[datasr,Eigenvalues[stabilityMatrix[datasr,getEquations[datasr,Infinity,-1.,10^-17,"xflavor"-> False],"xflavor"-> False]][[1]],10^-17];
+
+Return[VerificationTest[Between[dc2[[1]]//Chop,{-0.1,0.1}] && Between[dc4[[1]]//Chop,{-0.1,0.1}] && Between[dcdata[[1]]//Chop,{-0.1,0.1}],TestID-> "2 beam, 4 beam, and real data dispersion relation checks"]];
+];
 
 
+allDispersions[]
 
 
 (*Ellipse Check Section*)
