@@ -407,13 +407,14 @@ Return[moments];
 ];
 
 
-getInitialGuess[m0_,m1_,m2_]:=Module[{foc1234,ag,\[Beta]g,\[Chi]g},
+getInitialGuess[m0_,m1_,m2_]:=Module[{foc1234,ag,\[Beta]g,\[Chi]g,cg,bg},
 foc1234[x_,y_,z_]:=(1/(4 Pi ) )(m0 + 3 z m1+(5/2 (3 (m0 -m2 )/2 x^2+3 (m0 -m2 )/2 y^2+3 m2 z^2-m0)));
 
-ag=0.5 (foc1234[Sin[ArcCos[-1.]],0,-1.]+foc1234[Sin[ArcCos[1.]],0,1.]);
-\[Beta]g=5;
-\[Chi]g=-5;
-
+ag=0.5 (foc1234[Sin[ArcCos[-1.]],0.,-1.]+foc1234[Sin[ArcCos[1.]],0.,1.]); (*semi-major axis guess*)
+cg=Abs[foc1234[Sin[ArcCos[1.]],0.,1.]-ag]; (*horizontal shift from the center *)
+bg=Sqrt[foc1234[Sin[ArcCos[0.]],0.,0.]/(1+(cg/ag)^2)]; (*semi-minor axis*)
+\[Beta]g=ArcTanh[((2 bg)-1)/ag]; (*box transform b= 1/2(a tanh[\[Beta]]+1*)
+\[Chi]g=ArcTanh[((2 cg)-1)/ag]; (*box transform c=1/2(a tanh[\[Chi]]+1*)
 
 Return[{ag,\[Beta]g,\[Chi]g}]
 ];
