@@ -407,20 +407,31 @@ Return[moments];
 ];
 
 
-getInitialGuess[m0_,m1_,m2_]:=Module[{foc1234,ag,\[Beta]g,\[Chi]g,cg,bg},
+getInitialGuess[m0_,m1_,m2_]:=Module[{foc1234,ag,\[Beta]g,\[Chi]g,cg,bg,arg\[Beta],arg\[Chi]},
 foc1234[x_,y_,z_]:=(1/(4 Pi ) )(m0 + 3 z m1+(5/2 (3 (m0 -m2 )/2 x^2+3 (m0 -m2 )/2 y^2+3 m2 z^2-m0)));
 
 ag=0.5 (foc1234[Sin[ArcCos[-1.]],0.,-1.]+foc1234[Sin[ArcCos[1.]],0.,1.]); (*semi-major axis guess*)
-cg=Abs[foc1234[Sin[ArcCos[1.]],0.,1.]-ag]; (*horizontal shift from the center *)
-bg=Sqrt[foc1234[Sin[ArcCos[0.]],0.,0.]/(1+(cg/ag)^2)]; (*semi-minor axis*)
-\[Beta]g=ArcTanh[((2 bg)-1)/ag]; (*box transform b= 1/2(a tanh[\[Beta]]+1*)
-\[Chi]g=ArcTanh[((2 cg)-1)/ag]; (*box transform c=1/2(a tanh[\[Chi]]+1*)
 
+cg=Abs[foc1234[Sin[ArcCos[1.]],0.,1.]-ag]; (*horizontal shift from the center *)
+
+bg=Sqrt[foc1234[Sin[ArcCos[0.]],0.,0.]^2/(1-(cg/ag)^2)]; (*semi-minor axis*)
+
+Assert[bg<= ag]; (*Assert the semi-major axis is larger than the semi-minor*)
+If[bg> ag, Assert[bg/ag<= 1.001]]; (* If bg>ag, assert that the difference is small*)
+If[bg> ag && bg/ag<= 1.001, ag=ag+2(bg-ag)]; (* If bg>ag, and the difference is small, switches them in the transform*)
+
+arg\[Beta]=((2 bg/ag)-1);
+arg\[Chi]=((2 cg/ag)-1);
+
+\[Beta]g=ArcTanh[arg\[Beta]]; (*box transform b= a/2( tanh[\[Beta]]+1 *)
+\[Chi]g=ArcTanh[arg\[Chi]]; (*box transform c=a/2( tanh[\[Chi]]+1 *)
+
+Assert[Between[arg\[Beta],{-1.01,1.01}]];
+Assert[Between[arg\[Chi],{-1.01,1.01}]];
+
+Print[{ag,bg,cg,arg\[Beta],arg\[Chi]}];
 Return[{ag,\[Beta]g,\[Chi]g}]
 ];
-
-
-
 
 
 
@@ -429,7 +440,7 @@ ellipseMoments[af_,\[Beta]f_,\[Chi]f_]:=Module[{ebox,esbox},
 ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])+a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2
 +1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
 
-esbox[mom_]:=2 Pi NIntegrate[m^mom ebox[af,\[Beta]f,\[Chi]f,m],{m,-1.,1.},MaxRecursion->16];
+esbox[mom_]:=2 Pi NIntegrate[m^mom ebox[af,\[Beta]f,\[Chi]f,m],{m,-1.,1.},MinRecursion-> 8,MaxRecursion->16];
 
 Return[{esbox[0],esbox[1],esbox[2]}]
 
@@ -440,8 +451,7 @@ Return[{esbox[0],esbox[1],esbox[2]}]
 eBoxFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,\[Beta]f,\[Chi]f},
 
 
-
-br=FindRoot[{ellipseMoments[af,\[Beta]f,\[Chi]f][[1]]-m0,ellipseMoments[af,\[Beta]f,\[Chi]f][[2]]-m1,ellipseMoments[af,\[Beta]f,\[Chi]f][[3]]-m2},{{af,g0[[1]]},{\[Beta]f,g0[[2]]},{\[Chi]f,g0[[3]]}},Evaluated->False,MaxIterations-> 500];
+br=FindRoot[{ellipseMoments[af,\[Beta]f,\[Chi]f][[1]]-m0,ellipseMoments[af,\[Beta]f,\[Chi]f][[2]]-m1,ellipseMoments[af,\[Beta]f,\[Chi]f][[3]]-m2},{{af,g0[[1]]},{\[Beta]f,g0[[2]]},{\[Chi]f,g0[[3]]}},Evaluated->False,MaxIterations-> 700];
 
 Return[{af/.br,\[Beta]f/.br,\[Chi]f/.br}]
 
