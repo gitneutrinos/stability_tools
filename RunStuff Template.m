@@ -57,6 +57,9 @@ outfolder = outpath<>filename;
 
 
 
+On[Assert]
+
+
 (*Test on kAdapt. Comparing to old data (below). Generates a plot which should look similar (different exact k values tested*)
 
 OldData={{2.61019*10^-17, 1.12835*10^-18}, {2.8674*10^-17, 
@@ -207,7 +210,7 @@ allDispersions[]
 ellipseCheck[]:=Module[{m0,m1,m2,er0,er1,er2,fits},
 m0=1.;
 m1=10.^-8;
-m2=0.33;
+m2=1./3.;
 
 fits=eBoxFitToMoments[m0,m1,m2,getInitialGuess[m0,m1,m2]];
 
@@ -226,9 +229,10 @@ dataEllipseCheck[]:=Module[{m0,m1,m2,er0,er1,er2,fits,moms,file},
 file="G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\4timesHigh_1D_withV_withPairBrems_MC_moments.h5";
 
 moms=getMoments[file,1,1];
+Print[moms];
 
 m0=moms[[1]];
-m1=moms[[2]];
+m1=moms[[2]]//Abs;
 m2=moms[[3]];
 
 fits=eBoxFitToMoments[m0,m1,m2,getInitialGuess[m0,m1,m2]];
@@ -237,8 +241,7 @@ er0=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[1]]-m0)/m0;
 er1=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[2]]-m1)/m1;
 er2=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[3]]-m2)/m2;
 
-Print["Initial Guess: ",getInitialGuess[m0,m1,m2]];
-Return[{VerificationTest[Abs[er0]<10^-5 && Abs[er1]< 10^-5 && Abs[er2]< 10^-5,TestID-> "Ellipse Data error check"],er0,er1,er2}]
+Return[{VerificationTest[Abs[er0]<10^-4 && Abs[er1]< 10^-3 && Abs[er2]< 10^-4,TestID-> "Ellipse Data error check"],er0,er1,er2}]
 
 ];
 
