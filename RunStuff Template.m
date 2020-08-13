@@ -127,7 +127,7 @@ data2b=
 "Yes"-> 0.,
 "mids"-> {-1,1},
 "freqs"->{0,2},
-"Endensity"-> {{{{0., 0.},{(1+a)/(munits/(  h)),0.}}},{{{(1-a)/(munits/(h)),0.},{0.,0.}}}},
+"Endensity"-> {{{{0., 0.},{(1+a)/(munits/( h)),0.}}},{{{(1-a)/(munits/(h)),0.},{0.,0.}}}},
  "freqmid"-> {1},
  "munits"-> munits
 ]
@@ -149,95 +149,44 @@ cma[k_,\[Mu]ch_,a_,w_]:=cm[k,\[Mu]ch,w]/.{rb-> 0.,l-> 0.,r-> (1+a),lb-> -(1-a)};
 evtest=Sort[Eigenvalues[build2bMatrix[Infinity,2.]/.{a-> 0.}]]//Chop;
 
 VerificationTest[
-Re[\[CapitalOmega]ch[2.,2 Pi//N,0.,0]]===Re[evtest] 
+Re[\[CapitalOmega]ch[2.,1.,0.,0]]===Re[evtest] 
 ,TestID-> "2 Beam Growth Rate (Real part)"]
 
 VerificationTest[
-Im[\[CapitalOmega]ch[2.,2 Pi//N,0.,0]]=== Im[evtest]
+Im[\[CapitalOmega]ch[2.,1.,0.,0]]=== Im[evtest]
 ,TestID-> "2 Beam Growth Rate (Imaginary part)"]
 
-Print[Re[\[CapitalOmega]ch[2.,2 Pi//N,0.,0]],Re[evtest]];
-Print[Im[\[CapitalOmega]ch[2.,2 Pi//N,0.,0]],Im[evtest]];
+Print[Re[\[CapitalOmega]ch[2.,1.,0.,0]],Re[evtest]];
+Print[Im[\[CapitalOmega]ch[2.,1.,0.,0]],Im[evtest]];
 
-(*The hard coded number 2 10 ^21 is the "common factor" chakraborty calls \[Mu] for this matrix *)
+
 
 
 
 
 (*Check the dispersion relation from Gail's paper*)
-dispersionCheck[data_,\[CapitalOmega]_,k_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,check,Idis,\[Theta],ms},
+dispersionCheck[data_,\[CapitalOmega]_,k_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,check,Idis,\[Theta]},
 \[Theta]=data["mids"];
 (*Defined in Gail's Blue equation 30 and 31 *)
 \[Phi]0=Sum[munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
 \[Phi]1=Sum[(munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]])\[Theta][[i]],{i,1,Length[\[Theta]]}];
-ms=Table[munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
+
 (* "Shifted" Eigenvalue and k*)
 \[CapitalOmega]p=N[\[CapitalOmega]-((munits/mp) *data["Yes"] *data["matters"])-\[Phi]0];
 kp=k-\[Phi]1;
 
 (*Definition of I from Gail's equation (41)*)
-Idis[n_]:=Sum[((munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))/(\[CapitalOmega]p-(kp \[Theta][[i]])))\[Theta][[i]]^n,{i,1,Length[\[Theta]]}];
+Idis[n_]:= Sum[(( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))/(\[CapitalOmega]p-(kp \[Theta][[i]])))\[Theta][[i]]^n,{i,1,Length[\[Theta]]}]//Chop;
 
 (*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
 
-check=(Idis[0]+1)(Idis[2]-1)-(Idis[1]* Conjugate[Idis[1]]);
-
-Return[{check,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,Idis[0],Idis[1],Idis[2],ms}]
+check=((Idis[0]+1)(Idis[2]-1))-(Idis[1]^2)//Chop;
+Return[check]
 ];
 
 
 
-dispersionCheck2[k_]:= Module[{\[Theta],data,datasr,\[Phi]0,\[Phi]1,\[CapitalOmega],\[CapitalOmega]p,kp,rel,I,sol,\[CapitalOmega]r,\[CapitalOmega]pr},
-
-data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
-datasr=SelectSingleRadius[data,200];
-\[Theta]=datasr["mids"];
-
-
-
-\[Phi]0=Sum[munits (ndensities[datasr,"xflavor"-> False][[1,i,i]]-ndensities[datasr,"xflavor"-> False][[2,i,i]]),{i,1,Length[\[Theta]]}];
-\[Phi]1=Sum[(munits (ndensities[datasr,"xflavor"-> False][[1,i,i]]-ndensities[datasr,"xflavor"-> False][[2,i,i]]))\[Theta][[i]],{i,1,Length[\[Theta]]}];
-
-Assert[\[Phi]1<\[Phi]0];
-
-\[CapitalOmega]r=Eigenvalues[stabilityMatrix[datasr,getEquations[datasr,Infinity,-1.,k,"xflavor"-> False],"xflavor"-> False]];
-Print[\[CapitalOmega]r];
-(* "Shifted" Eigenvalue and k*)
-\[CapitalOmega]pr=N[\[CapitalOmega]r-((munits/mp) *datasr["Yes"] *datasr["matters"])-\[Phi]0];
-Print[\[CapitalOmega]pr];
-Print[\[CapitalOmega]r[[1]]-\[CapitalOmega]pr[[1]]];
-kp=k-\[Phi]1;
-
-I[n_,\[CapitalOmega]p_]:=Sum[((munits (ndensities[datasr,"xflavor"-> False][[1,i,i]]-ndensities[datasr,"xflavor"-> False][[2,i,i]]))\[Theta][[i]]^n)/(\[CapitalOmega]p-(kp \[Theta][[i]])),{i,1,Length[\[Theta]]}];
-rel=(I[0,x]+1)(I[2,x]-1)-(I[1,x] I[1,x])==0.;
-
-
-
-sol=Solve[rel//FullSimplify//Chop,x];
-
-Return[sol]
-
-];
-
-
-dispersionCheck2[0.]
-
-
-dispersionCheck2[4. 10.^-17]
-
-
-Eigenvalues[build2bMatrix[Infinity,2.]/.a-> 0.]//Chop
-build2bMatrix[Infinity,2.]/.a-> 0.//MatrixForm
-
-
-dispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[build2bMatrix[Infinity,2.]/.a-> 0.][[1]],2.]
-(*check,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,Idis[0],Idis[1],Idis[2]}*)
-
-
-2/(6.661338147750939`*^-16+ 6.8018734520304545` I)
-
-
-allDispersions[]:=Module[{data,dc2,dc4,dcdata,datasr},
+allDispersions[]:=Module[{data,dc2,dc4,dcdata,datasr,t1,t2,t3},
 
 dc2=dispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[build2bMatrix[Infinity,2.]/.a-> 0.][[1]],2.];
 
@@ -248,12 +197,45 @@ datasr=SelectSingleRadius[data,200];
 
 dcdata=dispersionCheck[datasr,Eigenvalues[stabilityMatrix[datasr,getEquations[datasr,Infinity,-1.,0.,"xflavor"-> False],"xflavor"-> False]][[1]],0.];
 
-Return[dcdata]
-(*Return[VerificationTest[Between[dc2[[1]]//Chop,{-0.1,0.1}] && Between[dc4[[1]]//Chop,{-0.1,0.1}] && Between[dcdata[[1]]//Chop,{-0.1,0.1}],TestID\[Rule] "2 beam, 4 beam, and real data dispersion relation checks"]];*)
+t1=VerificationTest[
+Between[dc2//Chop,{-0.01,0.01}],
+TestID-> "2 beam Dispersion Check"];
+
+t2=VerificationTest[
+Between[dc4//Chop,{-0.01,0.01}],
+TestID-> "4 Beam Dispersion Check"];
+
+t3=VerificationTest[
+Between[dcdata//Chop,{-0.01,0.01}],
+TestID-> "Real Data Dispersion Check"];
+
+Return[{{t1},{t2},{t3}}//MatrixForm]
+
 ];
 
 
+
 allDispersions[]
+
+
+listDispersion[]=Module[{data,datasr},
+data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
+datasr=SelectSingleRadius[data,200];
+Return[
+	Table[
+		VerificationTest[
+			Between[
+				dispersionCheck[datasr,
+					Eigenvalues[stabilityMatrix[datasr,getEquations[datasr,Infinity,-1.,0.,"xflavor"-> False],"xflavor"-> False]][[i]]
+				,0.]//Chop
+			,{-0.01,0.01}]
+		,TestID-> StringJoin["Eigenvalue ",ToString[i]]
+		]
+	,{i,1,Length[data["mids"]]}
+	]//MatrixForm
+]
+];
+
 
 
 (*Ellipse Check Section*)
