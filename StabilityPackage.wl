@@ -192,7 +192,7 @@ m=munits ndensities[data,"xflavor"-> OptionValue["xflavor"]];
 
 
 Do[
-Hsi[j]=Sum[\[Mu][[k,j]]\[Rho][k](2Pi)(1-Cos[\[Theta][[j]]]Cos[\[Theta][[k]]]),{k,1,n}]+Sum[-\[Mu]b[[k,j]]\[Rho]b[k](2Pi)(1-Cos[\[Theta][[j]]]Cos[\[Theta][[k]]]),{k,1,n}];
+Hsi[j]=Sum[\[Mu][[k,j]]\[Rho][k](1-Cos[\[Theta][[j]]]Cos[\[Theta][[k]]]),{k,1,n}]+Sum[-\[Mu]b[[k,j]]\[Rho]b[k](1-Cos[\[Theta][[j]]]Cos[\[Theta][[k]]]),{k,1,n}];
 ,{j,1,n}];
 Do[
 H[i]=Hvac+Hm+Hsi[i];
