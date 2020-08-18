@@ -218,8 +218,8 @@ datasr=SelectSingleRadius[data,200];
 
 dcdata=dispersionCheck[datasr,Eigenvalues[stabilityMatrix[datasr,getEquations[datasr,Infinity,-1.,0.,"xflavor"-> False],"xflavor"-> False]][[1]],0.];
 
-wdc2b=wdispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[build2bMatrix[20,2.]/.a-> 0.][[1]],2.,20];
-wdcdata=dispersionCheck[datasr,Eigenvalues[stabilityMatrix[datasr,getEquations[datasr,20,-1.,0.,"xflavor"-> False],"xflavor"-> False]][[1]],0.,20];
+wdc2b=wdispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[build2bMatrix[20.,2.]/.a-> 0.][[1]],2.,20.];
+wdcdata=wdispersionCheck[datasr,Eigenvalues[stabilityMatrix[datasr,getEquations[datasr,20.,-1.,0.,"xflavor"-> False],"xflavor"-> False]][[1]],0.,20.];
 
 
 t1=VerificationTest[
