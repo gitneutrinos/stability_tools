@@ -57,6 +57,9 @@ outfolder = outpath<>filename;
 
 
 
+On[Assert]
+
+
 (*Test on kAdapt. Comparing to old data (below). Generates a plot which should look similar (different exact k values tested*)
 
 OldData={{2.61019*10^-17, 1.12835*10^-18}, {2.8674*10^-17, 
@@ -124,7 +127,7 @@ data2b=
 "Yes"-> 0.,
 "mids"-> {-1,1},
 "freqs"->{0,2},
-"Endensity"-> {{{{0.},{(1+a)/(munits/h)}}},{{{(1-a)/(munits/h)},{0.}}}},
+"Endensity"-> {{{{0., 0.},{(1+a)/(munits/( h)),0.}}},{{{(1-a)/(munits/(h)),0.},{0.,0.}}}},
  "freqmid"-> {1},
  "munits"-> munits
 ]
@@ -146,25 +149,24 @@ cma[k_,\[Mu]ch_,a_,w_]:=cm[k,\[Mu]ch,w]/.{rb-> 0.,l-> 0.,r-> (1+a),lb-> -(1-a)};
 evtest=Sort[Eigenvalues[build2bMatrix[Infinity,2.]/.{a-> 0.}]]//Chop;
 
 VerificationTest[
-Re[\[CapitalOmega]ch[2.,2 Pi//N,0.,0]]===Re[evtest] 
+Re[\[CapitalOmega]ch[2.,1.,0.,0]]===Re[evtest] 
 ,TestID-> "2 Beam Growth Rate (Real part)"]
 
 VerificationTest[
-Im[\[CapitalOmega]ch[2.,2 Pi//N,0.,0]]=== Im[evtest]
+Im[\[CapitalOmega]ch[2.,1.,0.,0]]=== Im[evtest]
 ,TestID-> "2 Beam Growth Rate (Imaginary part)"]
 
-Print[Re[\[CapitalOmega]ch[2.,2 Pi//N,0.,0]],Re[evtest]];
-Print[Im[\[CapitalOmega]ch[2.,2 Pi//N,0.,0]],Im[evtest]];
+Print[Re[\[CapitalOmega]ch[2.,1.,0.,0]],Re[evtest]];
+Print[Im[\[CapitalOmega]ch[2.,1.,0.,0]],Im[evtest]];
 
-(*The hard coded number 2 10 ^21 is the "common factor" chakraborty calls \[Mu] for this matrix *)
+
 
 
 
 
 (*Check the dispersion relation from Gail's paper*)
-dispersionCheck[data_,\[CapitalOmega]_,k_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,check,Idis},
+dispersionCheck[data_,\[CapitalOmega]_,k_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,check,Idis,\[Theta]},
 \[Theta]=data["mids"];
-
 (*Defined in Gail's Blue equation 30 and 31 *)
 \[Phi]0=Sum[munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
 \[Phi]1=Sum[(munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]])\[Theta][[i]],{i,1,Length[\[Theta]]}];
@@ -174,23 +176,72 @@ dispersionCheck[data_,\[CapitalOmega]_,k_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOme
 kp=k-\[Phi]1;
 
 (*Definition of I from Gail's equation (41)*)
-Idis[n_]:=Sum[((munits ndensities[data,"xflavor"-> False][[1]][[i,i]]-munits ndensities[data,"xflavor"-> False][[2]][[i,i]])/(\[CapitalOmega]p-(kp \[Theta][[i]])))\[Theta][[i]]^n,{i,1,Length[\[Theta]]}];
+Idis[n_]:= Sum[(( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))/(\[CapitalOmega]p-(kp \[Theta][[i]])))\[Theta][[i]]^n,{i,1,Length[\[Theta]]}]//Chop;
 
 (*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
 
-check=(Idis[0]+1)(Idis[2]-1)-(Idis[1] Conjugate[Idis[1]]);
-
-Return[{check,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,Idis[0],Idis[1],Idis[2]}]
+check=((Idis[0]+1)(Idis[2]-1))-(Idis[1]^2)//Chop;
+Return[check]
 ];
 
 
 
+allDispersions[]:=Module[{data,dc2,dc4,dcdata,datasr,t1,t2,t3},
+
+dc2=dispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[build2bMatrix[Infinity,2.]/.a-> 0.][[1]],2.];
+
+dc4=dispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[stabilityMatrix[get2bdata[],getEquations[get2bdata[],Infinity,-1.,2.,"xflavor"-> False],"xflavor"-> False]/.a-> 0.][[1]],2.];
+
+data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
+datasr=SelectSingleRadius[data,200];
+
+dcdata=dispersionCheck[datasr,Eigenvalues[stabilityMatrix[datasr,getEquations[datasr,Infinity,-1.,0.,"xflavor"-> False],"xflavor"-> False]][[1]],0.];
+
+t1=VerificationTest[
+Between[dc2//Chop,{-0.01,0.01}],
+TestID-> "2 beam Dispersion Check"];
+
+t2=VerificationTest[
+Between[dc4//Chop,{-0.01,0.01}],
+TestID-> "4 Beam Dispersion Check"];
+
+t3=VerificationTest[
+Between[dcdata//Chop,{-0.01,0.01}],
+TestID-> "Real Data Dispersion Check"];
+
+Return[{{t1},{t2},{t3}}//MatrixForm]
+
+];
+
+
+
+allDispersions[]
+
+
+
+listDispersion[]=Module[{data,datasr},
+data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
+datasr=SelectSingleRadius[data,200];
+Return[
+	Table[
+		VerificationTest[
+			Between[
+				dispersionCheck[datasr,
+					Eigenvalues[stabilityMatrix[datasr,getEquations[datasr,Infinity,-1.,0.,"xflavor"-> False],"xflavor"-> False]][[i]]
+				,0.]//Chop
+			,{-0.01,0.01}]
+		,TestID-> StringJoin["Eigenvalue ",ToString[i]]
+		]
+	,{i,1,Length[data["mids"]]}
+	]//MatrixForm
+]
+];
 
 (*Ellipse Check Section*)
 ellipseCheck[]:=Module[{m0,m1,m2,er0,er1,er2,fits},
 m0=1.;
-m1=10^-8;
-m2=1/3;
+m1=10.^-8;
+m2=1./3.;
 
 fits=eBoxFitToMoments[m0,m1,m2,getInitialGuess[m0,m1,m2]];
 
@@ -198,7 +249,8 @@ er0=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[1]]-m0)/m0;
 er1=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[2]]-m1)/m1;
 er2=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[3]]-m2)/m2;
 
-Return[{VerificationTest[er0<10^-5 && er1< 10^-5 && er2< 10^-5,TestID-> "Ellipse error check"],er0,er1,er2}]
+Print["Initial Guess: ", getInitialGuess[m0,m1,m2]];
+Return[{VerificationTest[Abs[er0]<10^-5 && Abs[er1]< 10^-5 && Abs[er2]< 10^-5,TestID-> "Ellipse error check"],er0,er1,er2}]
 
 ];
 
@@ -208,9 +260,10 @@ dataEllipseCheck[]:=Module[{m0,m1,m2,er0,er1,er2,fits,moms,file},
 file="G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\4timesHigh_1D_withV_withPairBrems_MC_moments.h5";
 
 moms=getMoments[file,1,1];
+Print[moms];
 
 m0=moms[[1]];
-m1=moms[[2]];
+m1=moms[[2]]//Abs;
 m2=moms[[3]];
 
 fits=eBoxFitToMoments[m0,m1,m2,getInitialGuess[m0,m1,m2]];
@@ -219,16 +272,16 @@ er0=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[1]]-m0)/m0;
 er1=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[2]]-m1)/m1;
 er2=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[3]]-m2)/m2;
 
-Return[{VerificationTest[er0<10^-5 && er1< 10^-5 && er2< 10^-5,TestID-> "Ellipse Data error check"],er0,er1,er2}]
+Return[{VerificationTest[Abs[er0]<10^-4 && Abs[er1]< 10^-3 && Abs[er2]< 10^-4,TestID-> "Ellipse Data error check"],er0,er1,er2}]
 
 ];
 
 
-ellipseCheck[]//Quiet
-dataEllipseCheck[]//Quiet
+ellipseCheck[]
 
 
 
+dataEllipseCheck[]
 
 
 (*Place here: function to check that A and A bar are the same for some test case where \[Omega]\[Rule] 0*)
