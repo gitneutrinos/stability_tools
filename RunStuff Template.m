@@ -186,6 +186,26 @@ Return[check]
 
 
 
+wdispersionCheck[data_,\[CapitalOmega]_,k_,En_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,check,Idis,\[Theta]},
+\[Theta]=data["mids"];
+(*Defined in Gail's Blue equation 30 and 31 *)
+\[Phi]0=Sum[munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
+\[Phi]1=Sum[(munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]])\[Theta][[i]],{i,1,Length[\[Theta]]}];
+
+(* "Shifted" Eigenvalue and k*)
+\[CapitalOmega]p=N[\[CapitalOmega]-((munits/mp) *data["Yes"] *data["matters"])-\[Phi]0];
+kp=k-\[Phi]1;
+
+(*Definition of I from Gail's equation (41)*)
+Idis[n_]:= Sum[(( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))/(\[CapitalOmega]p-(kp \[Theta][[i]]))) \[Theta][[i]]^n,{i,1,Length[\[Theta]]}]//Chop;
+
+(*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
+
+check=((Idis[0]+1)(Idis[2]-1))-(Idis[1]^2)//Chop;
+Return[check]
+];
+
+
 allDispersions[]:=Module[{data,dc2,dc4,dcdata,datasr,t1,t2,t3},
 
 dc2=dispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[build2bMatrix[Infinity,2.]/.a-> 0.][[1]],2.];
