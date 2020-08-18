@@ -242,7 +242,7 @@ t5=VerificationTest[
 Between[wdcdata//Chop,{-0.01,0.01}],
 TestID-> "Real Data Dispersion Check"];
 
-Return[{{t1},{t2},{t3}}//MatrixForm]
+Return[{{t1},{t2},{t3},{t4},{t5}}//MatrixForm]
 
 ];
 
