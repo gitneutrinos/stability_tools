@@ -338,7 +338,7 @@ Return[kgrid];
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
 
-Options[kAdapt]={"xflavor"-> True,"ktarget"-> 0.,"krange"-> {10.^-3,10.},"eigenvectors"-> False};
+Options[kAdapt]={"xflavor"-> True,"ktarget"-> 0.,"krange"-> {10.^-3,10.},"eigenvectors"-> False,"inverse"-> False};
 kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,OptionsPattern[]]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,eout,pot,S},
 
 data=ImportData[infile];
@@ -346,7 +346,7 @@ evout=
 Reap[
 	Do[
 		singleRadiusData = SelectSingleRadius[data,rx];
-		ea=getEquations[singleRadiusData,testE,hi,kvar,"xflavor"-> OptionValue["xflavor"]];
+		ea=getEquations[singleRadiusData,testE,hi,kvar,"xflavor"-> OptionValue["xflavor"],"inverse"-> OptionValue["inverse"]];
 
 		S=stabilityMatrix[singleRadiusData,ea,"xflavor"-> OptionValue["xflavor"]];
 
