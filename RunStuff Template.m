@@ -218,6 +218,7 @@ Return[{{t1},{t2},{t3}}//MatrixForm]
 allDispersions[]
 
 
+
 listDispersion[]=Module[{data,datasr},
 data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
 datasr=SelectSingleRadius[data,200];
@@ -235,8 +236,6 @@ Return[
 	]//MatrixForm
 ]
 ];
-
-
 
 (*Ellipse Check Section*)
 ellipseCheck[]:=Module[{m0,m1,m2,er0,er1,er2,fits},
