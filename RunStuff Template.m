@@ -186,7 +186,7 @@ Return[check]
 
 
 
-wdispersionCheck[data_,\[CapitalOmega]_,k_,En_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,check,Idis,\[Theta]},
+wdispersionCheck[data_,\[CapitalOmega]_,k_,En_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,check,Idis,\[Theta],\[Omega]},
 \[Theta]=data["mids"];
 (*Defined in Gail's Blue equation 30 and 31 *)
 \[Phi]0=Sum[munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
@@ -195,9 +195,10 @@ wdispersionCheck[data_,\[CapitalOmega]_,k_,En_]:=Module[{\[Phi]0,\[Phi]1,\[Capit
 (* "Shifted" Eigenvalue and k*)
 \[CapitalOmega]p=N[\[CapitalOmega]-((munits/mp) *data["Yes"] *data["matters"])-\[Phi]0];
 kp=k-\[Phi]1;
+\[Omega]=\[Omega]EMev[En];
 
 (*Definition of I from Gail's equation (41)*)
-Idis[n_]:= Sum[(( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))/(\[CapitalOmega]p-(kp \[Theta][[i]]))) \[Theta][[i]]^n,{i,1,Length[\[Theta]]}]//Chop;
+Idis[n_]:= Sum[(( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))(\[CapitalOmega]p-(kp \[Theta][[i]])+( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))\[Omega]))/((\[CapitalOmega]p-(kp \[Theta][[i]]))^2-\[Omega]^2) \[Theta][[i]]^n,{i,1,Length[\[Theta]]}]//Chop;
 
 (*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
 
@@ -206,7 +207,7 @@ Return[check]
 ];
 
 
-allDispersions[]:=Module[{data,dc2,dc4,dcdata,datasr,t1,t2,t3},
+allDispersions[]:=Module[{data,dc2,dc4,dcdata,datasr,t1,t2,t3,wdc2b,wdcdata},
 
 dc2=dispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[build2bMatrix[Infinity,2.]/.a-> 0.][[1]],2.];
 
@@ -216,6 +217,10 @@ data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conv
 datasr=SelectSingleRadius[data,200];
 
 dcdata=dispersionCheck[datasr,Eigenvalues[stabilityMatrix[datasr,getEquations[datasr,Infinity,-1.,0.,"xflavor"-> False],"xflavor"-> False]][[1]],0.];
+
+wdc2b=wdispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[build2bMatrix[20,2.]/.a-> 0.][[1]],2.,20];
+wdcdata=dispersionCheck[datasr,Eigenvalues[stabilityMatrix[datasr,getEquations[datasr,20,-1.,0.,"xflavor"-> False],"xflavor"-> False]][[1]],0.,20];
+
 
 t1=VerificationTest[
 Between[dc2//Chop,{-0.01,0.01}],
@@ -227,6 +232,14 @@ TestID-> "4 Beam Dispersion Check"];
 
 t3=VerificationTest[
 Between[dcdata//Chop,{-0.01,0.01}],
+TestID-> "Real Data Dispersion Check"];
+
+t4=VerificationTest[
+Between[wdc2b//Chop,{-0.01,0.01}],
+TestID-> "Real Data Dispersion Check"];
+
+t5=VerificationTest[
+Between[wdcdata//Chop,{-0.01,0.01}],
 TestID-> "Real Data Dispersion Check"];
 
 Return[{{t1},{t2},{t3}}//MatrixForm]
