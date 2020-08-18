@@ -216,7 +216,7 @@ Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb}]
  5=HsiRadial
  *)
 
-Options[getEquations]={"xflavor"-> True};
+Options[getEquations]={"xflavor"-> True,"inverse"-> False};
 
 getEquations[data_,testE_,hi_,k_,OptionsPattern[]]:=Module[{n,\[Theta],eqn,eqnb,hs},
 hs=buildHamiltonians[data,testE,hi,"xflavor"-> OptionValue["xflavor"]];
@@ -226,6 +226,12 @@ n=Length[data["mids"]];
 (*This could be replaced with a mapthread or with associations, but one step at time*)
 With[{H=hs[[1]],Hb=hs[[2]],\[Rho]=hs[[3]],\[Rho]b=hs[[4]],A=hs[[5]],Ab=hs[[6]],\[Delta]H=hs[[7]],\[Delta]Hb=hs[[8]]}, 
 
+If[OptionValue["inverse"],
+Do[
+eqn[j]=-(Com[H[j],A[j]][[1,2]]+ Com[\[Delta]H[j],\[Rho][j]][[1,2]]+(-k Cos[\[Theta][[j]]] A[j][[1,2]]));
+eqnb[j]=-(-Com[Hb[j],Ab[j]][[1,2]]- Com[\[Delta]Hb[j],\[Rho]b[j]][[1,2]]+(-k Cos[\[Theta][[j]]] Ab[j][[1,2]]));
+,{j,1,n}];
+,
 Do[
 eqn[j]=Com[H[j],A[j]][[1,2]]+ Com[\[Delta]H[j],\[Rho][j]][[1,2]]+(k Cos[\[Theta][[j]]] A[j][[1,2]]);
 eqnb[j]=-Com[Hb[j],Ab[j]][[1,2]]- Com[\[Delta]Hb[j],\[Rho]b[j]][[1,2]]+(k Cos[\[Theta][[j]]] Ab[j][[1,2]]);
