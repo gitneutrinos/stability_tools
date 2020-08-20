@@ -214,7 +214,7 @@ dc2=dispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[build2bMatrix[Infinity,2.]/.
 dc4=dispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[stabilityMatrix[get2bdata[],getEquations[get2bdata[],Infinity,-1.,2.,"xflavor"-> False],"xflavor"-> False]/.a-> 0.][[1]],2.];
 
 data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
-datasr=SelectSingleRadius[data,200];
+datasr=SelectSingleRadius[data,250];
 
 dcdata=dispersionCheck[datasr,Eigenvalues[stabilityMatrix[datasr,getEquations[datasr,Infinity,-1.,0.,"xflavor"-> False],"xflavor"-> False]][[1]],0.];
 
@@ -254,7 +254,7 @@ allDispersions[]
 
 listDispersion[]=Module[{data,datasr},
 data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
-datasr=SelectSingleRadius[data,200];
+datasr=SelectSingleRadius[data,250];
 Return[
 	Table[
 		VerificationTest[
@@ -269,6 +269,7 @@ Return[
 	]//MatrixForm
 ]
 ];
+
 
 (*Ellipse Check Section*)
 ellipseCheck[]:=Module[{m0,m1,m2,er0,er1,er2,fits},
