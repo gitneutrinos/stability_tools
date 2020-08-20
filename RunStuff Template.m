@@ -252,21 +252,28 @@ allDispersions[]
 
 
 
-listDispersion[]=Module[{data,datasr},
+listDispersion[]=Module[{data,datasr,\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,k,\[CapitalOmega],\[Omega],evs,Ener,diffs,Ve,checks,values},
 data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
 datasr=SelectSingleRadius[data,250];
-Return[
-	Table[
-		VerificationTest[
-			Between[
-				dispersionCheck[datasr,
-					Eigenvalues[stabilityMatrix[datasr,getEquations[datasr,Infinity,-1.,0.,"xflavor"-> False],"xflavor"-> False]][[i]]
-				,0.]//Chop
-			,{-0.01,0.01}]
-		,TestID-> StringJoin["Eigenvalue ",ToString[i]]
-		]
-	,{i,1,Length[data["mids"]]}
-	]//MatrixForm
+\[Theta]=data["mids"];
+Ener=Infinity;
+k=0.;
+evs=Eigenvalues[stabilityMatrix[datasr,getEquations[datasr,Ener,-1.,k,"xflavor"-> False],"xflavor"-> False]];
+
+\[Phi]0=Sum[munits ndensities[datasr,"xflavor"-> False][[1,i,i]]-munits ndensities[datasr,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
+\[Phi]1=Sum[(munits ndensities[datasr,"xflavor"-> False][[1,i,i]]-munits ndensities[datasr,"xflavor"-> False][[2,i,i]])\[Theta][[i]],{i,1,Length[\[Theta]]}];
+Ve=(munits/mp) *datasr["Yes"] *datasr["matters"];
+\[CapitalOmega]p=Table[N[evs[[i]]-Ve-\[Phi]0],{i,1,Length[evs]};
+kp=k-\[Phi]1;
+\[Omega]=\[Omega]EMev[Ener];
+
+diffs=Table[{\[CapitalOmega]p[[i]],\[Theta][[j]],\[CapitalOmega]p[[i]]-kp \[Theta][[j]]},{i,1,Length[\[CapitalOmega]p]},{j,1,Length[\[Theta]]}];
+
+checks=Table[{evs[[i]],dispersionCheck[datasr,evs[[i]],k]},{i,1,Length[evs]}];
+
+values={\[Phi]0,\[Phi]1,Ve,kp,\[Omega],data["radius"[[250]]]};
+
+Return[{{values},{diffs},{checks}}]
 ]
 ];
 
@@ -319,3 +326,7 @@ dataEllipseCheck[]
 
 
 (*Place here: function to check that A and A bar are the same for some test case where \[Omega]\[Rule] 0*)
+
+
+norm=kAdapt[inpath<>"112Msun_100ms_DO.h5",240,340,20.,-1.,60,"xflavor"-> True];
+inv=kAdapt[inpath<>"112Msun_100ms_DO.h5",240,340,20.,-1.,60,"xflavor"-> True,"inverse"->True];
