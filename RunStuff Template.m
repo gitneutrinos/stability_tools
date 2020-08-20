@@ -165,6 +165,7 @@ Print[Im[\[CapitalOmega]ch[2.,1.,0.,0]],Im[evtest]];
 
 
 (*Check the dispersion relation from Gail's paper*)
+
 dispersionCheck[data_,\[CapitalOmega]_,k_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,check,Idis,\[Theta]},
 \[Theta]=data["mids"];
 (*Defined in Gail's Blue equation 30 and 31 *)
@@ -176,7 +177,7 @@ dispersionCheck[data_,\[CapitalOmega]_,k_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOme
 kp=k-\[Phi]1;
 
 (*Definition of I from Gail's equation (41)*)
-Idis[n_]:= Sum[(( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))/(\[CapitalOmega]p-(kp \[Theta][[i]])))\[Theta][[i]]^n,{i,1,Length[\[Theta]]}]//Chop;
+Idis[n_]:= Sum[(( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))/(\[CapitalOmega]p-(kp \[Theta][[i]])) \[Theta][[i]]^n,{i,1,Length[\[Theta]]}]//Chop;
 
 (*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
 
@@ -207,7 +208,7 @@ Return[check]
 ];
 
 
-allDispersions[]:=Module[{data,dc2,dc4,dcdata,datasr,t1,t2,t3,wdc2b,wdcdata,t4,t5},
+allDispersions[]:=Module[{data,dc2,dc4,dcdata,datasr,t1,t2,t3,wdc2b,wdcdata,t4,t5,kx},
 
 dc2=dispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[build2bMatrix[Infinity,2.]/.a-> 0.][[1]],2.];
 
@@ -216,7 +217,9 @@ dc4=dispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[stabilityMatrix[get2bdata[],
 data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
 datasr=SelectSingleRadius[data,250];
 
-dcdata=dispersionCheck[datasr,Eigenvalues[stabilityMatrix[datasr,getEquations[datasr,Infinity,-1.,0.,"xflavor"-> False],"xflavor"-> False]][[1]],0.];
+dcdata=dispersionCheck[datasr,
+evscale[0.,stabilityMatrix[datasr,getEquations[datasr,Infinity,-1.,0.,"xflavor"-> False],"xflavor"-> False],kx][[1]]
+,0.];
 
 wdc2b=wdispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[build2bMatrix[20.,2.]/.a-> 0.][[1]],2.,20.];
 wdcdata=wdispersionCheck[datasr,Eigenvalues[stabilityMatrix[datasr,getEquations[datasr,20.,-1.,0.,"xflavor"-> False],"xflavor"-> False]][[1]],0.,20.];
@@ -252,30 +255,38 @@ allDispersions[]
 
 
 
-listDispersion[]=Module[{data,datasr,\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,k,\[CapitalOmega],\[Omega],evs,Ener,diffs,Ve,checks,values},
+listDispersion[]:=Module[{data,datasr,\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,k,\[CapitalOmega],\[Omega],evs,Ener,Ve,checks,values,tab,kx},
 data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
 datasr=SelectSingleRadius[data,250];
 \[Theta]=data["mids"];
 Ener=Infinity;
 k=0.;
-evs=Eigenvalues[stabilityMatrix[datasr,getEquations[datasr,Ener,-1.,k,"xflavor"-> False],"xflavor"-> False]];
+evs=evscale[k,stabilityMatrix[datasr,getEquations[datasr,Ener,-1.,k,"xflavor"-> False],"xflavor"-> False],kx];
 
 \[Phi]0=Sum[munits ndensities[datasr,"xflavor"-> False][[1,i,i]]-munits ndensities[datasr,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
 \[Phi]1=Sum[(munits ndensities[datasr,"xflavor"-> False][[1,i,i]]-munits ndensities[datasr,"xflavor"-> False][[2,i,i]])\[Theta][[i]],{i,1,Length[\[Theta]]}];
 Ve=(munits/mp) *datasr["Yes"] *datasr["matters"];
-\[CapitalOmega]p=Table[N[evs[[i]]-Ve-\[Phi]0],{i,1,Length[evs]};
+\[CapitalOmega]p=Table[N[evs[[i]]-Ve-\[Phi]0],{i,1,Length[evs]}];
 kp=k-\[Phi]1;
 \[Omega]=\[Omega]EMev[Ener];
-
-diffs=Table[{\[CapitalOmega]p[[i]],\[Theta][[j]],\[CapitalOmega]p[[i]]-kp \[Theta][[j]]},{i,1,Length[\[CapitalOmega]p]},{j,1,Length[\[Theta]]}];
-
+Print[Length[evs]];
+Print[Length[\[CapitalOmega]p]];
+Print[Length[\[Theta]]];
+Print[Ve];
+Print[\[CapitalOmega]p];
+Print[evs];
+Print[N[\[CapitalOmega]p[[1]]-kp \[Theta][[1]]]];
+tab=Table[{\[CapitalOmega]p[[i]],\[Theta][[j]],N[\[CapitalOmega]p[[i]]-kp \[Theta][[j]]]},{i,1,Length[\[CapitalOmega]p]},{j,1,Length[\[Theta]]}];
 checks=Table[{evs[[i]],dispersionCheck[datasr,evs[[i]],k]},{i,1,Length[evs]}];
 
-values={\[Phi]0,\[Phi]1,Ve,kp,\[Omega],data["radius"[[250]]]};
+values={\[Phi]0,\[Phi]1,Ve,kp,\[Omega],data["radius"][[250]]};
+Print[\[Phi]0];
+Return[{checks//MatrixForm,tab//MatrixForm}];
 
-Return[{{values},{diffs},{checks}}]
-]
 ];
+
+
+listDispersion[]
 
 
 (*Ellipse Check Section*)
@@ -328,5 +339,6 @@ dataEllipseCheck[]
 (*Place here: function to check that A and A bar are the same for some test case where \[Omega]\[Rule] 0*)
 
 
-norm=kAdapt[inpath<>"112Msun_100ms_DO.h5",240,340,20.,-1.,60,"xflavor"-> True];
+(*norm=kAdapt[inpath<>"112Msun_100ms_DO.h5",240,340,20.,-1.,60,"xflavor"-> True];
 inv=kAdapt[inpath<>"112Msun_100ms_DO.h5",240,340,20.,-1.,60,"xflavor"-> True,"inverse"->True];
+*)
