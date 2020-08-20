@@ -58,6 +58,7 @@ outfolder = outpath<>filename;
 
 
 On[Assert]
+$MinPrecision=30;
 
 
 (*Test on kAdapt. Comparing to old data (below). Generates a plot which should look similar (different exact k values tested*)
@@ -177,7 +178,7 @@ dispersionCheck[data_,\[CapitalOmega]_,k_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOme
 kp=k-\[Phi]1;
 
 (*Definition of I from Gail's equation (41)*)
-Idis[n_]:= Sum[(( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))/(\[CapitalOmega]p-(kp \[Theta][[i]])) \[Theta][[i]]^n,{i,1,Length[\[Theta]]}]//Chop;
+Idis[n_]:= Sum[N[( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]])),40]/N[(\[CapitalOmega]p-(kp \[Theta][[i]])),40] \[Theta][[i]]^n,{i,1,Length[\[Theta]]}]//Chop;
 
 (*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
 
@@ -278,15 +279,12 @@ Print[evs];
 Print[N[\[CapitalOmega]p[[1]]-kp \[Theta][[1]]]];
 tab=Table[{\[CapitalOmega]p[[i]],\[Theta][[j]],N[\[CapitalOmega]p[[i]]-kp \[Theta][[j]]]},{i,1,Length[\[CapitalOmega]p]},{j,1,Length[\[Theta]]}];
 checks=Table[{evs[[i]],dispersionCheck[datasr,evs[[i]],k]},{i,1,Length[evs]}];
-
+Print[Table[N[(munits(ndensities[datasr,"xflavor"-> False][[1]][[i,i]]- ndensities[datasr,"xflavor"-> False][[2]][[i,i]])),40],{i,1,Length[\[Theta]]}]];
 values={\[Phi]0,\[Phi]1,Ve,kp,\[Omega],data["radius"][[250]]};
-Print[\[Phi]0];
+Print[\[Phi]0];Print[\[Phi]1];Print[data["radius"][[250]]];
 Return[{checks//MatrixForm,tab//MatrixForm}];
 
 ];
-
-
-listDispersion[]
 
 
 (*Ellipse Check Section*)
