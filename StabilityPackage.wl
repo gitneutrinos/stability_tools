@@ -292,31 +292,27 @@ Return[S];
 
 
 (*This scales the stability matrix up to a more managable scale based on the machine prescision, Solves for the eigenvalues, and then scales backs.  Returns a list of eigenvalues*)
-evscale[ktest_,S_,kx_]:=Module[{\[Epsilon],As,kx0s,as,kxs},
+Options[evscale]={"output"-> "Eigenvalues"};
+evscale[ktest_,S_,kx_,OptionsPattern[]]:=Module[{\[Epsilon],As,kx0s,as,kxs,evals,evecs},
 \[Epsilon]=$MachineEpsilon/2;
 As=Expand[(S/\[Epsilon])/.kx->\[Epsilon] kxs];
 kx0s=ktest/\[Epsilon];
+
+If[OptionValue["output"]=="Eigenvalues",
 as=\[Epsilon] Eigenvalues[N[As]/.kxs->kx0s];
-(*bs=\[Epsilon] Eigenvalues[As]/.kxs\[Rule]kx0s;*)
+];
+
+If[OptionValue["output"]=="Eigenvectors",
+as=\[Epsilon] Eigenvectors[N[As]/.kxs->kx0s];
+];
+If[OptionValue["outout"]=="Eigensystem",
+as={evals,evecs}=\[Epsilon] Eigensystem[N[As]/.kxs-> kx0s];
+];
+
 Return[as]
 ];
 
-evecscale[ktest_,S_,kx_]:=Module[{\[Epsilon],As,kx0s,as,kxs},
-\[Epsilon]=$MachineEpsilon/2;
-As=Expand[(S/\[Epsilon])/.kx->\[Epsilon] kxs];
-kx0s=ktest/\[Epsilon];
-as= \[Epsilon] Eigenvectors[N[As]/.kxs->kx0s];
-(*bs=\[Epsilon] Eigenvalues[As]/.kxs\[Rule]kx0s;*)
-Return[as]
-];
 
-esysscale[ktest_,S_,kx_]:=Module[{\[Epsilon],As,kx0s,as,kxs,evecs,evals},
-\[Epsilon]=$MachineEpsilon/2;
-As=Expand[(S/\[Epsilon])/.kx->\[Epsilon] kxs];
-kx0s=ktest/\[Epsilon];
-{evals,evecs}=\[Epsilon] Eigensystem[N[As]/.kxs-> kx0s];
-Return[{Re[evals],Im[evals],evecs}]
-];
 
 
 (*Constructs a nstep sized log spaced k grid based on the target k associated with the infile at radial bin r.  Currently the limits are 2 orders of magnitude above and below the target value, ignoring negatives for the moment *)
@@ -339,7 +335,7 @@ Return[kgrid];
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
 
-Options[kAdapt]={"xflavor"-> True,"ktarget"-> 0.,"krange"-> {10.^-3,10.},"eigenvectors"-> False,"inverse"-> False};
+Options[kAdapt]={"xflavor"-> True,"ktarget"-> 0.,"krange"-> {10.^-3,10.},"koutput"-> Eigenvalues,"inverse"-> False};
 kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,OptionsPattern[]]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,eout,pot,S},
 
 data=ImportData[infile];
@@ -353,10 +349,9 @@ Reap[
 
 		kl=buildkGrid[singleRadiusData,nstep,"ktarget"-> OptionValue["ktarget"],"krange"-> OptionValue["krange"],"xflavor"-> OptionValue["xflavor"]];
 		Do[
-			If[OptionValue["eigenvectors"],
-			eout=esysscale[kl[[kx]],S,kvar],
-			eout=Sort[Im[evscale[kl[[kx]],S,kvar]],Greater][[1]]
-			];
+		
+			eout=evscale[kl[[kx]],S,kvar,"output"->OptionValue["koutput"]];
+			
 			pot=siPotential[singleRadiusData,"xflavor"-> OptionValue["xflavor"]];
 			Sow[{data["radius"][[rx]],kl[[kx]],eout,pot}]; 
 		,{kx,1,Length[kl]}] (*close do over ktargets*)
