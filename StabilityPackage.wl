@@ -305,7 +305,7 @@ as=\[Epsilon] Eigenvalues[N[As]/.kxs->kx0s];
 If[OptionValue["output"]=="Eigenvectors",
 as=\[Epsilon] Eigenvectors[N[As]/.kxs->kx0s];
 ];
-If[OptionValue["outout"]=="Eigensystem",
+If[OptionValue["output"]=="Eigensystem",
 as={evals,evecs}=\[Epsilon] Eigensystem[N[As]/.kxs-> kx0s];
 ];
 
