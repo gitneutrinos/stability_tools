@@ -178,7 +178,7 @@ dispersionCheck[data_,\[CapitalOmega]_,k_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOme
 kp=k-\[Phi]1;
 
 (*Definition of I from Gail's equation (41)*)
-Idis[n_]:= Sum[( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))/(\[CapitalOmega]p-(kp \[Theta][[i]])) \[Theta][[i]]^n,{i,1,Length[\[Theta]]}]//Chop;
+Idis[n_]:= Sum[(( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))/(\[CapitalOmega]p-(kp \[Theta][[i]]))) \[Theta][[i]]^n,{i,1,Length[\[Theta]]}]//Chop;
 
 (*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
 
@@ -210,6 +210,7 @@ Return[check]
 
 
 allDispersions[]:=Module[{data,dc2,dc4,dcdata,datasr,t1,t2,t3,wdc2b,wdcdata,t4,t5,kx},
+
 
 dc2=dispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[build2bMatrix[Infinity,2.]/.a-> 0.][[1]],2.];
 
@@ -256,35 +257,72 @@ allDispersions[]
 
 
 
-listDispersion[]:=Module[{data,datasr,\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,k,\[CapitalOmega],\[Omega],evs,Ener,Ve,checks,values,tab,kx},
+listDispersion[r_]:=Module[{data,datasr,\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[CapitalOmega],\[Omega],evs,Ener,Ve,checks,values,tab,kx,k,esys,nuarrows,bottoms},
 data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
-datasr=SelectSingleRadius[data,250];
+datasr=SelectSingleRadius[data,r];
 \[Theta]=data["mids"];
 Ener=Infinity;
-k=0.;
-evs=evscale[k,stabilityMatrix[datasr,getEquations[datasr,Ener,-1.,k,"xflavor"-> False],"xflavor"-> False],kx];
-
+datasr["matters"]=0.;
+Ve=(munits/mp) *datasr["Yes"] *datasr["matters"];
+k=siPotential[datasr,"xflavor"-> False];
+esys=evscale[k,stabilityMatrix[datasr,getEquations[datasr,Ener,-1.,k,"xflavor"-> False],"xflavor"-> False],kx,"output"-> "Eigensystem"];
+evs=esys[[1]];
 \[Phi]0=Sum[munits ndensities[datasr,"xflavor"-> False][[1,i,i]]-munits ndensities[datasr,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
 \[Phi]1=Sum[(munits ndensities[datasr,"xflavor"-> False][[1,i,i]]-munits ndensities[datasr,"xflavor"-> False][[2,i,i]])\[Theta][[i]],{i,1,Length[\[Theta]]}];
-Ve=(munits/mp) *datasr["Yes"] *datasr["matters"];
+
 \[CapitalOmega]p=Table[N[evs[[i]]-Ve-\[Phi]0],{i,1,Length[evs]}];
+
 kp=k-\[Phi]1;
 \[Omega]=\[Omega]EMev[Ener];
-Print[Length[evs]];
-Print[Length[\[CapitalOmega]p]];
-Print[Length[\[Theta]]];
-Print[Ve];
-Print[\[CapitalOmega]p];
-Print[evs];
-Print[N[\[CapitalOmega]p[[1]]-kp \[Theta][[1]]]];
-tab=Table[{\[CapitalOmega]p[[i]],\[Theta][[j]],N[\[CapitalOmega]p[[i]]-kp \[Theta][[j]]]},{i,1,Length[\[CapitalOmega]p]},{j,1,Length[\[Theta]]}];
+
 checks=Table[{evs[[i]],dispersionCheck[datasr,evs[[i]],k]},{i,1,Length[evs]}];
-Print[Table[N[(munits(ndensities[datasr,"xflavor"-> False][[1]][[i,i]]- ndensities[datasr,"xflavor"-> False][[2]][[i,i]])),40],{i,1,Length[\[Theta]]}]];
-values={\[Phi]0,\[Phi]1,Ve,kp,\[Omega],data["radius"][[250]]};
-Print[\[Phi]0];Print[\[Phi]1];Print[data["radius"][[250]]];
-Return[{checks//MatrixForm,tab//MatrixForm}];
+
+bottoms=Table[(\[CapitalOmega]p[[i]]-(kp \[Theta][[j]])),{i,1,Length[evs]},{j,1,Length[\[Theta]]}];
+
+values={"\[Phi]0",\[Phi]0,"\[Phi]1",\[Phi]1,"Ve",Ve,"k",k,"kp",kp,"\[Omega]",\[Omega],"r",data["radius"][[r]]};
+
+Return[{esys,values,checks,bottoms}];
+
 
 ];
+
+
+evecviz[eigensys_,ni_,labels_]:=Module[{n,nulen,nublen,data,c\[Theta],nuarrow,nubarrow,draw,plotout,gridlines,gridlabels},
+n=Length[eigensys[[2]]];
+data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
+c\[Theta]=data["mids"]; (*cos{theta}*)
+nulen[i_]:=Normalize[eigensys[[2,i,1;;10]]]//Abs//Chop ;(*neutrino eigenvecot rlength for eigenvector i.  Normalized, and abs as some small parts go negative.  Chop rounds very small parts down to 0*)
+nublen[i_]:=Normalize[eigensys[[2,i,11;;20]]]//Abs//Chop ; (*anti-neutrino eigenvecot rlength for eigenvector i.  Normalized, and abs as some small parts go negative.*)
+nuarrow[i_]:=Table[Arrow[{{0,0},{nulen[i][[j]] c\[Theta][[j]],nulen[i][[j]] Sin[ArcCos[c\[Theta][[j]]]] }}],{j,1,Length[c\[Theta]]}] ;(*draws an arrow for the vector*)
+nubarrow[i_]:=Table[Arrow[{{0,0},{nublen[i][[j]] c\[Theta][[j]],nublen[i][[j]] Sin[ArcCos[c\[Theta][[j]]]]}}],{j,1,Length[c\[Theta]]}];
+gridlines=Table[Line[{{0,0},{ c\[Theta][[j]], Sin[ArcCos[c\[Theta][[j]]]] }}],{j,1,Length[c\[Theta]]}]; (*Draws line segments for the angular bin mids*)
+gridlabels=Table[Text[labels[[j]],{c\[Theta][[j]], Sin[ArcCos[c\[Theta][[j]]]]}],{j,1,Length[c\[Theta]]}]; 
+draw[i_]:=Graphics[{Black,Dotted,gridlines,Blue,Arrowheads[0.02],nuarrow[i],Red,Arrowheads[0.02],Dashed,nubarrow[i],Purple,gridlabels},Axes->True,PlotRange-> {{-1,1},{0,1}},PlotRangePadding-> 0.15,PlotLabel->eigensys[[1,i]],ImageSize-> Scaled[0.5]];
+Return[draw[ni]]
+];
+
+
+testsys=listDispersion[280];
+
+
+testsys[[2]]
+testsys[[3]]//MatrixForm
+
+
+Manipulate[Column[{testsys[[2]],testsys[[3,p,2]],testsys[[1,1,p]],evecviz[testsys[[1]],p,testsys[[4,p]]]}],{p,1,20,1}]
+
+
+testsys=listDispersion[280];
+
+
+testsys[[2]]//Length
+
+
+testsys[[2,10,1;;10]]//Normalize 
+testsys[[2,10,11;;20]]//Normalize  
+
+
+Graphics[Arrow[{{0,0},{testsys[[2,1,10]]}}]]
 
 
 (*Ellipse Check Section*)
