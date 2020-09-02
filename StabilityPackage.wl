@@ -34,12 +34,8 @@ rules::usage=
 "replacement rules for density matrix values"
 siPotential::usage=
 "get SI potential for k targets"
-evecscale::usage = 
-"finds eigenvectors while scaling the matrix to reasonable numbers"
 ndensities::usage = 
 "finds the neutrino number densities for a species, and returns the matrix of densities in an angular bin"
-esysscale::usage=
-"returns the real and imaginary parts of eigenvalues and associated eigenvectors"
 getInitialGuess::usage=
 "[file,species]generates Initial Guesses for the first radius from expansion expresssion"
 eBoxFitSingleRadius::usage=
@@ -292,11 +288,15 @@ Return[S];
 
 
 (*This scales the stability matrix up to a more managable scale based on the machine prescision, Solves for the eigenvalues, and then scales backs.  Returns a list of eigenvalues*)
-Options[evscale]={"output"-> "Eigenvalues"};
+Options[evscale]={"output"-> "RankedEigenvalues"};
 evscale[ktest_,S_,kx_,OptionsPattern[]]:=Module[{\[Epsilon],As,kx0s,as,kxs,evals,evecs},
 \[Epsilon]=$MachineEpsilon/2;
 As=Expand[(S/\[Epsilon])/.kx->\[Epsilon] kxs];
 kx0s=ktest/\[Epsilon];
+
+If[OptionValue["output"]=="RankedEigenvalues",
+as=Max[Im[\[Epsilon] Eigenvalues[N[As]/.kxs->kx0s]]];
+];
 
 If[OptionValue["output"]=="Eigenvalues",
 as=\[Epsilon] Eigenvalues[N[As]/.kxs->kx0s];
@@ -335,7 +335,7 @@ Return[kgrid];
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
 
-Options[kAdapt]={"xflavor"-> True,"ktarget"-> 0.,"krange"-> {10.^-3,10.},"koutput"-> Eigenvalues,"inverse"-> False};
+Options[kAdapt]={"xflavor"-> True,"ktarget"-> 0.,"krange"-> {10.^-3,10.},"koutput"-> "RankedEigenvalues","inverse"-> False};
 kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,OptionsPattern[]]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,eout,pot,S},
 
 data=ImportData[infile];
