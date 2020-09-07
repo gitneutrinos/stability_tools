@@ -257,6 +257,7 @@ allDispersions[]
 
 
 
+Option
 listDispersion[r_]:=Module[{data,datasr,\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[CapitalOmega],\[Omega],evs,Ener,Ve,checks,values,tab,kx,k,esys,nuarrows,bottoms},
 data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
 datasr=SelectSingleRadius[data,r];
@@ -297,7 +298,7 @@ nuarrow[i_]:=Table[Arrow[{{0,0},{nulen[i][[j]] c\[Theta][[j]],nulen[i][[j]] Sin[
 nubarrow[i_]:=Table[Arrow[{{0,0},{nublen[i][[j]] c\[Theta][[j]],nublen[i][[j]] Sin[ArcCos[c\[Theta][[j]]]]}}],{j,1,Length[c\[Theta]]}];
 gridlines=Table[Line[{{0,0},{ c\[Theta][[j]], Sin[ArcCos[c\[Theta][[j]]]] }}],{j,1,Length[c\[Theta]]}]; (*Draws line segments for the angular bin mids*)
 gridlabels=Table[Text[labels[[j]],{c\[Theta][[j]], Sin[ArcCos[c\[Theta][[j]]]]}],{j,1,Length[c\[Theta]]}]; 
-draw[i_]:=Graphics[{Black,Dotted,gridlines,Blue,Arrowheads[0.02],nuarrow[i],Red,Arrowheads[0.02],Dashed,nubarrow[i],Purple,gridlabels},Axes->True,PlotRange-> {{-1,1},{0,1}},PlotRangePadding-> 0.15,PlotLabel->eigensys[[1,i]],ImageSize-> Scaled[0.5]];
+draw[i_]:=Graphics[{Black,Dotted,gridlines,Blue,Arrowheads[0.02],nuarrow[i],Red,Arrowheads[0.02],Dashed,nubarrow[i],Purple,gridlabels},Axes->True,PlotRange-> {{-1,1},{0,1}},PlotRangePadding-> 0.15,PlotLabel->eigensys[[1,i]],ImageSize-> Scaled[0.65]];
 Return[draw[ni]]
 ];
 
