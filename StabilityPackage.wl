@@ -339,7 +339,7 @@ Return[out] (*Close reap over r*)
 
 
 getMoments[file_,r_,species_]:= Module[{data,datasr,moments},
-data=ImportData[file]//Quiet;
+data=ImportData[file];
 datasr=SelectSingleRadius[data,r];
 moments={Sum[datasr["Endensity"][[species,E,1]],{E,1,Length[data["freqs"]]-1}],Sum[datasr["Endensity"][[species,E,2]],{E,1,Length[data["freqs"]]-1}],Sum[datasr["Endensity"][[species,E,3]],{E,1,Length[data["freqs"]]-1}]};
 Return[moments];
