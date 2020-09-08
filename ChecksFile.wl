@@ -206,10 +206,10 @@ Between[dcdata//Chop,{-0.01,0.01}],
 TestID-> "Real Data Dispersion Check"];
 t4=VerificationTest[
 Between[wdc2b//Chop,{-0.01,0.01}],
-TestID-> "Real Data Dispersion Check"];
+TestID-> "2 Beam \[Omega]\[NotEqual]0 Dispersion Check"];
 t5=VerificationTest[
 Between[wdcdata//Chop,{-0.01,0.01}],
-TestID-> "Real Data Dispersion Check"];
+TestID-> "Real Data \[Omega]\[NotEqual]0 Dispersion Check"];
 Return[{{t1},{t2},{t3},{t4},{t5}}//MatrixForm]
 ];
 
