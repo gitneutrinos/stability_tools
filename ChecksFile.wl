@@ -233,7 +233,7 @@ Return[{VerificationTest[Abs[er0]<10^-5 && Abs[er1]< 10^-5 && Abs[er2]< 10^-5,Te
 
 dataEllipseCheck[]:=Module[{m0,m1,m2,er0,er1,er2,fits,moms,file},
 file="G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\4timesHigh_1D_withV_withPairBrems_MC_moments.h5";
-moms=getMoments[file,1,1];
+moms=Quiet[Quiet[getMoments[file,1,1],{Import::general}],{Import::noelem}]; (*quiets only the import complaint that there are no midpoints for moments*)
 m0=moms[[1]];
 m1=moms[[2]]//Abs;
 m2=moms[[3]];
@@ -249,3 +249,6 @@ ellipseCheck[]
 
 
 dataEllipseCheck[]
+
+
+
