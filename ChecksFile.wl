@@ -199,7 +199,7 @@ data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conv
 datasr=SelectSingleRadius[data,250];
 datasr["matters"]=0.; (*matter set to 0*)
 Idis[i_]:= dispersionCheck[datasr,
-evscale[0.,stabilityMatrix[datasr,getEquations[datasr,Infinity,-1.,0.,"xflavor"-> False],"xflavor"-> False],kx,"putput"-> "Eigenvalues"][[i]]
+evscale[0.,stabilityMatrix[datasr,getEquations[datasr,Infinity,-1.,0.,"xflavor"-> False],"xflavor"-> False],kx,"output"-> "Eigenvalues"][[i]]
 ,0.,"output"-> "Idis"];
 check[i_]:=((Idis[i][[1]]+1)(Idis[i][[3]]-1))-(Idis[i][[2]]^2)//Chop;
 wdc2b=wdispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[build2bMatrix[20.,2.]/.a-> 0.][[1]],2.,20.];
