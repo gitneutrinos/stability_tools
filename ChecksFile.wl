@@ -151,9 +151,8 @@ Print[Re[\[CapitalOmega]ch[2.,1.,0.,0]],Re[evtest]];
 Print[Im[\[CapitalOmega]ch[2.,1.,0.,0]],Im[evtest]];
 
 
-(*Check the dispersion relation from Gail's paper*)
-Options[dispersionCheck]={"output"-> "check"};
-dispersionCheck[data_,\[CapitalOmega]_,k_,OptionsPattern[]]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,check,Idis,\[Theta]},
+(*Calculates and Returns the nth I for the dispersion check.  Returns a single value of In*)
+Idis[data_,\[CapitalOmega]_,k_,n_]:=Module[{\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,Idis},
 \[Theta]=data["mids"];
 (*Defined in Gail's Blue equation 30 and 31 *)
 \[Phi]0=Sum[munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
@@ -163,15 +162,17 @@ dispersionCheck[data_,\[CapitalOmega]_,k_,OptionsPattern[]]:=Module[{\[Phi]0,\[P
 kp=k-\[Phi]1;
 (*Definition of I from Gail's equation (41)*)
 Do[Assert[(\[CapitalOmega]p-(kp \[Theta][[i]]))/(\[CapitalOmega]p+(kp \[Theta][[i]]))>= 1,"\[CapitalOmega]p' k'Cos[\[Theta]] percent difference less than 1"],{i,1,Length[\[Theta]]}]; 
-Idis[n_]:= Sum[(( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))/(\[CapitalOmega]p-(kp \[Theta][[i]]))) \[Theta][[i]]^n,{i,1,Length[\[Theta]]}]//Chop;
-(*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
-check=((Idis[0]+1)(Idis[2]-1))-(Idis[1]^2)//Chop; 
-If[OptionValue["output"]== "check",
+Idis[n]:= Sum[(( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))/(\[CapitalOmega]p-(kp \[Theta][[i]]))) \[Theta][[i]]^n,{i,1,Length[\[Theta]]}]//Chop;
+Return[Idis[n]]
+];
+
+
+(*Check the dispersion relation from Gail's paper*)
+
+dispersionCheck[data_,\[CapitalOmega]_,k_]:=Module[{},
+
+check=((Idis[data,\[CapitalOmega],k,0]+1)(Idis[data,\[CapitalOmega],k,2]-1))-(Idis[data,\[CapitalOmega],k,1])^2//Chop; 
 Return[check];
-];
-If[OptionValue["output"]=="Idis",
-Return[{Idis[0],Idis[1],Idis[2]}]
-];
 ];
 
 
