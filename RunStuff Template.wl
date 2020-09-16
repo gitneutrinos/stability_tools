@@ -200,13 +200,19 @@ kp=k-\[Phi]1;
 \[Omega]=\[Omega]EMev[En];
 
 (*Definition of I from Gail's equation (41)*)
-Idis[n_]:= Sum[(( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))(\[CapitalOmega]p-(kp \[Theta][[i]])+( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))\[Omega]))/((\[CapitalOmega]p-(kp \[Theta][[i]]))^2-\[Omega]^2) \[Theta][[i]]^n,{i,1,Length[\[Theta]]}]//Chop;
+Idis[n_]:= Sum[(( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))(\[CapitalOmega]p-(kp \[Theta][[i]])+( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]+ ndensities[data,"xflavor"-> False][[2]][[i,i]]))\[Omega]))/((\[CapitalOmega]p-(kp \[Theta][[i]]))^2-\[Omega]^2) \[Theta][[i]]^n,{i,1,Length[\[Theta]]}]//Chop;
 
 (*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
 
-check=((Idis[0]+1)(Idis[2]-1))-(Idis[1]^2)//Chop;
+check=((Idis[0]+1)(Idis[2]-1))-(Idis[1])^2//Chop;
 Return[check]
 ];
+
+
+(5+2I)^2
+
+
+dispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[build2bMatrix[Infinity,2.]/.a-> 0.][[1]],2.]
 
 
 allDispersions[]:=Module[{data,dc2,dc4,dcdata,datasr,t1,t2,t3,wdc2b,wdcdata,t4,t5,kx},
@@ -257,32 +263,34 @@ allDispersions[]
 
 
 
-Option
-listDispersion[r_]:=Module[{data,datasr,\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[CapitalOmega],\[Omega],evs,Ener,Ve,checks,values,tab,kx,k,esys,nuarrows,bottoms},
+Options[listDispersion]={"Energy"-> Infinity};
+listDispersion[r_,OptionsPattern[]]:=Module[{data,datasr,\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[CapitalOmega],\[Omega],evs,Ener,Ve,checks,values,tab,kx,k,esys,nuarrows,bottoms,Smat},
 data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
 datasr=SelectSingleRadius[data,r];
 \[Theta]=data["mids"];
-Ener=Infinity;
+Ener=OptionValue["Energy"];
 datasr["matters"]=0.;
 Ve=(munits/mp) *datasr["Yes"] *datasr["matters"];
 k=siPotential[datasr,"xflavor"-> False];
-esys=evscale[k,stabilityMatrix[datasr,getEquations[datasr,Ener,-1.,k,"xflavor"-> False],"xflavor"-> False],kx,"output"-> "Eigensystem"];
+Smat=stabilityMatrix[datasr,getEquations[datasr,Ener,-1.,k,"xflavor"-> False],"xflavor"-> False];
+esys=evscale[k,Smat,kx,"output"-> "Eigensystem"];
 evs=esys[[1]];
 \[Phi]0=Sum[munits ndensities[datasr,"xflavor"-> False][[1,i,i]]-munits ndensities[datasr,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
 \[Phi]1=Sum[(munits ndensities[datasr,"xflavor"-> False][[1,i,i]]-munits ndensities[datasr,"xflavor"-> False][[2,i,i]])\[Theta][[i]],{i,1,Length[\[Theta]]}];
-
 \[CapitalOmega]p=Table[N[evs[[i]]-Ve-\[Phi]0],{i,1,Length[evs]}];
-
 kp=k-\[Phi]1;
 \[Omega]=\[Omega]EMev[Ener];
-
+If[OptionValue["Energy"]== Infinity,
 checks=Table[{evs[[i]],dispersionCheck[datasr,evs[[i]],k]},{i,1,Length[evs]}];
-
 bottoms=Table[(\[CapitalOmega]p[[i]]-(kp \[Theta][[j]])),{i,1,Length[evs]},{j,1,Length[\[Theta]]}];
+,
+checks=Table[{evs[[i]],wdispersionCheck[datasr,evs[[i]],k,OptionValue["Energy"]]},{i,1,Length[evs]}];
+bottoms=Table[((\[CapitalOmega]p[[i]]-(kp \[Theta][[j]]))^2-\[Omega]^2),{i,1,Length[evs]},{j,1,Length[\[Theta]]}];
+];
 
 values={"\[Phi]0",\[Phi]0,"\[Phi]1",\[Phi]1,"Ve",Ve,"k",k,"kp",kp,"\[Omega]",\[Omega],"r",data["radius"][[r]]};
 
-Return[{esys,values,checks,bottoms}];
+Return[{esys,values,checks,bottoms,Smat}];
 
 
 ];
@@ -306,24 +314,21 @@ Return[draw[ni]]
 testsys=listDispersion[280];
 
 
+
+testsys2=listDispersion[200,"Energy"-> 20.];
+
+
 testsys[[2]]
-testsys[[3]]//MatrixForm
+testsys2[[2]]
 
 
-Manipulate[Column[{testsys[[2]],testsys[[3,p,2]],testsys[[1,1,p]],evecviz[testsys[[1]],p,testsys[[4,p]]]}],{p,1,20,1}]
+Manipulate[Column[{testsys[[2]],testsys[[3,p,2]],testsys[[1,1,p]],evecviz[testsys[[1]],p,testsys[[4,p]]],MatrixPlot[testsys[[5]],PlotLegends-> Automatic,ImageSize-> Scaled[0.45]]}],{p,1,20,1}]
 
 
-testsys=listDispersion[280];
+Manipulate[Column[{testsys2[[2]],testsys2[[3,p,2]],testsys2[[1,1,p]],evecviz[testsys2[[1]],p,testsys2[[4,p]]],MatrixPlot[testsys2[[5]],PlotLegends-> Automatic,ImageSize-> Scaled[0.65]]}],{p,1,20,1}]
 
 
-testsys[[2]]//Length
-
-
-testsys[[2,10,1;;10]]//Normalize 
-testsys[[2,10,11;;20]]//Normalize  
-
-
-Graphics[Arrow[{{0,0},{testsys[[2,1,10]]}}]]
+testsys[[5]]-testsys2[[5]]//MatrixForm
 
 
 (*Ellipse Check Section*)

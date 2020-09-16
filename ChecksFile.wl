@@ -62,7 +62,6 @@ $MinPrecision=30;
 
 
 (*Test on kAdapt. Comparing to old data (below). Generates a plot which should look similar (different exact k values tested*)
-
 OldData={{2.61019*10^-17, 1.12835*10^-18}, {2.8674*10^-17, 
   7.11518*10^-19}, {3.14996*10^-17, 1.13532*10^-21}, {3.46036*10^-17, 
   1.12664*10^-21}, {3.80135*10^-17, 1.11669*10^-21}, {4.17594*10^-17, 
@@ -115,10 +114,6 @@ kAdapt[file,ri,ri,testE,hi,10,"xflavor"-> False]
 ListLogPlot[{Transpose@{kdebug[[All,2]],kdebug[[All,3]]},OldData},ImageSize-> Scaled[0.25]]
 
 
-
-
-(*2x2 matrix check*)
-
 (*Artifical data set which defines 2 beams only, with 2 angular bins, and have chakraborty asymmetry parameters "a" *)
 get2bdata[]:=Module[{S2ba,S2b,data2b},
 data2b=
@@ -133,7 +128,6 @@ data2b=
  "munits"-> munits
 ]
 ];
-
 (*builds a 4x4 matrix with the two beam data, then reduces the size of the matrix *)
 build2bMatrix[En_,k_]:=Module[{fakeEn,S2ba,S2b},
 S2ba=stabilityMatrix[get2bdata[],getEquations[get2bdata[],En,-1.,k,"xflavor"-> False],"xflavor"-> False];
@@ -143,49 +137,43 @@ Return[S2b]
 
 
 (*Chakraborty's analytic expression for the 2x2 case, and a verification test that they're the same within one part in 1000*)
-
 \[CapitalOmega]ch[k_,\[Mu]ch_,a_,\[Omega]_]:=Sort[{2 a \[Mu]ch+Sqrt[(2 a \[Mu]ch)^2+(\[Omega]+k)((\[Omega]+k)-4 \[Mu]ch)],2 a \[Mu]ch-Sqrt[(2 a \[Mu]ch)^2+(\[Omega]+k)((\[Omega]+k)-4 \[Mu]ch)]}];
 cm[k_,\[Mu]ch_,w_]:=DiagonalMatrix[{w+k,-w-k,w-k,-w+k}]+2 \[Mu]ch{{l+lb,-lb,-l,0.},{-r,r+rb,0,-rb},{-r,0,r+rb,-rb},{0.,-lb,-l,l+lb}};
 cma[k_,\[Mu]ch_,a_,w_]:=cm[k,\[Mu]ch,w]/.{rb-> 0.,l-> 0.,r-> (1+a),lb-> -(1-a)};
 evtest=Sort[Eigenvalues[build2bMatrix[Infinity,2.]/.{a-> 0.}]]//Chop;
-
 VerificationTest[
 Re[\[CapitalOmega]ch[2.,1.,0.,0]]===Re[evtest] 
 ,TestID-> "2 Beam Growth Rate (Real part)"]
-
 VerificationTest[
 Im[\[CapitalOmega]ch[2.,1.,0.,0]]=== Im[evtest]
 ,TestID-> "2 Beam Growth Rate (Imaginary part)"]
-
 Print[Re[\[CapitalOmega]ch[2.,1.,0.,0]],Re[evtest]];
 Print[Im[\[CapitalOmega]ch[2.,1.,0.,0]],Im[evtest]];
 
 
-
-
-
-
-(*Check the dispersion relation from Gail's paper*)
-
-dispersionCheck[data_,\[CapitalOmega]_,k_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,check,Idis,\[Theta]},
+(*Calculates and Returns the nth I for the dispersion check.  Returns a single value of In*)
+Idis[data_,\[CapitalOmega]_,k_,n_]:=Module[{\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,Idis},
 \[Theta]=data["mids"];
 (*Defined in Gail's Blue equation 30 and 31 *)
 \[Phi]0=Sum[munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
 \[Phi]1=Sum[(munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]])\[Theta][[i]],{i,1,Length[\[Theta]]}];
-
 (* "Shifted" Eigenvalue and k*)
 \[CapitalOmega]p=N[\[CapitalOmega]-((munits/mp) *data["Yes"] *data["matters"])-\[Phi]0];
 kp=k-\[Phi]1;
-
 (*Definition of I from Gail's equation (41)*)
-Idis[n_]:= Sum[(( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))/(\[CapitalOmega]p-(kp \[Theta][[i]]))) \[Theta][[i]]^n,{i,1,Length[\[Theta]]}]//Chop;
-
-(*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
-
-check=((Idis[0]+1)(Idis[2]-1))-(Idis[1]^2)//Chop;
-Return[check]
+Do[Assert[(\[CapitalOmega]p-(kp \[Theta][[i]]))/(\[CapitalOmega]p+(kp \[Theta][[i]]))>= 1,"\[CapitalOmega]p' k'Cos[\[Theta]] percent difference less than 1"],{i,1,Length[\[Theta]]}]; 
+Idis[n]:= Sum[(( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))/(\[CapitalOmega]p-(kp \[Theta][[i]]))) \[Theta][[i]]^n,{i,1,Length[\[Theta]]}]//Chop;
+Return[Idis[n]]
 ];
 
+
+(*Check the dispersion relation from Gail's paper*)
+
+dispersionCheck[data_,\[CapitalOmega]_,k_]:=Module[{},
+
+check=((Idis[data,\[CapitalOmega],k,0]+1)(Idis[data,\[CapitalOmega],k,2]-1))-(Idis[data,\[CapitalOmega],k,1])^2//Chop; 
+Return[check];
+];
 
 
 wdispersionCheck[data_,\[CapitalOmega]_,k_,En_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,check,Idis,\[Theta],\[Omega]},
@@ -193,137 +181,50 @@ wdispersionCheck[data_,\[CapitalOmega]_,k_,En_]:=Module[{\[Phi]0,\[Phi]1,\[Capit
 (*Defined in Gail's Blue equation 30 and 31 *)
 \[Phi]0=Sum[munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
 \[Phi]1=Sum[(munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]])\[Theta][[i]],{i,1,Length[\[Theta]]}];
-
 (* "Shifted" Eigenvalue and k*)
 \[CapitalOmega]p=N[\[CapitalOmega]-((munits/mp) *data["Yes"] *data["matters"])-\[Phi]0];
 kp=k-\[Phi]1;
 \[Omega]=\[Omega]EMev[En];
-
 (*Definition of I from Gail's equation (41)*)
-Idis[n_]:= Sum[(( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))(\[CapitalOmega]p-(kp \[Theta][[i]])+( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))\[Omega]))/((\[CapitalOmega]p-(kp \[Theta][[i]]))^2-\[Omega]^2) \[Theta][[i]]^n,{i,1,Length[\[Theta]]}]//Chop;
-
+Idis[n_]:= Sum[(( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))(\[CapitalOmega]p-(kp \[Theta][[i]])+( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]+ ndensities[data,"xflavor"-> False][[2]][[i,i]]))\[Omega]))/((\[CapitalOmega]p-(kp \[Theta][[i]]))^2-\[Omega]^2) \[Theta][[i]]^n,{i,1,Length[\[Theta]]}]//Chop;
 (*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
-
-check=((Idis[0]+1)(Idis[2]-1))-(Idis[1]^2)//Chop;
+check=((Idis[0]+1)(Idis[2]-1))-(Idis[1])^2//Chop;
 Return[check]
 ];
 
 
-allDispersions[]:=Module[{data,dc2,dc4,dcdata,datasr,t1,t2,t3,wdc2b,wdcdata,t4,t5,kx},
-
-
+allDispersions[]:=Module[{data,dc2,dc4,dcdata,datasr,t1,t2,t3,wdc2b,wdcdata,t4,t5,kx,Idis,check},
 dc2=dispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[build2bMatrix[Infinity,2.]/.a-> 0.][[1]],2.];
-
 dc4=dispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[stabilityMatrix[get2bdata[],getEquations[get2bdata[],Infinity,-1.,2.,"xflavor"-> False],"xflavor"-> False]/.a-> 0.][[1]],2.];
-
 data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
 datasr=SelectSingleRadius[data,250];
-
-dcdata=dispersionCheck[datasr,
-evscale[0.,stabilityMatrix[datasr,getEquations[datasr,Infinity,-1.,0.,"xflavor"-> False],"xflavor"-> False],kx][[1]]
-,0.];
-
+datasr["matters"]=0.; (*matter set to 0*)
+Idis[i_]:= dispersionCheck[datasr,
+evscale[0.,stabilityMatrix[datasr,getEquations[datasr,Infinity,-1.,0.,"xflavor"-> False],"xflavor"-> False],kx,"output"-> "Eigenvalues"][[i]]
+,0.,"output"-> "Idis"];
+check[i_]:=((Idis[i][[1]]+1)(Idis[i][[3]]-1))-(Idis[i][[2]]^2)//Chop;
 wdc2b=wdispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[build2bMatrix[20.,2.]/.a-> 0.][[1]],2.,20.];
 wdcdata=wdispersionCheck[datasr,Eigenvalues[stabilityMatrix[datasr,getEquations[datasr,20.,-1.,0.,"xflavor"-> False],"xflavor"-> False]][[1]],0.,20.];
-
 
 t1=VerificationTest[
 Between[dc2//Chop,{-0.01,0.01}],
 TestID-> "2 beam Dispersion Check"];
-
 t2=VerificationTest[
 Between[dc4//Chop,{-0.01,0.01}],
 TestID-> "4 Beam Dispersion Check"];
-
-t3=VerificationTest[
-Between[dcdata//Chop,{-0.01,0.01}],
-TestID-> "Real Data Dispersion Check"];
-
+t3=Table[VerificationTest[Between[check[j],{-0.01,0.01}],TestID-> "Real Data Dispersion Check for Eigenvalue"<>ToString[j] ],{j,1,2 Length[datasr["mids"]]}];
 t4=VerificationTest[
 Between[wdc2b//Chop,{-0.01,0.01}],
-TestID-> "Real Data Dispersion Check"];
-
+TestID-> "2 Beam \[Omega]\[NotEqual]0 Dispersion Check"];
 t5=VerificationTest[
 Between[wdcdata//Chop,{-0.01,0.01}],
-TestID-> "Real Data Dispersion Check"];
-
-Return[{{t1},{t2},{t3},{t4},{t5}}//MatrixForm]
-
+TestID-> "Real Data \[Omega]\[NotEqual]0 Dispersion Check"];
+Print[Table[check[j],{j,1,20}]];
+Return[Column[{{t1},{t2},{t3},{t4},{t5}}]]
 ];
-
 
 
 allDispersions[]
-
-
-
-Option
-listDispersion[r_]:=Module[{data,datasr,\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[CapitalOmega],\[Omega],evs,Ener,Ve,checks,values,tab,kx,k,esys,nuarrows,bottoms},
-data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
-datasr=SelectSingleRadius[data,r];
-\[Theta]=data["mids"];
-Ener=Infinity;
-datasr["matters"]=0.;
-Ve=(munits/mp) *datasr["Yes"] *datasr["matters"];
-k=siPotential[datasr,"xflavor"-> False];
-esys=evscale[k,stabilityMatrix[datasr,getEquations[datasr,Ener,-1.,k,"xflavor"-> False],"xflavor"-> False],kx,"output"-> "Eigensystem"];
-evs=esys[[1]];
-\[Phi]0=Sum[munits ndensities[datasr,"xflavor"-> False][[1,i,i]]-munits ndensities[datasr,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
-\[Phi]1=Sum[(munits ndensities[datasr,"xflavor"-> False][[1,i,i]]-munits ndensities[datasr,"xflavor"-> False][[2,i,i]])\[Theta][[i]],{i,1,Length[\[Theta]]}];
-
-\[CapitalOmega]p=Table[N[evs[[i]]-Ve-\[Phi]0],{i,1,Length[evs]}];
-
-kp=k-\[Phi]1;
-\[Omega]=\[Omega]EMev[Ener];
-
-checks=Table[{evs[[i]],dispersionCheck[datasr,evs[[i]],k]},{i,1,Length[evs]}];
-
-bottoms=Table[(\[CapitalOmega]p[[i]]-(kp \[Theta][[j]])),{i,1,Length[evs]},{j,1,Length[\[Theta]]}];
-
-values={"\[Phi]0",\[Phi]0,"\[Phi]1",\[Phi]1,"Ve",Ve,"k",k,"kp",kp,"\[Omega]",\[Omega],"r",data["radius"][[r]]};
-
-Return[{esys,values,checks,bottoms}];
-
-
-];
-
-
-evecviz[eigensys_,ni_,labels_]:=Module[{n,nulen,nublen,data,c\[Theta],nuarrow,nubarrow,draw,plotout,gridlines,gridlabels},
-n=Length[eigensys[[2]]];
-data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
-c\[Theta]=data["mids"]; (*cos{theta}*)
-nulen[i_]:=Normalize[eigensys[[2,i,1;;10]]]//Abs//Chop ;(*neutrino eigenvecot rlength for eigenvector i.  Normalized, and abs as some small parts go negative.  Chop rounds very small parts down to 0*)
-nublen[i_]:=Normalize[eigensys[[2,i,11;;20]]]//Abs//Chop ; (*anti-neutrino eigenvecot rlength for eigenvector i.  Normalized, and abs as some small parts go negative.*)
-nuarrow[i_]:=Table[Arrow[{{0,0},{nulen[i][[j]] c\[Theta][[j]],nulen[i][[j]] Sin[ArcCos[c\[Theta][[j]]]] }}],{j,1,Length[c\[Theta]]}] ;(*draws an arrow for the vector*)
-nubarrow[i_]:=Table[Arrow[{{0,0},{nublen[i][[j]] c\[Theta][[j]],nublen[i][[j]] Sin[ArcCos[c\[Theta][[j]]]]}}],{j,1,Length[c\[Theta]]}];
-gridlines=Table[Line[{{0,0},{ c\[Theta][[j]], Sin[ArcCos[c\[Theta][[j]]]] }}],{j,1,Length[c\[Theta]]}]; (*Draws line segments for the angular bin mids*)
-gridlabels=Table[Text[labels[[j]],{c\[Theta][[j]], Sin[ArcCos[c\[Theta][[j]]]]}],{j,1,Length[c\[Theta]]}]; 
-draw[i_]:=Graphics[{Black,Dotted,gridlines,Blue,Arrowheads[0.02],nuarrow[i],Red,Arrowheads[0.02],Dashed,nubarrow[i],Purple,gridlabels},Axes->True,PlotRange-> {{-1,1},{0,1}},PlotRangePadding-> 0.15,PlotLabel->eigensys[[1,i]],ImageSize-> Scaled[0.65]];
-Return[draw[ni]]
-];
-
-
-testsys=listDispersion[280];
-
-
-testsys[[2]]
-testsys[[3]]//MatrixForm
-
-
-Manipulate[Column[{testsys[[2]],testsys[[3,p,2]],testsys[[1,1,p]],evecviz[testsys[[1]],p,testsys[[4,p]]]}],{p,1,20,1}]
-
-
-testsys=listDispersion[280];
-
-
-testsys[[2]]//Length
-
-
-testsys[[2,10,1;;10]]//Normalize 
-testsys[[2,10,11;;20]]//Normalize  
-
-
-Graphics[Arrow[{{0,0},{testsys[[2,1,10]]}}]]
 
 
 (*Ellipse Check Section*)
@@ -331,51 +232,36 @@ ellipseCheck[]:=Module[{m0,m1,m2,er0,er1,er2,fits},
 m0=1.;
 m1=10.^-8;
 m2=1./3.;
-
 fits=eBoxFitToMoments[m0,m1,m2,getInitialGuess[m0,m1,m2]];
-
 er0=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[1]]-m0)/m0;
 er1=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[2]]-m1)/m1;
 er2=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[3]]-m2)/m2;
-
 Print["Initial Guess: ", getInitialGuess[m0,m1,m2]];
 Return[{VerificationTest[Abs[er0]<10^-5 && Abs[er1]< 10^-5 && Abs[er2]< 10^-5,TestID-> "Ellipse error check"],er0,er1,er2}]
-
 ];
 
 
 dataEllipseCheck[]:=Module[{m0,m1,m2,er0,er1,er2,fits,moms,file},
-
 file="G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\4timesHigh_1D_withV_withPairBrems_MC_moments.h5";
-
-moms=getMoments[file,1,1];
-Print[moms];
-
+moms=Quiet[Quiet[getMoments[file,1,1],{Import::general}],{Import::noelem}]; (*quiets only the import complaint that there are no midpoints for moments*)
 m0=moms[[1]];
 m1=moms[[2]]//Abs;
 m2=moms[[3]];
-
 fits=eBoxFitToMoments[m0,m1,m2,getInitialGuess[m0,m1,m2]];
-
 er0=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[1]]-m0)/m0;
 er1=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[2]]-m1)/m1;
 er2=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[3]]-m2)/m2;
-
 Return[{VerificationTest[Abs[er0]<10^-4 && Abs[er1]< 10^-3 && Abs[er2]< 10^-4,TestID-> "Ellipse Data error check"],er0,er1,er2}]
-
 ];
 
 
 ellipseCheck[]
 
 
-
 dataEllipseCheck[]
 
 
-(*Place here: function to check that A and A bar are the same for some test case where \[Omega]\[Rule] 0*)
 
 
-(*norm=kAdapt[inpath<>"112Msun_100ms_DO.h5",240,340,20.,-1.,60,"xflavor"-> True];
-inv=kAdapt[inpath<>"112Msun_100ms_DO.h5",240,340,20.,-1.,60,"xflavor"-> True,"inverse"->True];
-*)
+
+
