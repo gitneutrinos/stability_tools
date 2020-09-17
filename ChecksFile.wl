@@ -61,6 +61,10 @@ On[Assert]
 $MinPrecision=30;
 
 
+(* ::Subsection:: *)
+(*Regression test for growth rate over a range of wavenumbers. The new results (blue) should match the old results (orange).*)
+
+
 (*Test on kAdapt. Comparing to old data (below). Generates a plot which should look similar (different exact k values tested*)
 OldData={{2.61019*10^-17, 1.12835*10^-18}, {2.8674*10^-17, 
   7.11518*10^-19}, {3.14996*10^-17, 1.13532*10^-21}, {3.46036*10^-17, 
@@ -114,6 +118,10 @@ kAdapt[file,ri,ri,testE,hi,10,"xflavor"-> False]
 ListLogPlot[{Transpose@{kdebug[[All,2]],kdebug[[All,3]]},OldData},ImageSize-> Scaled[0.25]]
 
 
+(* ::Subsection:: *)
+(*Two-beam test. Initialize data with neutrinos moving right and antineutrinos moving left. The real and imaginary parts of the eigenvalues should match the theoretical results from Chakraborty+2016 (Self-induced neutrino flavor conversion without flavor mixing)*)
+
+
 (*Artifical data set which defines 2 beams only, with 2 angular bins, and have chakraborty asymmetry parameters "a" *)
 get2bdata[]:=Module[{S2ba,S2b,data2b},
 data2b=
@@ -151,84 +159,130 @@ Print[Re[\[CapitalOmega]ch[2.,1.,0.,0]],Re[evtest]];
 Print[Im[\[CapitalOmega]ch[2.,1.,0.,0]],Im[evtest]];
 
 
+(* ::Subsection:: *)
+(*Preliminaries for dispersion checks*)
+
+
 (*Calculates and Returns the nth I for the dispersion check.  Returns a single value of In*)
-Idis[data_,\[CapitalOmega]_,k_,n_]:=Module[{\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,Idis},
-\[Theta]=data["mids"];
+Idis[data_,\[CapitalOmega]_,k_,n_,xflavor_]:=Module[{cos\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],mu,mubar,Vmatter,\[CapitalOmega]minuskpcos\[Theta],result},
+
+(* direction cosines *)
+cos\[Theta]=data["mids"];
+
+(* neutrino number densities disguised as SI potentials *)
+mu[i_]:=   munits ndensities[data,"xflavor"->xflavor][[1,i,i]];
+mubar[i_]:=munits ndensities[data,"xflavor"->xflavor][[2,i,i]];
+
 (*Defined in Gail's Blue equation 30 and 31 *)
-\[Phi]0=Sum[munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
-\[Phi]1=Sum[(munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]])\[Theta][[i]],{i,1,Length[\[Theta]]}];
+\[Phi]0 = Sum[(mu[i]-mubar[i])         ,{i,1,Length[cos\[Theta]]}];
+\[Phi]1 = Sum[(mu[i]-mubar[i])cos\[Theta][[i]],{i,1,Length[cos\[Theta]]}];
+
 (* "Shifted" Eigenvalue and k*)
-\[CapitalOmega]p=N[\[CapitalOmega]-((munits/mp) *data["Yes"] *data["matters"])-\[Phi]0];
-kp=k-\[Phi]1;
-(*Definition of I from Gail's equation (41)*)
-Do[Assert[(\[CapitalOmega]p-(kp \[Theta][[i]]))/(\[CapitalOmega]p+(kp \[Theta][[i]]))>= 1,"\[CapitalOmega]p' k'Cos[\[Theta]] percent difference less than 1"],{i,1,Length[\[Theta]]}]; 
-Idis[n]:= Sum[(( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))/(\[CapitalOmega]p-(kp \[Theta][[i]]))) \[Theta][[i]]^n,{i,1,Length[\[Theta]]}]//Chop;
-Return[Idis[n]]
-];
-
-
-(*Check the dispersion relation from Gail's paper*)
-
-dispersionCheck[data_,\[CapitalOmega]_,k_]:=Module[{},
-
-check=((Idis[data,\[CapitalOmega],k,0]+1)(Idis[data,\[CapitalOmega],k,2]-1))-(Idis[data,\[CapitalOmega],k,1])^2//Chop; 
-Return[check];
-];
-
-
-wdispersionCheck[data_,\[CapitalOmega]_,k_,En_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,check,Idis,\[Theta],\[Omega]},
-\[Theta]=data["mids"];
-(*Defined in Gail's Blue equation 30 and 31 *)
-\[Phi]0=Sum[munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]],{i,1,Length[\[Theta]]}];
-\[Phi]1=Sum[(munits ndensities[data,"xflavor"-> False][[1,i,i]]-munits ndensities[data,"xflavor"-> False][[2,i,i]])\[Theta][[i]],{i,1,Length[\[Theta]]}];
-(* "Shifted" Eigenvalue and k*)
-\[CapitalOmega]p=N[\[CapitalOmega]-((munits/mp) *data["Yes"] *data["matters"])-\[Phi]0];
-kp=k-\[Phi]1;
+Vmatter = munits data["Yes"] data["matters"]/mp;
+\[CapitalOmega]p = N[\[CapitalOmega]-Vmatter-\[Phi]0];
+kp = k-\[Phi]1;
 \[Omega]=\[Omega]EMev[En];
+\[CapitalOmega]minuskpcos\[Theta][i_]:=\[CapitalOmega]p-(kp cos\[Theta][[i]]);
+
+(* make sure the denominator is not tiny *)
+Do[Assert[(\[CapitalOmega]p-(kp cos\[Theta][[i]]))/(\[CapitalOmega]p+(kp cos\[Theta][[i]]))>= 1,"\[CapitalOmega]p' k'Cos[\[Theta]] percent difference less than 1"],{i,1,Length[\[Theta]]}]; 
+
 (*Definition of I from Gail's equation (41)*)
-Idis[n_]:= Sum[(( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]- ndensities[data,"xflavor"-> False][[2]][[i,i]]))(\[CapitalOmega]p-(kp \[Theta][[i]])+( munits(ndensities[data,"xflavor"-> False][[1]][[i,i]]+ ndensities[data,"xflavor"-> False][[2]][[i,i]]))\[Omega]))/((\[CapitalOmega]p-(kp \[Theta][[i]]))^2-\[Omega]^2) \[Theta][[i]]^n,{i,1,Length[\[Theta]]}]//Chop;
-(*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
-check=((Idis[0]+1)(Idis[2]-1))-(Idis[1])^2//Chop;
-Return[check]
+result= Sum[cos\[Theta][[i]]^n (((mu[i]-mubar[i])\[CapitalOmega]minuskpcos\[Theta][i]) + (mu[i]+mubar[i])\[Omega]) / (\[CapitalOmega]minuskpcos\[Theta][i]^2-\[Omega]^2) ,{i,1,Length[cos\[Theta]]}];
+Return[result]
 ];
 
 
-allDispersions[]:=Module[{data,dc2,dc4,dcdata,datasr,t1,t2,t3,wdc2b,wdcdata,t4,t5,kx,Idis,check},
-dc2=dispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[build2bMatrix[Infinity,2.]/.a-> 0.][[1]],2.];
-dc4=dispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[stabilityMatrix[get2bdata[],getEquations[get2bdata[],Infinity,-1.,2.,"xflavor"-> False],"xflavor"-> False]/.a-> 0.][[1]],2.];
-data=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
+dispersionCheck[data_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{I0,I1,I2},
+(*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
+I0 = Idis[data,\[CapitalOmega],k,0,xflavor];
+I1 = Idis[data,\[CapitalOmega],k,1,xflavor];
+I2 = Idis[data,\[CapitalOmega],k,2,xflavor];
+Return[(I0+1.)(I2-1.)-I1^2]
+];
+
+
+(* ::Subsection:: *)
+(*Two-beam \[Omega]=0 dispersion check*)
+
+
+(* Inpus *)
+data = get2bdata[]/.a-> 0;
+k=2.;
+En=Infinity; (* MeV *)
+
+(* Calculations *)
+\[CapitalOmega]=Eigenvalues[build2bMatrix[En,k]/.a-> 0.][[1]];
+xflavor=False;
+zero=dispersionCheck[data,\[CapitalOmega],k,En,xflavor]
+
+(* Test *)
+VerificationTest[Between[zero,{-0.01,0.01}],TestID-> "2 beam Dispersion Check"]
+
+
+(* ::Subsection:: *)
+(*2 Beam \[Omega]!=0 Dispersion Check*)
+
+
+(* Inpus *)
+data = get2bdata[]/.a-> 0.;
+k=2.;
+En=20.; (* MeV *)
+
+(* Calculations *)
+\[CapitalOmega] = Eigenvalues[build2bMatrix[En,k]/.a-> 0.][[1]]
+zero = dispersionCheck[data,\[CapitalOmega],k,En,xflavor]
+
+(* Test *)
+VerificationTest[Between[zero,{-0.01,0.01}],TestID-> "2 Beam \[Omega]\[NotEqual]0 Dispersion Check"]
+
+
+(* ::Subsection:: *)
+(*Four-beam \[Omega]=0 dispersion check*)
+
+
+(* Inpus *)
+data = get2bdata[]/.a-> 0.;
+k=2.;
+En=Infinity;
+hierarchy=-1;
+xflavor=False;
+
+(* Calculations *)
+equations = getEquations[data,En,hierarchy,k,"xflavor"->xflavor];
+\[CapitalOmega]=Eigenvalues[stabilityMatrix[data,equations,"xflavor"->xflavor]][[1]]
+zero = dispersionCheck[data,\[CapitalOmega],k,En,xflavor]
+
+(* Test *)
+VerificationTest[Between[zero,{-0.01,0.01}],TestID-> "4 Beam Dispersion Check"]
+
+
+(* ::Subsection:: *)
+(*Real data dispersion check*)
+
+
+(* Inputs *)
+data=ImportData[inpath<>"112Msun_100ms_DO.h5"];
 datasr=SelectSingleRadius[data,250];
 datasr["matters"]=0.; (*matter set to 0*)
-Idis[i_]:= dispersionCheck[datasr,
-evscale[0.,stabilityMatrix[datasr,getEquations[datasr,Infinity,-1.,0.,"xflavor"-> False],"xflavor"-> False],kx,"output"-> "Eigenvalues"][[i]]
-,0.,"output"-> "Idis"];
-check[i_]:=((Idis[i][[1]]+1)(Idis[i][[3]]-1))-(Idis[i][[2]]^2)//Chop;
-wdc2b=wdispersionCheck[get2bdata[]/.a-> 0.,Eigenvalues[build2bMatrix[20.,2.]/.a-> 0.][[1]],2.,20.];
-wdcdata=wdispersionCheck[datasr,Eigenvalues[stabilityMatrix[datasr,getEquations[datasr,20.,-1.,0.,"xflavor"-> False],"xflavor"-> False]][[1]],0.,20.];
+k=0.;
+En=20.; (* MeV *)
+hierarchy=-1;
+xflavor=False;
 
-t1=VerificationTest[
-Between[dc2//Chop,{-0.01,0.01}],
-TestID-> "2 beam Dispersion Check"];
-t2=VerificationTest[
-Between[dc4//Chop,{-0.01,0.01}],
-TestID-> "4 Beam Dispersion Check"];
-t3=Table[VerificationTest[Between[check[j],{-0.01,0.01}],TestID-> "Real Data Dispersion Check for Eigenvalue"<>ToString[j] ],{j,1,2 Length[datasr["mids"]]}];
-t4=VerificationTest[
-Between[wdc2b//Chop,{-0.01,0.01}],
-TestID-> "2 Beam \[Omega]\[NotEqual]0 Dispersion Check"];
-t5=VerificationTest[
-Between[wdcdata//Chop,{-0.01,0.01}],
-TestID-> "Real Data \[Omega]\[NotEqual]0 Dispersion Check"];
-Print[Table[check[j],{j,1,20}]];
-Return[Column[{{t1},{t2},{t3},{t4},{t5}}]]
-];
+(* Calculations *)
+equations = getEquations[datasr,En,hierarchy,k,"xflavor"-> False];
+\[CapitalOmega]=Eigenvalues[stabilityMatrix[datasr,equations,"xflavor"-> False]][[1]]
+zero=dispersionCheck[datasr,\[CapitalOmega],k,En,xflavor]
+
+(* Test *)
+VerificationTest[Between[zero,{-0.01,0.01}],TestID-> "Real Data \[Omega]\[NotEqual]0 Dispersion Check"]
 
 
-allDispersions[]
+(* ::Subsection:: *)
+(*Check that ellipse construction results in the correct moments given hand-chosen moments*)
 
 
-(*Ellipse Check Section*)
-ellipseCheck[]:=Module[{m0,m1,m2,er0,er1,er2,fits},
 m0=1.;
 m1=10.^-8;
 m2=1./3.;
@@ -237,12 +291,16 @@ er0=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[1]]-m0)/m0;
 er1=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[2]]-m1)/m1;
 er2=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[3]]-m2)/m2;
 Print["Initial Guess: ", getInitialGuess[m0,m1,m2]];
-Return[{VerificationTest[Abs[er0]<10^-5 && Abs[er1]< 10^-5 && Abs[er2]< 10^-5,TestID-> "Ellipse error check"],er0,er1,er2}]
-];
+
+VerificationTest[Abs[er0]<10^-5 && Abs[er1]< 10^-5 && Abs[er2]< 10^-5,TestID-> "Ellipse error check"]
+{er0,er1,er2}
 
 
-dataEllipseCheck[]:=Module[{m0,m1,m2,er0,er1,er2,fits,moms,file},
-file="G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\4timesHigh_1D_withV_withPairBrems_MC_moments.h5";
+(* ::Subsection:: *)
+(*Check that ellipse construction results in the correct moments given moments from CCSN data*)
+
+
+file=inpath<>"4timesHigh_1D_withV_withPairBrems_MC_moments.h5";
 moms=Quiet[Quiet[getMoments[file,1,1],{Import::general}],{Import::noelem}]; (*quiets only the import complaint that there are no midpoints for moments*)
 m0=moms[[1]];
 m1=moms[[2]]//Abs;
@@ -251,17 +309,5 @@ fits=eBoxFitToMoments[m0,m1,m2,getInitialGuess[m0,m1,m2]];
 er0=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[1]]-m0)/m0;
 er1=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[2]]-m1)/m1;
 er2=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[3]]-m2)/m2;
-Return[{VerificationTest[Abs[er0]<10^-4 && Abs[er1]< 10^-3 && Abs[er2]< 10^-4,TestID-> "Ellipse Data error check"],er0,er1,er2}]
-];
 
-
-ellipseCheck[]
-
-
-dataEllipseCheck[]
-
-
-
-
-
-
+{VerificationTest[Abs[er0]<10^-4 && Abs[er1]< 10^-3 && Abs[er2]< 10^-4,TestID-> "Ellipse Data error check"],er0,er1,er2}
