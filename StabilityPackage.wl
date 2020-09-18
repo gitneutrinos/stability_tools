@@ -283,7 +283,7 @@ Return[as]
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*k Grid and Adaptive k Solver*)
 
 
@@ -321,13 +321,25 @@ Reap[
 			eout=evscale[kl[[kx]],S,kvar,"output"->OptionValue["koutput"]];
 			
 			pot=siPotential[singleRadiusData,"xflavor"-> OptionValue["xflavor"]];
-			Sow[{data["radius"][[rx]],kl[[kx]],eout,pot}]; 
+			Sow[{rx,data["radius"][[rx]],kl[[kx]],eout,pot}]; 
 		,{kx,1,Length[kl]}] (*close do over ktargets*)
 	,{rx,rstr,rend}] (*close do over r*)
 ][[2,1]];
 
 Return[evout] (*Close reap over r*)
 ]; (*close module*)
+
+
+exportkadapt[outevs_,name_]:=Module[{},
+Export[ToString[name]<>".h5",  {"/unique_elements/r_indicies"->{"Data"-> DeleteDuplicates[outevs[[All,1]]]},
+"/unique_elements/radius"-> {"Data"-> DeleteDuplicates[outevs[[All,2]]],"Attributes"-> {"Units"-> "Centimeters"}},
+"/unique_elements/k"-> {"Data"-> DeleteDuplicates[outevs[[All,3]]],"Attributes"-> {"Units"-> "Ergs"}},
+"/unique_elements/evs"-> {"Data"-> DeleteDuplicates[outevs[[All,4]]],"Attributes"-> {"Units"-> "Ergs"}},
+"/unique_elements/Vsi"-> {"Data"-> DeleteDuplicates[outevs[[All,5]]],"Attributes"-> {"Units"-> "Ergs"}}
+}]
+];
+
+(*This currently outputs several datasets, each containing the unique elements from a run of kadapt, belonging to the group unique_elements.  Will add in groups that are, for instance, sorted by r. i.e. all k and omega combinations for a given radial index.*)
 
 
 (* ::Subsection::Closed:: *)
