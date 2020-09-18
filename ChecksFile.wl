@@ -118,7 +118,7 @@ kAdapt[file,ri,ri,testE,hi,10,"xflavor"-> False]
 ListLogPlot[{Transpose@{kdebug[[All,2]],kdebug[[All,3]]},OldData},ImageSize-> Scaled[0.25]]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Two-beam test. Initialize data with neutrinos moving right and antineutrinos moving left. The real and imaginary parts of the eigenvalues should match the theoretical results from Chakraborty+2016 (Self-induced neutrino flavor conversion without flavor mixing)*)
 
 
@@ -206,27 +206,32 @@ Return[(I0+1.)(I2-1.)-I1^2]
 (*Two-beam \[Omega]=0 dispersion check*)
 
 
-(* Inpus *)
+(* Inputs *)
 data = get2bdata[]/.a-> 0;
-k=2.;
+k=1;
 En=Infinity; (* MeV *)
 
 (* Calculations *)
-\[CapitalOmega]=Eigenvalues[build2bMatrix[En,k]/.a-> 0.][[1]];
+\[CapitalOmega]=Eigenvalues[build2bMatrix[En,k]/.a-> 0.][[1]]
 xflavor=False;
 zero=dispersionCheck[data,\[CapitalOmega],k,En,xflavor]
 
 (* Test *)
-VerificationTest[Between[zero,{-0.01,0.01}],TestID-> "2 beam Dispersion Check"]
+VerificationTest[Between[Abs[zero],{-0.01,0.01}],TestID-> "2 beam Dispersion Check"]
+
+
+Idis[get2bdata[]/.a->0.,-1.1102230246251565`*^-16+ 1.7320508075688772` I,1,1,xflavor]
+Idis[get2bdata[]/.a->0.,-1.1102230246251565`*^-16+ 1.7320508075688772` I,1,2,xflavor]
+Idis[get2bdata[]/.a->0.,-1.1102230246251565`*^-16+ 1.7320508075688772` I,1,3,xflavor]
 
 
 (* ::Subsection:: *)
 (*2 Beam \[Omega]!=0 Dispersion Check*)
 
 
-(* Inpus *)
+(* Inputs *)
 data = get2bdata[]/.a-> 0.;
-k=2.;
+k=1.;
 En=20.; (* MeV *)
 
 (* Calculations *)
@@ -234,16 +239,16 @@ En=20.; (* MeV *)
 zero = dispersionCheck[data,\[CapitalOmega],k,En,xflavor]
 
 (* Test *)
-VerificationTest[Between[zero,{-0.01,0.01}],TestID-> "2 Beam \[Omega]\[NotEqual]0 Dispersion Check"]
+VerificationTest[Between[Abs[zero],{-0.01,0.01}],TestID-> "2 Beam \[Omega]\[NotEqual]0 Dispersion Check"]
 
 
 (* ::Subsection:: *)
 (*Four-beam \[Omega]=0 dispersion check*)
 
 
-(* Inpus *)
+(* Inputs *)
 data = get2bdata[]/.a-> 0.;
-k=2.;
+k=1.;
 En=Infinity;
 hierarchy=-1;
 xflavor=False;
@@ -254,7 +259,27 @@ equations = getEquations[data,En,hierarchy,k,"xflavor"->xflavor];
 zero = dispersionCheck[data,\[CapitalOmega],k,En,xflavor]
 
 (* Test *)
-VerificationTest[Between[zero,{-0.01,0.01}],TestID-> "4 Beam Dispersion Check"]
+VerificationTest[Between[Abs[zero],{-0.01,0.01}],TestID-> "4 Beam Dispersion Check"]
+
+
+(* ::Subsection:: *)
+(*Four - beam \[Omega] != 0 dispersion check*)
+
+
+(* Inpus *)
+data = get2bdata[]/.a-> 0.;
+k=1.;
+En=20;
+hierarchy=-1;
+xflavor=False;
+
+(* Calculations *)
+equations = getEquations[data,En,hierarchy,k,"xflavor"->xflavor];
+\[CapitalOmega]=Eigenvalues[stabilityMatrix[data,equations,"xflavor"->xflavor]][[1]]
+zero = dispersionCheck[data,\[CapitalOmega],k,En,xflavor]
+
+(* Test *)
+VerificationTest[Between[Abs[zero],{-0.01,0.01}],TestID-> "4 Beam Dispersion Check"]
 
 
 (* ::Subsection:: *)
@@ -266,13 +291,13 @@ data=ImportData[inpath<>"112Msun_100ms_DO.h5"];
 datasr=SelectSingleRadius[data,250];
 datasr["matters"]=0.; (*matter set to 0*)
 k=0.;
-En=20.; (* MeV *)
+En=Infinity; (* MeV *)
 hierarchy=-1;
 xflavor=False;
 
 (* Calculations *)
 equations = getEquations[datasr,En,hierarchy,k,"xflavor"-> False];
-\[CapitalOmega]=Eigenvalues[stabilityMatrix[datasr,equations,"xflavor"-> False]][[1]]
+\[CapitalOmega]=Eigenvalues[stabilityMatrix[datasr,equations,"xflavor"-> False]][[2]]
 zero=dispersionCheck[datasr,\[CapitalOmega],k,En,xflavor]
 
 (* Test *)
