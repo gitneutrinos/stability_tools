@@ -200,7 +200,8 @@ zero = dispersionCheck[data,\[CapitalOmega],k,En,xflavor]
 VerificationTest[Between[Abs[zero],{-0.01,0.01}],TestID-> "2 Beam \[Omega]\[NotEqual]0 Dispersion Check"]
 
 
- TestReport["C:\\Users\\Sam\\Documents\\GitHub\\stability_tools\\testfiles.wlt"]
+ tr=TestReport["C:\\Users\\Sam\\Documents\\GitHub\\stability_tools\\testfiles.wlt"]
+ tr["TestResults"]
 
 
 (* ::Subsection:: *)
