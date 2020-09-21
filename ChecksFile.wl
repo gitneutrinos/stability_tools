@@ -220,11 +220,6 @@ zero=dispersionCheck[data,\[CapitalOmega],k,En,xflavor]
 VerificationTest[Between[Abs[zero],{-0.01,0.01}],TestID-> "2 beam Dispersion Check"]
 
 
-Idis[get2bdata[]/.a->0.,-1.1102230246251565`*^-16+ 1.7320508075688772` I,1,1,xflavor]
-Idis[get2bdata[]/.a->0.,-1.1102230246251565`*^-16+ 1.7320508075688772` I,1,2,xflavor]
-Idis[get2bdata[]/.a->0.,-1.1102230246251565`*^-16+ 1.7320508075688772` I,1,3,xflavor]
-
-
 (* ::Subsection:: *)
 (*2 Beam \[Omega]!=0 Dispersion Check*)
 
