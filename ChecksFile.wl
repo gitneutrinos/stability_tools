@@ -38,9 +38,6 @@ outfolder = outpath<>filename;
 
 
 
-On[Assert]
-
-
 (* ::Subsection:: *)
 (*Regression test for growth rate over a range of wavenumbers. The new results (blue) should match the old results (orange).*)
 
@@ -65,6 +62,9 @@ kAdapt[file,ri,ri,testE,hi,20,"xflavor"-> False]
 plot1=ListLogPlot[{Transpose@{kdebug[[All,3]],kdebug[[All,4]]}},ImageSize-> Scaled[0.25]];
 plot2=ListLogPlot[{OldData},ImageSize-> Scaled[0.25]];
 VerificationTest[Rasterize[plot1]==Rasterize[plot2],TestID-> "kAdapt test; current calculation = old calculation"]
+
+
+
 
 
 (* ::Subsection:: *)
@@ -97,6 +97,9 @@ Return[S2b]
 \[CapitalOmega]ch[k_,\[Mu]ch_,a_,\[Omega]_]:=Sort[{2 a \[Mu]ch+Sqrt[(2 a \[Mu]ch)^2+(\[Omega]+k)((\[Omega]+k)-4 \[Mu]ch)],2 a \[Mu]ch-Sqrt[(2 a \[Mu]ch)^2+(\[Omega]+k)((\[Omega]+k)-4 \[Mu]ch)]}];
 cm[k_,\[Mu]ch_,w_]:=DiagonalMatrix[{w+k,-w-k,w-k,-w+k}]+2 \[Mu]ch{{l+lb,-lb,-l,0.},{-r,r+rb,0,-rb},{-r,0,r+rb,-rb},{0.,-lb,-l,l+lb}};
 cma[k_,\[Mu]ch_,a_,w_]:=cm[k,\[Mu]ch,w]/.{rb-> 0.,l-> 0.,r-> (1+a),lb-> -(1-a)};
+
+
+
 evtest=Sort[Eigenvalues[build2bMatrix[Infinity,2.]/.{a-> 0.}]]//Chop;
 VerificationTest[
 Re[\[CapitalOmega]ch[2.,1.,0.,0]]===Re[evtest] 
@@ -151,6 +154,17 @@ Return[(I0+1.)(I2-1.)-I1^2]
 ];
 
 
+test2bdispersionCheck[k_,En_,atest_,xflavor_]:=Module[{I0,I1,I2,\[CapitalOmega],data},
+data = get2bdata[]/.a-> atest;
+\[CapitalOmega]=evscale[k,build2bMatrix[En,k]/.a-> 0.,kvar,"output"->"Eigenvalues"][[1]];
+Return[dispersionCheck[data,\[CapitalOmega],k,En,xflavor]]
+];
+
+(*This exists so that I can run the testfile thing without having to worry about context paths for the package.*)
+(*Will require similar modules in order to run in the testfile*)
+
+
+
 (* ::Subsection:: *)
 (*Two-beam \[Omega]=0 dispersion check*)
 
@@ -184,6 +198,9 @@ zero = dispersionCheck[data,\[CapitalOmega],k,En,xflavor]
 
 (* Test *)
 VerificationTest[Between[Abs[zero],{-0.01,0.01}],TestID-> "2 Beam \[Omega]\[NotEqual]0 Dispersion Check"]
+
+
+ TestReport["C:\\Users\\Sam\\Documents\\GitHub\\stability_tools\\testfiles.wlt"]
 
 
 (* ::Subsection:: *)
