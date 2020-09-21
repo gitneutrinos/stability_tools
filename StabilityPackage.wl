@@ -2,6 +2,12 @@
 
 BeginPackage["StabililtyPackage`"]
 ClearAll["StabililtyPackage`", "StabililtyPackage`"]
+
+
+(* ::Subsection::Closed:: *)
+(*Package Functions*)
+
+
 ImportData::usage =
 	"ImportData[file] reads in the data from file."
 buildHamiltonians::usage=
@@ -48,7 +54,8 @@ getMoments::usage=
 "takes moments out of moment data for a given file, radius, species. Energy integrated"
 
 
-ClearAll["StabililtyPackage`", "StabililtyPackage`"]
+(* ::Subsection:: *)
+(*Units*)
 
 
 c=2.99792458 10^10; (* cm/s*)
@@ -67,7 +74,8 @@ munits=Sqrt[2] (Gf/Geverg^2 )(hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
 Begin["`Private`"]
 
 
-Com[A_,B_]:=Module[{a=A,b=B},Return[A.B-B.A]];
+(* ::Subsection::Closed:: *)
+(*Import Functions*)
 
 
 (*Have xflavor option  set the x do to 0 here*)
@@ -87,7 +95,7 @@ Association[
 
 SelectSingleRadius[data_,ri_]:=
 Association[
-"Endensity"->data["Endensity"][[ri]] (*distribution functions*),
+"Endensity"->data["Endensity"][[ri]] (*distribution functions [species,frequency,theta,phi]*),
 "matters"->data["matters"][[ri]], (*densities*)
 "Yes"->data["Yes"][[ri]], (*electron fractions *)
 "freqs"->data["freqs"], (*freq grid in hz*)
@@ -96,6 +104,10 @@ Association[
 "mids"->data["mids"],
 "phis"-> data["phis"] (*"phi bin edges"*) (*Cos\[Theta] bin midpoints*)
 ];
+
+
+(* ::Subsection::Closed:: *)
+(*Neutrino Densities and Potentials*)
 
 
 Options[ndensities]={"xflavor"-> True};
@@ -129,6 +141,10 @@ B=Tr[m[[3]]]/Tr[m[[1]]];
 Bb=Tr[m[[3]]]/Tr[m[[2]]];
 Return[{B,Bb}];
 ];
+
+
+(* ::Subsection::Closed:: *)
+(*Stability Matrix Functions*)
 
 
 (*This function creates the hamiltonians based on the data set, and returns them in a "general" way that is readable.  
@@ -171,6 +187,9 @@ Hb[i]=Hvac-Hm-Hsi[i];
 Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb}]
 )
 ];
+
+
+Com[A_,B_]:=Module[{a=A,b=B},Return[A.B-B.A]];
 
 
 (*Calculates the equations of motion by computing the relvant commutators. 
@@ -238,6 +257,10 @@ Return[S];
 ];
 
 
+(* ::Subsection::Closed:: *)
+(*Machine Scaled Eigensystem (evscale)*)
+
+
 (*This scales the stability matrix up to a more managable scale based on the machine prescision, Solves for the eigenvalues, and then scales backs.  Returns a list of eigenvalues*)
 Options[evscale]={"output"-> "RankedEigenvalues"};
 evscale[ktest_,S_,kx_,OptionsPattern[]]:=Module[{\[Epsilon],As,kx0s,as,kxs,evals,evecs},
@@ -258,6 +281,10 @@ as={evals,evecs}=\[Epsilon] Eigensystem[N[As]/.kxs-> kx0s];
 ];
 Return[as]
 ];
+
+
+(* ::Subsection:: *)
+(*k Grid and Adaptive k Solver*)
 
 
 (*Constructs a nstep sized log spaced k grid based on the target k associated with the infile at radial bin r.  Currently the limits are 2 orders of magnitude above and below the target value, ignoring negatives for the moment *)
@@ -294,13 +321,29 @@ Reap[
 			eout=evscale[kl[[kx]],S,kvar,"output"->OptionValue["koutput"]];
 			
 			pot=siPotential[singleRadiusData,"xflavor"-> OptionValue["xflavor"]];
-			Sow[{data["radius"][[rx]],kl[[kx]],eout,pot}]; 
+			Sow[{rx,data["radius"][[rx]],kl[[kx]],eout,pot}]; 
 		,{kx,1,Length[kl]}] (*close do over ktargets*)
 	,{rx,rstr,rend}] (*close do over r*)
 ][[2,1]];
 
 Return[evout] (*Close reap over r*)
 ]; (*close module*)
+
+
+exportkadapt[outevs_,name_]:=Module[{},
+Export[ToString[name]<>".h5",  {"/unique_elements/r_indicies"->{"Data"-> DeleteDuplicates[outevs[[All,1]]]},
+"/unique_elements/radius"-> {"Data"-> DeleteDuplicates[outevs[[All,2]]],"Attributes"-> {"Units"-> "Centimeters"}},
+"/unique_elements/k"-> {"Data"-> DeleteDuplicates[outevs[[All,3]]],"Attributes"-> {"Units"-> "Ergs"}},
+"/unique_elements/evs"-> {"Data"-> DeleteDuplicates[outevs[[All,4]]],"Attributes"-> {"Units"-> "Ergs"}},
+"/unique_elements/Vsi"-> {"Data"-> DeleteDuplicates[outevs[[All,5]]],"Attributes"-> {"Units"-> "Ergs"}}
+}]
+];
+
+(*This currently outputs several datasets, each containing the unique elements from a run of kadapt, belonging to the group unique_elements.  Will add in groups that are, for instance, sorted by r. i.e. all k and omega combinations for a given radial index.*)
+
+
+(* ::Subsection::Closed:: *)
+(*Gershgorin Disks*)
 
 
 GDValue[tm_]:=Module[{cs,rrow,rcol,drow,dcol,mv,reg,\[Epsilon],tms},
@@ -336,6 +379,10 @@ Reap[
 ][[2,1]];
 Return[out] (*Close reap over r*)	
 ];
+
+
+(* ::Subsection::Closed:: *)
+(*Ellipse Fitting Approximations*)
 
 
 getMoments[file_,r_,species_]:= Module[{data,datasr,moments},
