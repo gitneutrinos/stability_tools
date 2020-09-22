@@ -165,7 +165,17 @@ Return[dispersionCheck[data,\[CapitalOmega],k,En,xflavor]]
 
 
 
-(* ::Subsection:: *)
+test4bdispersionCheck[k_,En_,atest_,xflavor_]:=Module[{I0,I1,I2,\[CapitalOmega],data,equations},
+data = get2bdata[]/.a-> atest;
+equations = getEquations[data,En,-1.,k,"xflavor"->xflavor];
+\[CapitalOmega]=evscale[k,stabilityMatrix[data,equations,"xflavor"->xflavor],kx,"output"-> "Eigenvalues"][[1]];
+Return[dispersionCheck[data,\[CapitalOmega],k,En,xflavor]]
+];
+
+
+
+
+(* ::Subsection::Closed:: *)
 (*Two-beam \[Omega]=0 dispersion check*)
 
 
@@ -183,7 +193,7 @@ zero=dispersionCheck[data,\[CapitalOmega],k,En,xflavor]
 VerificationTest[Between[Abs[zero],{-0.01,0.01}],TestID-> "2 beam Dispersion Check"]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*2 Beam \[Omega]!=0 Dispersion Check*)
 
 
@@ -200,11 +210,7 @@ zero = dispersionCheck[data,\[CapitalOmega],k,En,xflavor]
 VerificationTest[Between[Abs[zero],{-0.01,0.01}],TestID-> "2 Beam \[Omega]\[NotEqual]0 Dispersion Check"]
 
 
- tr=TestReport["C:\\Users\\Sam\\Documents\\GitHub\\stability_tools\\testfiles.wlt"]
- tr["TestResults"]
-
-
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Four-beam \[Omega]=0 dispersion check*)
 
 
@@ -242,6 +248,10 @@ zero = dispersionCheck[data,\[CapitalOmega],k,En,xflavor]
 
 (* Test *)
 VerificationTest[Between[Abs[zero],{-0.01,0.01}],TestID-> "4 Beam Dispersion Check"]
+
+
+ tr=TestReport["C:\\Users\\Sam\\Documents\\GitHub\\stability_tools\\testfiles.wlt"]
+ tr["TestResults"]
 
 
 (* ::Subsection:: *)
