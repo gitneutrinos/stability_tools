@@ -56,4 +56,22 @@ VerificationTest[(* 7 *)
 	TestID->"4 beam \[Omega]!=0 dispersion check"
 ]
 
+VerificationTest[(* 8 *)
+	And[Less[Part[ellipsefiterrors[1.`, Power[10.`, -8], Times[1.`, Power[3.`, -1]]], 1], Power[10, -5]], Less[Part[ellipsefiterrors[1.`, Power[10.`, -8], Times[1.`, Power[3.`, -1]]], 2], Power[10, -5]], Less[Part[ellipsefiterrors[1.`, Power[10.`, -8], Times[1.`, Power[3.`, -1]]], 3], Power[10, -5]]]
+	,
+	True	
+	,
+	TestID->"Ellipse Fitting: Check ellipse fit error in moments for artificial data"
+]
+
+VerificationTest[(* 9 *)
+	And[Less[Part[ellipsefitrealdatacheck[], 1], Power[10, -3]], Less[Part[ellipsefitrealdatacheck[], 2], Power[10, -3]], Less[Part[ellipsefitrealdatacheck[], 3], Power[10, -3]]]
+	,
+	True
+	,
+	{FindRoot::jsing, FindRoot::jsing, FindRoot::jsing, General::stop}
+	,
+	TestID-> "Ellipse Fitting: Check ellipse fit error in moments for CSSN data"
+]
+
 EndTestSection[]
