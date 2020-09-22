@@ -28,12 +28,32 @@ VerificationTest[(* 4 *)
 	Between[Chop[Abs[test2bdispersionCheck[1, Infinity, 0, False]]], List[Times[-1, Power[10, -10]], Power[10, -10]]]
 	,
 	True	
+	,
+	TestID-> "2 beam \[Omega]=0 dispersion check"
 ]
 
 VerificationTest[(* 5 *)
 	Between[Chop[Abs[test2bdispersionCheck[1, 20, 0, False]]], List[Times[-1, Power[10, -10]], Power[10, -10]]]
 	,
 	True	
+	,
+	TestID-> "2 beam \[Omega]!=0 dispersion check"
+]
+
+VerificationTest[(* 6 *)
+	Between[Chop[Abs[test4bdispersionCheck[1, Infinity, 0, False]]], List[Times[-1, Power[10, -10]], Power[10, -10]]]
+	,
+	True	
+	,
+	TestID->"4 beam \[Omega]=0 dispersion check"
+]
+
+VerificationTest[(* 7 *)
+	Between[Chop[Abs[test4bdispersionCheck[1, 20, 0, False]]], List[Times[-1, Power[10, -10]], Power[10, -10]]]
+	,
+	True	
+	,
+	TestID->"4 beam \[Omega]!=0 dispersion check"
 ]
 
 EndTestSection[]
