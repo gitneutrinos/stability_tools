@@ -100,18 +100,7 @@ cma[k_,\[Mu]ch_,a_,w_]:=cm[k,\[Mu]ch,w]/.{rb-> 0.,l-> 0.,r-> (1+a),lb-> -(1-a)};
 
 
 
-evtest=Sort[Eigenvalues[build2bMatrix[Infinity,2.]/.{a-> 0.}]]//Chop;
-VerificationTest[
-Re[\[CapitalOmega]ch[2.,1.,0.,0]]===Re[evtest] 
-,TestID-> "2 Beam Growth Rate (Real part)"]
-VerificationTest[
-Im[\[CapitalOmega]ch[2.,1.,0.,0]]=== Im[evtest]
-,TestID-> "2 Beam Growth Rate (Imaginary part)"]
-Print[Re[\[CapitalOmega]ch[2.,1.,0.,0]],Re[evtest]];
-Print[Im[\[CapitalOmega]ch[2.,1.,0.,0]],Im[evtest]];
-
-
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Preliminaries for dispersion checks*)
 
 
@@ -175,85 +164,6 @@ Return[dispersionCheck[data,\[CapitalOmega],k,En,xflavor]]
 
 
 
-(* ::Subsection::Closed:: *)
-(*Two-beam \[Omega]=0 dispersion check*)
-
-
-(* Inputs *)
-data = get2bdata[]/.a-> 0;
-k=1;
-En=Infinity; (* MeV *)
-
-(* Calculations *)
-\[CapitalOmega]=evscale[k,build2bMatrix[En,k]/.a-> 0.,kvar,"output"->"Eigenvalues"][[1]]
-xflavor=False;
-zero=dispersionCheck[data,\[CapitalOmega],k,En,xflavor]
-
-(* Test *)
-VerificationTest[Between[Abs[zero],{-0.01,0.01}],TestID-> "2 beam Dispersion Check"]
-
-
-(* ::Subsection::Closed:: *)
-(*2 Beam \[Omega]!=0 Dispersion Check*)
-
-
-(* Inputs *)
-data = get2bdata[]/.a-> 0.;
-k=1.;
-En=20.; (* MeV *)
-
-(* Calculations *)
-\[CapitalOmega] = evscale[k,build2bMatrix[En,k]/.a-> 0.,kvar,"output"->"Eigenvalues"][[1]]
-zero = dispersionCheck[data,\[CapitalOmega],k,En,xflavor]
-
-(* Test *)
-VerificationTest[Between[Abs[zero],{-0.01,0.01}],TestID-> "2 Beam \[Omega]\[NotEqual]0 Dispersion Check"]
-
-
-(* ::Subsection::Closed:: *)
-(*Four-beam \[Omega]=0 dispersion check*)
-
-
-(* Inputs *)
-data = get2bdata[]/.a-> 0.;
-k=1.;
-En=Infinity;
-hierarchy=-1;
-xflavor=False;
-
-(* Calculations *)
-equations = getEquations[data,En,hierarchy,k,"xflavor"->xflavor];
-\[CapitalOmega]=evscale[k,stabilityMatrix[data,equations,"xflavor"->xflavor],kx,"output"-> "Eigenvalues"][[1]]
-zero = dispersionCheck[data,\[CapitalOmega],k,En,xflavor]
-
-(* Test *)
-VerificationTest[Between[Abs[zero],{-0.01,0.01}],TestID-> "4 Beam Dispersion Check"]
-
-
-(* ::Subsection:: *)
-(*Four - beam \[Omega] != 0 dispersion check*)
-
-
-(* Inpus *)
-data = get2bdata[]/.a-> 0.;
-k=1.;
-En=20;
-hierarchy=-1;
-xflavor=False;
-
-(* Calculations *)
-equations = getEquations[data,En,hierarchy,k,"xflavor"->xflavor];
-\[CapitalOmega]=evscale[k,stabilityMatrix[data,equations,"xflavor"->xflavor],kx,"output"-> "Eigenvalues"][[1]]
-zero = dispersionCheck[data,\[CapitalOmega],k,En,xflavor]
-
-(* Test *)
-VerificationTest[Between[Abs[zero],{-0.01,0.01}],TestID-> "4 Beam Dispersion Check"]
-
-
- tr=TestReport["C:\\Users\\Sam\\Documents\\GitHub\\stability_tools\\testfiles.wlt"]
- tr["TestResults"]
-
-
 (* ::Subsection:: *)
 (*Real data dispersion check*)
 
@@ -298,43 +208,14 @@ Return[ellipsefiterrors[moms[[1]],moms[[2]]//Abs,moms[[3]]]]
 (*Imports real CSSN data and then calls ellipse fit errors for the tests file*)
 
 
-m0=1.;
-m1=10.^-8;
-m2=1./3.;
-fits=eBoxFitToMoments[m0,m1,m2,getInitialGuess[m0,m1,m2]];
-er0=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[1]]-m0)/m0;
-er1=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[2]]-m1)/m1;
-er2=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[3]]-m2)/m2;
-Print["Initial Guess: ", getInitialGuess[m0,m1,m2]];
-
-VerificationTest[Abs[er0]<10^-5 && Abs[er1]< 10^-5 && Abs[er2]< 10^-5,TestID-> "Ellipse error check"]
-{er0,er1,er2}
-
-
 (* ::Subsection:: *)
-(*Check that ellipse construction results in the correct moments given moments from CCSN data*)
+(*Test Report*)
 
 
-file=inpath<>"4timesHigh_1D_withV_withPairBrems_MC_moments.h5";
-moms=Quiet[Quiet[getMoments[file,1,1],{Import::general}],{Import::noelem}]; (*quiets only the import complaint that there are no midpoints for moments*)
-m0=moms[[1]];
-m1=moms[[2]]//Abs;
-m2=moms[[3]];
-fits=eBoxFitToMoments[m0,m1,m2,getInitialGuess[m0,m1,m2]];
-er0=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[1]]-m0)/m0;
-er1=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[2]]-m1)/m1;
-er2=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[3]]-m2)/m2;
+ tr=TestReport["C:\\Users\\Sam\\Documents\\GitHub\\stability_tools\\testfiles.wlt"]
+Table[tr["TestResults"][i],{i,1,9}]//MatrixForm
 
-{VerificationTest[Abs[er0]<10^-4 && Abs[er1]< 10^-3 && Abs[er2]< 10^-4,TestID-> "Ellipse Data error check"],er0,er1,er2}
-
-
-
-
-
-
-
-
-
+ 
 
 
 
