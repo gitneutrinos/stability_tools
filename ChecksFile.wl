@@ -280,6 +280,24 @@ VerificationTest[Between[zero,{-0.01,0.01}],TestID-> "Real Data \[Omega]\[NotEqu
 (*Check that ellipse construction results in the correct moments given hand-chosen moments*)
 
 
+ellipsefiterrors[m0_,m1_,m2_]:=Module[{er0,er1,er2,fits},
+fits=eBoxFitToMoments[m0,m1,m2,getInitialGuess[m0,m1,m2]];
+er0=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[1]]-m0)/m0;
+er1=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[2]]-m1)/m1;
+er2=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[3]]-m2)/m2;
+(*Print["Initial Guess: ", getInitialGuess[m0,m1,m2]];*)
+Return[{er0,er1,er2}];
+]
+(*Ellipse fits to 3 moments and returns the percent errors*)
+
+ellipsefitrealdatacheck[]:=Module[{file,moms},
+file=inpath<>"4timesHigh_1D_withV_withPairBrems_MC_moments.h5";
+moms=Quiet[Quiet[getMoments[file,1,1],{Import::general}],{Import::noelem}]; (*quiets only the import complaint that there are no midpoints for moments*)
+Return[ellipsefiterrors[moms[[1]],moms[[2]]//Abs,moms[[3]]]]
+];
+(*Imports real CSSN data and then calls ellipse fit errors for the tests file*)
+
+
 m0=1.;
 m1=10.^-8;
 m2=1./3.;
@@ -308,6 +326,12 @@ er1=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[2]]-m1)/m1;
 er2=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[3]]-m2)/m2;
 
 {VerificationTest[Abs[er0]<10^-4 && Abs[er1]< 10^-3 && Abs[er2]< 10^-4,TestID-> "Ellipse Data error check"],er0,er1,er2}
+
+
+
+
+
+
 
 
 
