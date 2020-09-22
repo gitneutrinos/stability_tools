@@ -381,7 +381,7 @@ Return[out] (*Close reap over r*)
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Ellipse Fitting Approximations*)
 
 
@@ -407,7 +407,7 @@ arg\[Chi]=((2 cg/ag)-1);
 \[Chi]g=ArcTanh[arg\[Chi]]; (*box transform c=a/2( tanh[\[Chi]]+1 *)
 Assert[Between[arg\[Beta],{-1.01,1.01}]];
 Assert[Between[arg\[Chi],{-1.01,1.01}]];
-Print[{ag,bg,cg,arg\[Beta],arg\[Chi]}];
+(*Print[{ag,bg,cg,arg\[Beta],arg\[Chi]}];*)
 Return[{ag,\[Beta]g,\[Chi]g}]
 ];
 
