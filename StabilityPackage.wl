@@ -257,7 +257,7 @@ Return[S];
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Machine Scaled Eigensystem (evscale)*)
 
 
@@ -304,7 +304,7 @@ Return[kgrid];
 
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
-Options[kAdapt]={"xflavor"-> True,"ktarget"-> 0.,"krange"-> {10.^-3,10.},"koutput"-> "RankedEigenvalues","inverse"-> False};
+Options[kAdapt]={"xflavor"-> True,"ktarget"-> 0.,"krange"-> {10.^-3,10.},"koutput"-> "Eigensystem","inverse"-> False};
 kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,OptionsPattern[]]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,eout,pot,S},
 data=ImportData[infile];
 evout=
@@ -326,17 +326,19 @@ Reap[
 	,{rx,rstr,rend}] (*close do over r*)
 ][[2,1]];
 
-Return[evout] (*Close reap over r*)
+Return[{evout,{OptionValue["xflavor"],OptionValue["ktarget"],OptionValue["inverse"]}}] (*Close reap over r*)
 ]; (*close module*)
 
 
 exportkadapt[outevs_,name_]:=Module[{},
 Export[ToString[name]<>".h5",  {"/unique_elements/r_indicies"->{"Data"-> DeleteDuplicates[outevs[[All,1]]]},
-"/unique_elements/radius"-> {"Data"-> DeleteDuplicates[outevs[[All,2]]],"Attributes"-> {"Units"-> "Centimeters"}},
-"/unique_elements/k"-> {"Data"-> DeleteDuplicates[outevs[[All,3]]],"Attributes"-> {"Units"-> "Ergs"}},
-"/unique_elements/evs"-> {"Data"-> DeleteDuplicates[outevs[[All,4]]],"Attributes"-> {"Units"-> "Ergs"}},
-"/unique_elements/Vsi"-> {"Data"-> DeleteDuplicates[outevs[[All,5]]],"Attributes"-> {"Units"-> "Ergs"}}
-}]
+"/unique_elements/radius"-> {"Data"-> DeleteDuplicates[outevs[[1,All,2]]],"Attributes"-> {"Units"-> "Centimeters"}},
+"/unique_elements/k"-> {"Data"-> DeleteDuplicates[outevs[[1,All,3]]],"Attributes"-> {"Units"-> "Ergs"}},
+"/unique_elements/evs"-> {"Data"-> DeleteDuplicates[outevs[[1,All,4,1]]],"Attributes"-> {"Units"-> "Ergs"}},
+"/unique_elements/Vsi"-> {"Data"-> DeleteDuplicates[outevs[[1,All,5]]],"Attributes"-> {"Units"-> "Ergs"}},
+"/grid/by_ri"->{"Data"-> GatherBy[outevs[[1]],First],"Attributes"-> {"Index"->"[[ri,r(cm),k,{evs,evecs},Vsi]]"}},
+"/Options/option_values"-> {"Data"-> outevs[[2]],"Attributes"-> {"Index"-> "[[xflavor,ktarget,inverse]]"}}
+}
 ];
 
 (*This currently outputs several datasets, each containing the unique elements from a run of kadapt, belonging to the group unique_elements.  Will add in groups that are, for instance, sorted by r. i.e. all k and omega combinations for a given radial index.*)
@@ -381,7 +383,7 @@ Return[out] (*Close reap over r*)
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Ellipse Fitting Approximations*)
 
 
