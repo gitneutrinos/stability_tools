@@ -334,7 +334,7 @@ Reap[
 	,{rx,rstr,rend}] (*close do over r*)
 ][[2,1]];
 
-Return[{evout,{OptionValue["xflavor"],OptionValue["ktarget"],OptionValue["inverse"]}}] (*Close reap over r*)
+Return[{evout,{OptionValue["xflavor"],OptionValue["inverse"]}}] (*Close reap over r*)
 ]; (*close module*)
 
 
@@ -342,10 +342,20 @@ exportkadapt[outevs_,name_]:=
 Export[ToString[name]<>".h5",  {"/unique_elements/r_indicies"->{"Data"-> DeleteDuplicates[outevs[[1,All,1]]]},
 "/unique_elements/radius"-> {"Data"-> DeleteDuplicates[outevs[[1,All,2]]],"Attributes"-> {"Units"-> "Centimeters"}},
 "/unique_elements/k"-> {"Data"-> DeleteDuplicates[outevs[[1,All,3]]],"Attributes"-> {"Units"-> "Ergs"}},
-"/unique_elements/evs"-> {"Data"-> DeleteDuplicates[outevs[[1,All,4,1]]],"Attributes"-> {"Units"-> "Ergs"}},
+"/unique_elements/evs_Re"-> {"Data"-> DeleteDuplicates[Re[outevs[[1,All,4,1]]]],"Attributes"-> {"Units"-> "Ergs"}},
+"/unique_elements/evs_Im"-> {"Data"-> DeleteDuplicates[Im[outevs[[1,All,4,1]]]],"Attributes"-> {"Units"-> "Ergs"}},
 "/unique_elements/Vsi"-> {"Data"-> DeleteDuplicates[outevs[[1,All,5]]],"Attributes"-> {"Units"-> "Ergs"}},
-"/grid/by_ri"->{"Data"-> GatherBy[outevs[[1]],First],"DataFormat"->"Array","Attributes"-> {"Index"->"{ri,k,partof[[ri,r(cm),k,{evs,evecs},Vsi]]"}},
-"/Options/option_values"-> {"Data"-> outevs[[2]],"DataFormat"->"String","Attributes"-> {"Index"-> "[[xflavor,ktarget,inverse]]"}}
+"/grid_elements/ri"->{"Data"-> outevs[[1,All,1]]},
+"/grid_elements/radius"-> {"Data"-> outevs[[1,All,2]],"Attributes"-> {"Units"-> "Centimeters"}},
+"/grid_elements/k"-> {"Data"-> outevs[[1,All,3]],"Attributes"-> {"Units"-> "Ergs"}},
+"/grid_elements/evs_Re"-> {"Data"-> Re[outevs[[1,All,4,1]]],"Attributes"-> {"Units"-> "Ergs"}},
+"/grid_elements/evs_Im"-> {"Data"-> Im[outevs[[1,All,4,1]]],"Attributes"-> {"Units"-> "Ergs"}},
+"/grid_elements/evecs_nu_Re"-> {"Data"-> Re[Normalize[outevs[[1,All,4,2,1;;10]]]],"Attributes"-> {"Normalized"}},
+"/grid_elements/evecs_nu_Im"-> {"Data"-> Im[Normalize[outevs[[1,All,4,2,1;;10]]]],"Attributes"-> {"Normalized"}},
+"/grid_elements/evecs_nubar_Re"-> {"Data"-> Re[Normalize[outevs[[1,All,4,2,11;;20]]]],"Attributes"-> {"Normalized"}},
+"/grid_elements/evecs_nubar_Im"-> {"Data"-> Im[Normalize[outevs[[1,All,4,2,11;;20]]]],"Attributes"-> {"Normalized"}},
+"/grid_elements/Vsi"-> {"Data"-> outevs[[1,All,5]],"Attributes"-> {"Units"-> "Ergs"}},
+"/options/values"-> {"Data"-> outevs[[2]],"Attributes"-> {"Order"-> "xflavor value, inverse value"}}
 }
 ];
 
