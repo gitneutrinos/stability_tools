@@ -4,7 +4,7 @@ BeginPackage["StabililtyPackage`"]
 ClearAll["StabililtyPackage`", "StabililtyPackage`"]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Package Functions*)
 
 
@@ -52,6 +52,8 @@ eBoxFitToMoments::usage=
 "given 3 input moments and set of guess parameters, fits ellipse parameters to moments"
 getMoments::usage=
 "takes moments out of moment data for a given file, radius, species. Energy integrated"
+exportkadapt::usage=
+"[outevs_,name_]"
 
 
 (* ::Subsection:: *)
@@ -74,7 +76,7 @@ munits=Sqrt[2] (Gf/Geverg^2 )(hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
 Begin["`Private`"]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Import Functions*)
 
 
@@ -103,6 +105,12 @@ Association[
 "muss"->data["muss"], (*Cos\[Theta] grid*)
 "mids"->data["mids"],
 "phis"-> data["phis"] (*"phi bin edges"*) (*Cos\[Theta] bin midpoints*)
+];
+
+
+ImportCalcData[infile_]:=Association[
+
+
 ];
 
 
