@@ -285,7 +285,7 @@ If[OptionValue["output"]=="Eigenvectors",
 as=\[Epsilon] Eigenvectors[N[As]/.kxs->kx0s];
 ];
 If[OptionValue["output"]=="Eigensystem",
-as={evals,evecs}=\[Epsilon] Eigensystem[N[As]/.kxs-> kx0s];
+as=\[Epsilon] Eigensystem[N[As]/.kxs-> kx0s];
 ];
 Return[as]
 ];
@@ -350,12 +350,12 @@ Export[ToString[name]<>".h5",  {"/unique_elements/r_indicies"->{"Data"-> DeleteD
 "/grid_elements/k"-> {"Data"-> outevs[[1,All,3]],"Attributes"-> {"Units"-> "Ergs"}},
 "/grid_elements/evs_Re"-> {"Data"-> Re[outevs[[1,All,4,1]]],"Attributes"-> {"Units"-> "Ergs"}},
 "/grid_elements/evs_Im"-> {"Data"-> Im[outevs[[1,All,4,1]]],"Attributes"-> {"Units"-> "Ergs"}},
-"/grid_elements/evecs_nu_Re"-> {"Data"-> Re[Normalize[outevs[[1,All,4,2,1;;10]]]],"Attributes"-> {"Normalized"}},
-"/grid_elements/evecs_nu_Im"-> {"Data"-> Im[Normalize[outevs[[1,All,4,2,1;;10]]]],"Attributes"-> {"Normalized"}},
-"/grid_elements/evecs_nubar_Re"-> {"Data"-> Re[Normalize[outevs[[1,All,4,2,11;;20]]]],"Attributes"-> {"Normalized"}},
-"/grid_elements/evecs_nubar_Im"-> {"Data"-> Im[Normalize[outevs[[1,All,4,2,11;;20]]]],"Attributes"-> {"Normalized"}},
+"/grid_elements/evecs_nu_Re"-> {"Data"-> Re[outevs[[1,All,4,2]][[All,All,1;;10]]],"Attributes"-> {"Norm?"-> "Unnormalized"}},
+"/grid_elements/evecs_nu_Im"-> {"Data"-> Im[outevs[[1,All,4,2]][[All,All,1;;10]]],"Attributes"-> {"Norm?"-> "Unnormalized"}},
+"/grid_elements/evecs_nubar_Re"-> {"Data"-> Re[outevs[[1,All,4,2]][[All,All,11;;20]]],"Attributes"-> {"Norm?"-> "Unnormalized"}},
+"/grid_elements/evecs_nubar_Im"-> {"Data"-> Im[outevs[[1,All,4,2]][[All,All,11;;20]]],"Attributes"-> {"Norm?"-> "Unnormalized"}},
 "/grid_elements/Vsi"-> {"Data"-> outevs[[1,All,5]],"Attributes"-> {"Units"-> "Ergs"}},
-"/options/values"-> {"Data"-> outevs[[2]],"Attributes"-> {"Order"-> "xflavor value, inverse value"}}
+"/options/values"-> {"Data"-> ToString[outevs[[2]]],"Attributes"-> {"Order"-> "xflavor value, inverse value"}}
 }
 ];
 
