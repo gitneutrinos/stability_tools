@@ -338,7 +338,7 @@ Return[{evout,{OptionValue["xflavor"],OptionValue["ktarget"],OptionValue["invers
 ]; (*close module*)
 
 
-exportkadapt[outevs_,name_]:=Module[{},
+exportkadapt[outevs_,name_]:=
 Export[ToString[name]<>".h5",  {"/unique_elements/r_indicies"->{"Data"-> DeleteDuplicates[outevs[[All,1]]]},
 "/unique_elements/radius"-> {"Data"-> DeleteDuplicates[outevs[[1,All,2]]],"Attributes"-> {"Units"-> "Centimeters"}},
 "/unique_elements/k"-> {"Data"-> DeleteDuplicates[outevs[[1,All,3]]],"Attributes"-> {"Units"-> "Ergs"}},
