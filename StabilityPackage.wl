@@ -339,13 +339,13 @@ Return[{evout,{OptionValue["xflavor"],OptionValue["ktarget"],OptionValue["invers
 
 
 exportkadapt[outevs_,name_]:=
-Export[ToString[name]<>".h5",  {"/unique_elements/r_indicies"->{"Data"-> DeleteDuplicates[outevs[[All,1]]]},
+Export[ToString[name]<>".h5",  {"/unique_elements/r_indicies"->{"Data"-> DeleteDuplicates[outevs[[1,All,1]]]},
 "/unique_elements/radius"-> {"Data"-> DeleteDuplicates[outevs[[1,All,2]]],"Attributes"-> {"Units"-> "Centimeters"}},
 "/unique_elements/k"-> {"Data"-> DeleteDuplicates[outevs[[1,All,3]]],"Attributes"-> {"Units"-> "Ergs"}},
 "/unique_elements/evs"-> {"Data"-> DeleteDuplicates[outevs[[1,All,4,1]]],"Attributes"-> {"Units"-> "Ergs"}},
 "/unique_elements/Vsi"-> {"Data"-> DeleteDuplicates[outevs[[1,All,5]]],"Attributes"-> {"Units"-> "Ergs"}},
-"/grid/by_ri"->{"Data"-> GatherBy[outevs[[1]],First],"Attributes"-> {"Index"->"[[ri,r(cm),k,{evs,evecs},Vsi]]"}},
-"/Options/option_values"-> {"Data"-> outevs[[2]],"Attributes"-> {"Index"-> "[[xflavor,ktarget,inverse]]"}}
+"/grid/by_ri"->{"Data"-> GatherBy[outevs[[1]],First],"DataFormat"->"Array","Attributes"-> {"Index"->"{ri,k,partof[[ri,r(cm),k,{evs,evecs},Vsi]]"}},
+"/Options/option_values"-> {"Data"-> outevs[[2]],"DataFormat"->"String","Attributes"-> {"Index"-> "[[xflavor,ktarget,inverse]]"}}
 }
 ];
 
