@@ -108,7 +108,7 @@ Association[
 ];
 
 
-ImportCalcData[infile_]:=Association[
+ImportCalcGridData[infile_]:=Association[
 
 
 ];
@@ -334,7 +334,7 @@ Reap[
 	,{rx,rstr,rend}] (*close do over r*)
 ][[2,1]];
 
-Return[{evout,{OptionValue["xflavor"],OptionValue["inverse"],OptionValue["krange"],infile,rstr,rend,testE,hi,nstep}}] (*Close reap over r*)
+Return[{evout,{OptionValue["xflavor"],OptionValue["inverse"],OptionValue["krange"]},{infile,rstr,rend,testE,hi,nstep}}] (*Close reap over r*)
 ]; (*close module*)
 
 
@@ -355,7 +355,8 @@ Export[ToString[name]<>".h5",  {"/unique_elements/r_indicies"->{"Data"-> DeleteD
 "/grid_elements/evecs_nubar_Re"-> {"Data"-> Re[outevs[[1,All,4,2]][[All,All,11;;20]]],"Attributes"-> {"Norm?"-> "Unnormalized"}},
 "/grid_elements/evecs_nubar_Im"-> {"Data"-> Im[outevs[[1,All,4,2]][[All,All,11;;20]]],"Attributes"-> {"Norm?"-> "Unnormalized"}},
 "/grid_elements/Vsi"-> {"Data"-> outevs[[1,All,5]],"Attributes"-> {"Units"-> "Ergs"}},
-"/settings/options"-> {"Data"-> ToString[outevs[[2]]],"Attributes"-> {"Order"-> "xflavor value, inverse value"}}
+"/settings/options"-> {"Data"-> ToString[outevs[[2]]],"Attributes"-> {"Order"-> "xflavor value, inverse value,krange"}},
+"/settings/inputs"-> {"Data"-> ToString[outevs[[3]]],"Attributes"-> {"Order"-> "file,rsrt,rend,testE,hi,nstep"}}
 }
 ];
 
