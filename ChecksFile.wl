@@ -172,6 +172,7 @@ Return[dispersionCheck[data,\[CapitalOmega],k,En,xflavor]]
 
 
 (*Takes in the real part of neutrino vector, Im[neutrino vector], Re[anti-neutrino vector],Im[anti-neutrino vector] *)
+(*Checks if a single component of the vectors is greater than 0.95.  Returns an error message if true for both vecctors, and a different message if only 1 is*)
 evecchecker[renvec_,imnvec_,renbvec_,imnbvec_]:=Module[{nuv,nuvb,testout},
 nuv=Abs[Normalize[renvec+(imnvec I)]];
 nuvb=Abs[Normalize[renbvec+(imnbvec I)]];
@@ -182,7 +183,37 @@ Return[testout];
 ];
 
 
-
+realdatacheck[infile_,hdffile_,ri_]:=Module[{data,datasr,pos,testpos,griddata,testk,test\[CapitalOmega]s,evecchecks,dischecks,ops,ins},
+data=ImportData[infile];
+datasr=SelectSingleRadius[data,ri];
+griddata=ImportCalcGridData[hdffile];
+ops=ImportCalcOptions[hdffile]; (*imports options*)
+ins=ImportCalcInputs[hdffile]; (*imports the inputs*)
+pos=Position[griddata["ri"],ri]; (*A list of positions in the grid which are at radius ri*)
+testpos=[[RandomChoice[pos]]]; (*Pulls out a random choice of these positions, i.e. the random k to use*)
+testk=griddata["k"][[testpos]]; 
+test\[CapitalOmega]s=griddata["evs_Re"][[testpos]]+I griddata["evs_Im"][[testpos]]; (*Reconstructs the evs*)
+(*Checks each of the 20 eigenvectors to see if they are dominated by one component, and collects the messages / ""'s*)
+evecchecks=
+Reap[
+	Do[
+		Sow[
+			evecchecker[griddata["evecs_nu_Re"][[testpos]][[i]],griddata["evecs_nu_Im"][[testpos]][[i]],griddata["evecs_nubar_Re"][[testpos]][[i]],griddata["evecs_nubar_Im"][[testpos]][[i]]]
+			]
+	,{i,1,Length[griddata["evs_Re"][[testpos]]]}
+	]
+];
+(*Performs a dispersion checks for each of the 20 eigenvalues, which should be 0. Collects all of the dispchecks*)
+dischecks=
+Reap[
+	Do[
+		Sow[
+			Abs[dispersionCheck[datasr,test\[CapitalOmega]s[[i]],testk,ins["testE"],ops["xflavor"]]]
+			]
+		,{i,1,Length["evs_Re"][[testpos]]}
+		]
+];
+Return[Transpose@{dischecks,evecchecks}]]; (*Returns a list of ordered pairs for each of the 20 eigenvalues tests where the first component is the result of the dispersion check, and the second contains a "" or error message*)
 
 
 (* Inputs *)
