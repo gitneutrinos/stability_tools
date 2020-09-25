@@ -1,5 +1,9 @@
 (* ::Package:: *)
 
+(* ::Subsection::Closed:: *)
+(*User Initialization*)
+
+
 (* ::Input::Initialization:: *)
 (*Dialog prompt to fix in/out paths.  Can be replaced with direct path input later*)
 id=ChoiceDialog[
@@ -61,7 +65,6 @@ kAdapt[file,ri,ri,testE,hi,20,"xflavor"-> False]
 ];
 plot1=ListLogPlot[{Transpose@{kdebug[[All,3]],kdebug[[All,4]]}},ImageSize-> Scaled[0.25]];
 plot2=ListLogPlot[{OldData},ImageSize-> Scaled[0.25]];
-VerificationTest[Rasterize[plot1]==Rasterize[plot2],TestID-> "kAdapt test; current calculation = old calculation"]
 
 
 
@@ -100,7 +103,7 @@ cma[k_,\[Mu]ch_,a_,w_]:=cm[k,\[Mu]ch,w]/.{rb-> 0.,l-> 0.,r-> (1+a),lb-> -(1-a)};
 
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Preliminaries for dispersion checks*)
 
 
@@ -168,6 +171,20 @@ Return[dispersionCheck[data,\[CapitalOmega],k,En,xflavor]]
 (*Real data dispersion check*)
 
 
+(*Takes in the real part of neutrino vector, Im[neutrino vector], Re[anti-neutrino vector],Im[anti-neutrino vector] *)
+evecchecker[renvec_,imnvec_,renbvec_,imnbvec_]:=Module[{nuv,nuvb,testout},
+nuv=Abs[Normalize[renvec+(imnvec I)]];
+nuvb=Abs[Normalize[renbvec+(imnbvec I)]];
+testout=If[Max[nuv]>= .95 && Max[nuvb]>= 0.95,Message[evecchecker::both_singular],
+If[Max[nuv]>= .95 \[Xor] Max[nuvb]>= 0.95,Message[evecchecker::one_singular]]
+];
+Return[testout];
+];
+
+
+
+
+
 (* Inputs *)
 data=ImportData[inpath<>"112Msun_100ms_DO.h5"];
 datasr=SelectSingleRadius[data,250];
@@ -183,10 +200,10 @@ equations = getEquations[datasr,En,hierarchy,k,"xflavor"-> False];
 zero=dispersionCheck[datasr,\[CapitalOmega],k,En,xflavor]
 
 (* Test *)
-VerificationTest[Between[zero,{-0.01,0.01}],TestID-> "Real Data \[Omega]\[NotEqual]0 Dispersion Check"]
+VerificationTest[Between[Abs[zero],{-0.01,0.01}],TestID-> "Real Data \[Omega]\[NotEqual]0 Dispersion Check"]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Check that ellipse construction results in the correct moments given hand-chosen moments*)
 
 
