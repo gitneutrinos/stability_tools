@@ -54,6 +54,14 @@ getMoments::usage=
 "takes moments out of moment data for a given file, radius, species. Energy integrated"
 exportkadapt::usage=
 "[outevs_,name_]"
+ImportCalcGridData::usage=
+"Imports the calcultion grid elements."
+ImportCalcUniqueData::usage=
+"Imports only unique values for each element, duplicates deleted."
+ImportCalcOptions::usage=
+"Imports 3 option settings, xflavor,inverse,krange"
+ImportCalcInputs::usage=
+"Imports the calc file, rsrt, rend,testE,hi,nstep used in the calculation"
 
 
 (* ::Subsection:: *)
@@ -108,9 +116,20 @@ Association[
 ];
 
 
-ImportCalcGridData[infile_]:=Association[
-
-
+ImportCalcGridData[infile_]:=Import[infile,"/grid_elements"];
+ImportCalcUniqueData[infile_]:=Import[infile,"/unique_data"];
+ImportCalcOptions[infile_]:=Association[
+"xflavor"-> ToExpression[Import[infile,{"Data","/settings/options"}][[1]]];
+"inverse"->ToExpression[Import[infile,{"Data","/settings/options"}][[2]]];
+"krange"->ToExpression[Import[infile,{"Data","/settings/options"}][[3]]];
+];
+ImportCalcInputs[infile_]:=Association[
+"file"-> ToString[Import[infile,{"Data","/settings/inputs"}][[1]]];
+"rsrt"-> ToExpression[Import[infile,{"Data","/settings/inputs"}][[2]]];
+"rend"-> ToExpression[Import[infile,{"Data","/settings/inputs"}][[3]]];
+"testE"-> ToExpression[Import[infile,{"Data","/settings/inputs"}][[4]]];
+"hi"-> ToExpression[Import[infile,{"Data","/settings/inputs"}][[5]]];
+"nstep"-> ToExpression[Import[infile,{"Data","/settings/inputs"}][[6]]];
 ];
 
 
