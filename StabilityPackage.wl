@@ -334,7 +334,7 @@ Reap[
 	,{rx,rstr,rend}] (*close do over r*)
 ][[2,1]];
 
-Return[{evout,{OptionValue["xflavor"],OptionValue["inverse"]}}] (*Close reap over r*)
+Return[{evout,{OptionValue["xflavor"],OptionValue["inverse"],OptionValue["krange"],infile,rstr,rend,testE,hi,nstep}}] (*Close reap over r*)
 ]; (*close module*)
 
 
@@ -355,11 +355,14 @@ Export[ToString[name]<>".h5",  {"/unique_elements/r_indicies"->{"Data"-> DeleteD
 "/grid_elements/evecs_nubar_Re"-> {"Data"-> Re[outevs[[1,All,4,2]][[All,All,11;;20]]],"Attributes"-> {"Norm?"-> "Unnormalized"}},
 "/grid_elements/evecs_nubar_Im"-> {"Data"-> Im[outevs[[1,All,4,2]][[All,All,11;;20]]],"Attributes"-> {"Norm?"-> "Unnormalized"}},
 "/grid_elements/Vsi"-> {"Data"-> outevs[[1,All,5]],"Attributes"-> {"Units"-> "Ergs"}},
-"/options/values"-> {"Data"-> ToString[outevs[[2]]],"Attributes"-> {"Order"-> "xflavor value, inverse value"}}
+"/settings/options"-> {"Data"-> ToString[outevs[[2]]],"Attributes"-> {"Order"-> "xflavor value, inverse value"}}
 }
 ];
 
 (*This currently outputs several datasets, each containing the unique elements from a run of kadapt, belonging to the group unique_elements.  Will add in groups that are, for instance, sorted by r. i.e. all k and omega combinations for a given radial index.*)
+
+
+ 
 
 
 (* ::Subsection::Closed:: *)
