@@ -57,13 +57,13 @@ OldData={{3.943351801881396`*^-20,0},{6.403122930332929`*^-20,0},{1.039724207244
 {-3.053194088231941`*^-19,5.832887809619426`*^-20},{-8.495693916972988`*^-19,1.851851392271892`*^-21},{-2.3639772986947037`*^-18,1.1000927210473065`*^-21},
 {-6.577907259087188`*^-18,9.189580059662592`*^-22},{-1.830341769061953`*^-17,8.575191336733617`*^-22},{-5.0930346987557535`*^-17,8.360035843249597`*^-22},
 {-1.4171671586789936`*^-16,8.283420407361107`*^-22},{-3.9433518018813854`*^-16,8.255976606410335`*^-22}};
-kdebug=Module[{data,ri=200,testE=20,hi=-1,kvar},
+kdebug=Module[{data,ri=200,testE=20,hi=-1,kvar,nstep=20},
 file=inpath<>"1D_withV_withPairBrems_DO.h5";
 (*SCalcScale[ImportData[inpath<>file<>".h5"],ri,testE,hi,0][[3]]//MatrixForm*)
 (*buildkGrid[ImportData[inpath<>file<>".h5"],ri,testE,hi,40]*)
-kAdapt[file,ri,ri,testE,hi,20,"xflavor"-> False]
+kAdapt[file,ri,ri,testE,hi,nstep,"xflavor"-> False]
 ];
-plot1=ListLogPlot[{Transpose@{kdebug[[All,3]],kdebug[[All,4]]}},ImageSize-> Scaled[0.25]];
+plot1=ListLogPlot[{Transpose@{kdebug[[1,All,3]],Table[kdebug[[1,All,4,1]][[i]]//Im//Max,{i,1,30}]}},ImageSize-> Scaled[0.25]];
 plot2=ListLogPlot[{OldData},ImageSize-> Scaled[0.25]];
 
 
@@ -264,6 +264,9 @@ Return[ellipsefiterrors[moms[[1]],moms[[2]]//Abs,moms[[3]]]]
 Table[tr["TestResults"][i],{i,1,9}]//MatrixForm
 
  
+
+
+
 
 
 
