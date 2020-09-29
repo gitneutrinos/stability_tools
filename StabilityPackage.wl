@@ -119,17 +119,17 @@ Association[
 ImportCalcGridData[infile_]:=Import[infile,"/grid_elements"];
 ImportCalcUniqueData[infile_]:=Import[infile,"/unique_data"];
 ImportCalcOptions[infile_]:=Association[
-"xflavor"-> ToExpression[Import[infile,{"Data","/settings/options"}]][[1]];
-"inverse"->ToExpression[Import[infile,{"Data","/settings/options"}]][[2]];
-"krange"->ToExpression[Import[infile,{"Data","/settings/options"}]][[3]];
+"xflavor"-> ToExpression[Import[infile,{"Data","/settings/options"}]][[1]],
+"inverse"->ToExpression[Import[infile,{"Data","/settings/options"}]][[2]],
+"krange"->ToExpression[Import[infile,{"Data","/settings/options"}]][[3]]
 ];
 ImportCalcInputs[infile_]:=Association[
-"file"-> ToString[Import[infile,{"Data","/settings/inputs"}]][[1]];
-"rsrt"-> ToExpression[Import[infile,{"Data","/settings/inputs"}]][[2]];
-"rend"-> ToExpression[Import[infile,{"Data","/settings/inputs"}]][[3]];
-"testE"-> ToExpression[Import[infile,{"Data","/settings/inputs"}]][[4]];
-"hi"-> ToExpression[Import[infile,{"Data","/settings/inputs"}]][[5]];
-"nstep"-> ToExpression[Import[infile,{"Data","/settings/inputs"}]][[6]];
+"file"-> ToString[Import[infile,{"Data","/settings/inputs"}]][[1]],
+"rsrt"-> ToExpression[Import[infile,{"Data","/settings/inputs"}]][[2]],
+"rend"-> ToExpression[Import[infile,{"Data","/settings/inputs"}]][[3]],
+"testE"-> ToExpression[Import[infile,{"Data","/settings/inputs"}]][[4]],
+"hi"-> ToExpression[Import[infile,{"Data","/settings/inputs"}]][[5]],
+"nstep"-> ToExpression[Import[infile,{"Data","/settings/inputs"}]][[6]]
 ];
 
 
