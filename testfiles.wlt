@@ -1,7 +1,7 @@
 BeginTestSection["testfiles_notebook"]
 
 VerificationTest[(* 1 *)
-	ListLogPlot[List[Transpose[List[Part[kdebug, All, 3], Part[kdebug, All, 4]]]], Rule[ImageSize, Scaled[0.25`]]]
+	ListLogPlot[List[Transpose[List[Part[kdebug, 1, All, 3], Table[Max[Im[Part[Part[kdebug, 1, All, 4, 1], i]]], List[i, 1, 30]]]]], Rule[ImageSize, Scaled[0.25`]]]
 	,
 	ListLogPlot[List[OldData], Rule[ImageSize, Scaled[0.25`]]]	
 	,
