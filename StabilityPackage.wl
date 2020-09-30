@@ -124,12 +124,12 @@ ImportCalcOptions[infile_]:=Association[
 "krange"->ToExpression[Import[infile,{"Data","/settings/options"}]][[3]]
 ];
 ImportCalcInputs[infile_]:=Association[
-"file"-> ToString[Import[infile,{"Data","/settings/inputs"}]][[1]],
-"rsrt"-> ToExpression[Import[infile,{"Data","/settings/inputs"}]][[2]],
-"rend"-> ToExpression[Import[infile,{"Data","/settings/inputs"}]][[3]],
-"testE"-> ToExpression[Import[infile,{"Data","/settings/inputs"}]][[4]],
-"hi"-> ToExpression[Import[infile,{"Data","/settings/inputs"}]][[5]],
-"nstep"-> ToExpression[Import[infile,{"Data","/settings/inputs"}]][[6]]
+"file"->ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[1]]//ToString,
+"rsrt"-> ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[2]]//ToString//ToExpression,
+"rend"-> ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[3]]//ToString//ToExpression,
+"testE"->ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[4]]//ToString//ToExpression,
+"hi"-> ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[5]]//ToString//ToExpression,
+"nstep"-> ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[6]]//ToString//ToExpression
 ];
 
 
