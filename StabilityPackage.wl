@@ -4,7 +4,7 @@ BeginPackage["StabililtyPackage`"]
 ClearAll["StabililtyPackage`", "StabililtyPackage`"]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Package Functions*)
 
 
@@ -64,7 +64,7 @@ ImportCalcInputs::usage=
 "Imports the calc file, rsrt, rend,testE,hi,nstep used in the calculation"
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Units*)
 
 
@@ -84,7 +84,7 @@ munits=Sqrt[2] (Gf/Geverg^2 )(hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
 Begin["`Private`"]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Import Functions*)
 
 
@@ -117,7 +117,6 @@ Association[
 
 
 ImportCalcGridData[infile_]:=Import[infile,"/grid_elements"];
-ImportCalcUniqueData[infile_]:=Import[infile,"/unique_data"];
 ImportCalcOptions[infile_]:=Association[
 "xflavor"-> ToExpression[Import[infile,{"Data","/settings/options"}]][[1]],
 "inverse"->ToExpression[Import[infile,{"Data","/settings/options"}]][[2]],
@@ -284,7 +283,7 @@ Return[S];
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Machine Scaled Eigensystem (evscale)*)
 
 
@@ -310,7 +309,7 @@ Return[as]
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*k Grid and Adaptive k Solver*)
 
 
@@ -358,12 +357,7 @@ Return[{evout,{OptionValue["xflavor"],OptionValue["inverse"],OptionValue["krange
 
 
 exportkadapt[outevs_,name_]:=
-Export[ToString[name]<>".h5",  {"/unique_elements/r_indicies"->{"Data"-> DeleteDuplicates[outevs[[1,All,1]]]},
-"/unique_elements/radius"-> {"Data"-> DeleteDuplicates[outevs[[1,All,2]]],"Attributes"-> {"Units"-> "Centimeters"}},
-"/unique_elements/k"-> {"Data"-> DeleteDuplicates[outevs[[1,All,3]]],"Attributes"-> {"Units"-> "Ergs"}},
-"/unique_elements/evs_Re"-> {"Data"-> DeleteDuplicates[Re[outevs[[1,All,4,1]]]],"Attributes"-> {"Units"-> "Ergs"}},
-"/unique_elements/evs_Im"-> {"Data"-> DeleteDuplicates[Im[outevs[[1,All,4,1]]]],"Attributes"-> {"Units"-> "Ergs"}},
-"/unique_elements/Vsi"-> {"Data"-> DeleteDuplicates[outevs[[1,All,5]]],"Attributes"-> {"Units"-> "Ergs"}},
+Export[ToString[name]<>".h5",  {
 "/grid_elements/ri"->{"Data"-> outevs[[1,All,1]]},
 "/grid_elements/radius"-> {"Data"-> outevs[[1,All,2]],"Attributes"-> {"Units"-> "Centimeters"}},
 "/grid_elements/k"-> {"Data"-> outevs[[1,All,3]],"Attributes"-> {"Units"-> "Ergs"}},
