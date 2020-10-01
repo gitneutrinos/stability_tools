@@ -372,11 +372,7 @@ Export[ToString[name]<>".h5",  {
 "/settings/inputs"-> {"Data"-> ToString[outevs[[3]]],"Attributes"-> {"Order"-> "file,rsrt,rend,testE,hi,nstep"}}
 }
 ];
-
 (*This currently outputs several datasets, each containing the unique elements from a run of kadapt, belonging to the group unique_elements.  Will add in groups that are, for instance, sorted by r. i.e. all k and omega combinations for a given radial index.*)
-
-
- 
 
 
 (* ::Subsection::Closed:: *)
