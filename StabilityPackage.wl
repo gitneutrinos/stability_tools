@@ -123,12 +123,12 @@ ImportCalcOptions[infile_]:=Association[
 "krange"->ToExpression[Import[infile,{"Data","/settings/options"}]][[3]]
 ];
 ImportCalcInputs[infile_]:=Association[
-"file"->ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[1]]//ToString,
-"rsrt"-> ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[2]]//ToString//ToExpression,
-"rend"-> ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[3]]//ToString//ToExpression,
-"testE"->ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[4]]//ToString//ToExpression,
-"hi"-> ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[5]]//ToString//ToExpression,
-"nstep"-> ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[6]]//ToString//ToExpression
+"file"->ToString[ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[1]]],
+"rsrt"-> ToExpression[ToString[ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[2]]]],
+"rend"-> ToExpression[ToString[ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[3]]]],
+"testE"->ToExpression[ToString[ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[4]]]],
+"hi"-> ToExpression[ToString[ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[5]]]],
+"nstep"-> ToExpression[ToString[ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[6]]]]
 ];
 
 
