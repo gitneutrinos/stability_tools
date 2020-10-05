@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*User Initialization*)
 
 
@@ -42,7 +42,7 @@ outfolder = outpath<>filename;
 
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Regression test for growth rate over a range of wavenumbers. The new results (blue) should match the old results (orange).*)
 
 
@@ -73,7 +73,7 @@ GraphicsRow[{plot1,plot2,diffplot},Frame-> True];
 
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Two-beam test. Initialize data with neutrinos moving right and antineutrinos moving left. The real and imaginary parts of the eigenvalues should match the theoretical results from Chakraborty+2016 (Self-induced neutrino flavor conversion without flavor mixing)*)
 
 
@@ -106,7 +106,7 @@ cma[k_,\[Mu]ch_,a_,w_]:=cm[k,\[Mu]ch,w]/.{rb-> 0.,l-> 0.,r-> (1+a),lb-> -(1-a)};
 
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Preliminaries for dispersion checks*)
 
 
@@ -170,7 +170,7 @@ Return[dispersionCheck[data,\[CapitalOmega],k,En,xflavor]]
 
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Real data dispersion check*)
 
 
@@ -237,7 +237,7 @@ zero=dispersionCheck[datasr,\[CapitalOmega],k,En,xflavor]
 VerificationTest[Between[Abs[zero],{-0.01,0.01}],TestID-> "Real Data \[Omega]\[NotEqual]0 Dispersion Check"]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Check that ellipse construction results in the correct moments given hand-chosen moments*)
 
 
@@ -259,7 +259,7 @@ Return[ellipsefiterrors[moms[[1]],moms[[2]]//Abs,moms[[3]]]]
 (*Imports real CSSN data and then calls ellipse fit errors for the tests file*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Test Report*)
 
 
