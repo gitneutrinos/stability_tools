@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*User Initialization*)
 
 
@@ -63,8 +63,11 @@ file=inpath<>"1D_withV_withPairBrems_DO.h5";
 (*buildkGrid[ImportData[inpath<>file<>".h5"],ri,testE,hi,40]*)
 kAdapt[file,ri,ri,testE,hi,nstep,"xflavor"-> False]
 ];
-plot1=ListLogPlot[{Transpose@{kdebug[[1,All,3]],Table[kdebug[[1,All,4,1]][[i]]//Im//Max,{i,1,30}]}},ImageSize-> Scaled[0.25]];
-plot2=ListLogPlot[{OldData},ImageSize-> Scaled[0.25]];
+debugdata=Transpose@{kdebug[[1,All,3]],Table[kdebug[[1,All,4,1]][[i]]//Im//Max,{i,1,30}]};
+plot1=ListLogPlot[{debugdata},ImageSize-> Scaled[0.25]]; (*Current data as calculated by kadapt*)
+plot2=ListLogPlot[{OldData},ImageSize-> Scaled[0.25]]; (*Old reference data set*)
+diffplot=ListPlot[debugdata[[All,2]]-OldData[[All,2]],Joined-> True,ImageSize->Scaled[0.25]]; (*Plot of the difference between OldData and current data*)
+GraphicsRow[{plot1,plot2,diffplot},Frame-> True];
 
 
 
@@ -234,7 +237,7 @@ zero=dispersionCheck[datasr,\[CapitalOmega],k,En,xflavor]
 VerificationTest[Between[Abs[zero],{-0.01,0.01}],TestID-> "Real Data \[Omega]\[NotEqual]0 Dispersion Check"]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Check that ellipse construction results in the correct moments given hand-chosen moments*)
 
 
@@ -260,10 +263,13 @@ Return[ellipsefiterrors[moms[[1]],moms[[2]]//Abs,moms[[3]]]]
 (*Test Report*)
 
 
- tr=TestReport["C:\\Users\\Sam\\Documents\\GitHub\\stability_tools\\testfiles.wlt"]
+ tr=TestReport["testfiles.wlt"]
 Table[tr["TestResults"][i],{i,1,9}]//MatrixForm
 
  
+
+
+
 
 
 
