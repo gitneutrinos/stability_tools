@@ -372,6 +372,27 @@ Export[ToString[name]<>".h5",  {
 "/settings/inputs"-> {"Data"-> ToString[outevs[[3]]],"Attributes"-> {"Order"-> "file,rsrt,rend,testE,hi,nstep"}}
 }
 ];
+(*
+---Indicies Guide for Editing---
+kAdapt calculates data via 2 loops, one over radial position, and one over k.  For each r and k, kAdapt outputs the following, called "evout";
+{Radial Index, Radial position in cm, k in ergs, eigensystem information, sipotential (\[Sqrt]2}Subscript[G, f](total neutrinos +total anti-neutrinos)}
+---
+The Eigensystem information is itself a list containing {eigenvalues, eigenvectors}, where the eigenvalues are a list of 2Subscript[n, \[Theta]] eigenvalues, an the eigenvectors contain 2Subscript[n, \[Theta]] vectors each of length 2Subscript[n, \[Theta].]
+---
+Thus, evout is a list of length number of Subscript[\[CapitalDelta]r, i] x nstep(1+1/2), where nstep is the number of k points in the positive direction (plus half as much in the negative k direction),
+with each entry of evout being of length 5, with the length of the 4th entry (the eigensystem) having 2 parts, with the first part holding a 2Subscript[n, \[Theta]] list, and the second part holding a 2Subscript[n, \[Theta]] list with each entry being a 2Subscript[n, \[Theta]] list.
+---
+kAdapt itself exports a list of 3 entries; {evout, {List of Options},{list of inputs}.
+The list of options is length 3: {xflavor, inverse, krange}. 
+The length of the list of inputs is 6: {infile,rstrt,rend,testE,hi,nstep}.
+---
+To export grid elements, we export [[1,All,i]]; 1 for the evout entry, all for all r/k combinations, and i for a particular part of evout.  Example; For radial positions, the second entry in kadapt, [[1,All,2]].
+To export eigenvalues, we jsut export all of the first entries of the 4th entry of evout. [[1,All,4,1]]
+To export eigenvectors, we export the second part of the 4th entry, [[1,All,4,2]].  
+To pick out just the first (or last) 10 entries of each eigenvector (the neutrino entries), we need to additionally pick out the first ten entries of each vector, for each eigenvalue So we need [[1,All,4,2]] then [[All,All,1;;10]].
+---
+Finally, to export outputs we jsut take the second list, and for the inputs the third.
+*)
 (*This currently outputs several datasets, each containing the unique elements from a run of kadapt, belonging to the group unique_elements.  Will add in groups that are, for instance, sorted by r. i.e. all k and omega combinations for a given radial index.*)
 
 
