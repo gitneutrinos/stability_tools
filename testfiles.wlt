@@ -1,11 +1,11 @@
 BeginTestSection["testfiles_notebook"]
 
 VerificationTest[(* 1 *)
-	ListLogPlot[Transpose[List[Part[kdebug, 1, All, 3], Table[Max[Im[Part[Part[kdebug, 1, All, 4, 1], i]]], List[i, 1, 30]]]], Rule[ImageSize, Scaled[0.25`]]]
+	Equal[OldData, debugdata]
 	,
-	ListLogPlot[List[OldData], Rule[ImageSize, Scaled[0.25`]]]	
+	True	
 	,
-	SameTest->(Rasterize[#1]==Rasterize[#2]&), TestID->"kAdapt test; current calculation = old calculation"
+	TestID->"kAdapt test; current calculation = old calculation"
 ]
 
 VerificationTest[(* 2 *)
