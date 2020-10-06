@@ -1,7 +1,7 @@
 BeginTestSection["testfiles_notebook"]
 
 VerificationTest[(* 1 *)
-	Equal[OldData, debugdata]
+	Equal[Select[Abs[Times[Plus[Cases[Part[OldData, All, 2], Except[0]], Times[-1, Cases[Part[debugdata, All, 2], Except[0]]]], Power[Plus[Cases[Part[OldData, All, 2], Except[0]], Cases[Part[debugdata, All, 2], Except[0]]], -1]]], GreaterThan[Power[10, -6]]], List[]]
 	,
 	True	
 	,
