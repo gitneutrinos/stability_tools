@@ -122,7 +122,7 @@ data2b=
 "Yes"-> 0.,
 "mids"-> {-1,1},
 "freqs"->{0,2},
-"Endensity"-> {{{{nulefts, 0.},{nurights,0.}}},{{{nublefts,0.},{nubrights,0.}}}},
+"Endensity"-> munits{{{{nulefts, 0.},{nurights,0.}}},{{{nublefts,0.},{nubrights,0.}}}},
  "freqmid"-> {1},
  "munits"-> munits
 ]
