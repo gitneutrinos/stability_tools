@@ -57,6 +57,22 @@ VerificationTest[(* 7 *)
 ]
 
 VerificationTest[(* 8 *)
+	realdatadispersioncheck[StringJoin[inpath, "112Msun_100ms_DO.h5"], "112Msun_100ms_r200_r300_now_nox.h5", 250]
+	,
+	True	
+	,
+	TestID-> "Real data Dispersion Check; \[Omega]=0, no x flavor"
+]
+
+VerificationTest[(* 9 *)
+	realdatadispersioncheck[StringJoin[inpath, "112Msun_100ms_DO.h5"], "112Msun_100ms_r200_r300_nox.h5", 250]
+	,
+	True	
+	,
+	{TestID-> "Real data Dispersion Check; \[Omega]!=0, no x flavor"}
+]
+
+VerificationTest[(* 10 *)
 	And[Less[Part[ellipsefiterrors[1.`, Power[10.`, -8], Times[1.`, Power[3.`, -1]]], 1], Power[10, -5]], Less[Part[ellipsefiterrors[1.`, Power[10.`, -8], Times[1.`, Power[3.`, -1]]], 2], Power[10, -5]], Less[Part[ellipsefiterrors[1.`, Power[10.`, -8], Times[1.`, Power[3.`, -1]]], 3], Power[10, -5]]]
 	,
 	True	
@@ -64,12 +80,12 @@ VerificationTest[(* 8 *)
 	TestID->"Ellipse Fitting: Check ellipse fit error in moments for artificial data"
 ]
 
-VerificationTest[(* 9 *)
+VerificationTest[(* 11 *)
 	And[Less[Part[ellipsefitrealdatacheck[], 1], Power[10, -3]], Less[Part[ellipsefitrealdatacheck[], 2], Power[10, -3]], Less[Part[ellipsefitrealdatacheck[], 3], Power[10, -3]]]
 	,
 	True
 	,
-	{FindRoot::jsing, FindRoot::jsing, FindRoot::jsing, General::stop}
+	{Assert::asrtfl, FindRoot::jsing, Assert::asrtfl, FindRoot::jsing, Assert::asrtfl, General::stop, FindRoot::jsing, General::stop}
 	,
 	TestID-> "Ellipse Fitting: Check ellipse fit error in moments for CSSN data"
 ]
