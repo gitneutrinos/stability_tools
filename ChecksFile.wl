@@ -228,7 +228,8 @@ Return[dispersionCheck[data,\[CapitalOmega],k,En,xflavor]]
 (*Real data dispersion check*)
 
 
-realdatacheck[infile_,hdffile_,ri_]:=Module[{data,datasr,pos,testpos,griddata,testk,test\[CapitalOmega]s,evecchecks,dischecks,ops,ins,bottoms,cos\[Theta],sumbottoms,percentdiff,mindiff},
+(*Calculates the dispersion relation based on a hdf file of a stability calculation. Then, returns ordered pairs of the dispersion relation together with the percent difference of \[CapitalOmega]p-kpcos\[Theta]*)
+realdatadispcalc[infile_,hdffile_,ri_]:=Module[{data,datasr,pos,testpos,griddata,testk,test\[CapitalOmega]s,evecchecks,dischecks,ops,ins,bottoms,cos\[Theta],sumbottoms,percentdiff,mindiff},
 data=ImportData[infile];
 datasr=SelectSingleRadius[data,ri];
 cos\[Theta]=data["mids"];
@@ -239,16 +240,17 @@ pos=Position[griddata["ri"],ri]; (*A list of positions in the grid which are at 
 testpos=pos[[1,1]];(*RandomChoice[pos]; Pulls out a random choice of these positions, i.e. the random k to use*)
 testk=griddata["k"][[testpos]];
 test\[CapitalOmega]s=griddata["evs_Re"][[testpos]]+I griddata["evs_Im"][[testpos]]; (*Reconstructs the evs*)
+(*
 Print[testpos];
 Print[testk];
 Print[test\[CapitalOmega]s];
 Print[ins["testE"]];
+*)
 (*Returns a list of ordered pairs of the maximum component of each of the {neutrino, antineutrino} eigenvectors*)
 bottoms=Reap[Do[Sow[IdisBottom[datasr,test\[CapitalOmega]s[[i]],testk,ins["testE"],ops["xflavor"]]],{i,1,Length[test\[CapitalOmega]s]}]][[2,1]]; (*Values of \[CapitalOmega]p-kpcos\[Theta] for each eigenvalue, and each angle.*)
 sumbottoms=Reap[Do[Sow[2 test\[CapitalOmega]s[[i]]- IdisBottom[datasr,test\[CapitalOmega]s[[i]],testk,ins["testE"],ops["xflavor"]]],{i,1,Length[test\[CapitalOmega]s]}]][[2,1]]; (*value of \[CapitalOmega]p+kpcos[\[Theta]] done via 2\[CapitalOmega]p-(\[CapitalOmega]ps-kpcos\[Theta])*)
 percentdiff=Reap[Do[Sow[bottoms[[i]]/sumbottoms[[i]]],{i,1,Length[test\[CapitalOmega]s]}]][[2,1]]; (*percent difference; (\[CapitalOmega]p-kpcos\[Theta])/(\[CapitalOmega]p+kpcos\[Theta]) for each \[CapitalOmega]p and angle*)
 mindiff=Reap[Do[Sow[Min[percentdiff[[i]]]],{i,1,Length[percentdiff[[1]]]}]][[2,1]]; (*For each eigenvalue, takes the minimum percent difference across the 10 angular bins*)
-Print[Now[]];
 (*Performs a dispersion checks for each of the 20 eigenvalues, which should be 0. Collects all of the dispchecks*)
 dischecks=
 Reap[
@@ -259,13 +261,24 @@ Reap[
 		,{i,1,2(*Length[griddata["evs_Re"][[testpos]]]*)}
 		]
 ][[2,1]];
-Print[Now[]];
 Return[Transpose@{dischecks,mindiff[[1;;2]]}];
 ]; (*Returns a list of ordered pairs for each of the 20 eigenvalues tests where the first component is the result of the dispersion check, and the second contains a "" or error message*)
 
 
-(*Sherwodd, this looks like it's working well for these two eigenvalues, but the time is still really long. It's all in the dispersion check loop, but I don't understand why it's taking so long.*)
-realdatacheck[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_now_nox.h5",250]
+(*Calls realdatadispcalc and performs the logic for the check on whether the disp checks are passing*)
+realdatadispersioncheck[infile_,hdffile_,ri_]:=Module[{dispouts,checks},
+dispouts=realdatadispcalc[infile,hdffile,ri];
+(*Check each pair, returns true if the disp passes OR the percent difference is very small.*)
+checks=Reap[
+	Do[ 
+		Sow[ If[dispouts[[j,1]]<10^-3 \[Or] dispouts[[j,2]]< 10^-10,True,False]
+		]
+	, {j,1,Length[dispouts]}]
+	][[2,1]];
+
+ans=Apply[And,checks];	(*Checks whether all elements of checks are true*)
+Return[ans];
+];
 
 
 (* ::Subsection::Closed:: *)
