@@ -52,9 +52,19 @@ eBoxFitToMoments::usage=
 "given 3 input moments and set of guess parameters, fits ellipse parameters to moments"
 getMoments::usage=
 "takes moments out of moment data for a given file, radius, species. Energy integrated"
+exportkadapt::usage=
+"[outevs_,name_]"
+ImportCalcGridData::usage=
+"Imports the calcultion grid elements."
+ImportCalcUniqueData::usage=
+"Imports only unique values for each element, duplicates deleted."
+ImportCalcOptions::usage=
+"Imports 3 option settings, xflavor,inverse,krange"
+ImportCalcInputs::usage=
+"Imports the calc file, rsrt, rend,testE,hi,nstep used in the calculation"
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Units*)
 
 
@@ -103,6 +113,22 @@ Association[
 "muss"->data["muss"], (*Cos\[Theta] grid*)
 "mids"->data["mids"],
 "phis"-> data["phis"] (*"phi bin edges"*) (*Cos\[Theta] bin midpoints*)
+];
+
+
+ImportCalcGridData[infile_]:=Import[infile,"/grid_elements"];
+ImportCalcOptions[infile_]:=Association[
+"xflavor"-> ToExpression[Import[infile,{"Data","/settings/options"}]][[1]],
+"inverse"->ToExpression[Import[infile,{"Data","/settings/options"}]][[2]],
+"krange"->ToExpression[Import[infile,{"Data","/settings/options"}]][[3]]
+];
+ImportCalcInputs[infile_]:=Association[
+"file"->ToString[ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[1]]],
+"rsrt"-> ToExpression[ToString[ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[2]]]],
+"rend"-> ToExpression[ToString[ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[3]]]],
+"testE"->ToExpression[ToString[ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[4]]]],
+"hi"-> ToExpression[ToString[ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[5]]]],
+"nstep"-> ToExpression[ToString[ReadList[StringToStream[StringDelete[Import[infile,{"Data","settings/inputs"}],{"{","}"}]],Word,WordSeparators->{","}][[6]]]]
 ];
 
 
@@ -277,18 +303,18 @@ If[OptionValue["output"]=="Eigenvectors",
 as=\[Epsilon] Eigenvectors[N[As]/.kxs->kx0s];
 ];
 If[OptionValue["output"]=="Eigensystem",
-as={evals,evecs}=\[Epsilon] Eigensystem[N[As]/.kxs-> kx0s];
+as=\[Epsilon] Eigensystem[N[As]/.kxs-> kx0s];
 ];
 Return[as]
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*k Grid and Adaptive k Solver*)
 
 
 (*Constructs a nstep sized log spaced k grid based on the target k associated with the infile at radial bin r.  Currently the limits are 2 orders of magnitude above and below the target value, ignoring negatives for the moment *)
-Options[buildkGrid]={"ktarget"-> 0.,"krange"-> {10.^-3,10.},"xflavor"-> True};
+Options[buildkGrid]={"ktarget"-> 0.,"krange"-> {10.^(-3),10.},"xflavor"-> True};
 buildkGrid[data_,nstep_,OptionsPattern[]]:=Module[{kgrid,fSpace,ktarget,kblow,kbhigh},
 If[OptionValue["ktarget"]== 0.,
 ktarget=siPotential[data,"xflavor"-> OptionValue["xflavor"]]
@@ -304,7 +330,7 @@ Return[kgrid];
 
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
-Options[kAdapt]={"xflavor"-> True,"ktarget"-> 0.,"krange"-> {10.^-3,10.},"koutput"-> "RankedEigenvalues","inverse"-> False};
+Options[kAdapt]={"xflavor"-> True,"ktarget"-> 0.,"krange"-> {10.^(-3),10.},"koutput"-> "Eigensystem","inverse"-> False};
 kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,OptionsPattern[]]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,eout,pot,S},
 data=ImportData[infile];
 evout=
@@ -326,19 +352,47 @@ Reap[
 	,{rx,rstr,rend}] (*close do over r*)
 ][[2,1]];
 
-Return[evout] (*Close reap over r*)
+Return[{evout,{OptionValue["xflavor"],OptionValue["inverse"],OptionValue["krange"]},{infile,rstr,rend,testE,hi,nstep}}] (*Close reap over r*)
 ]; (*close module*)
 
 
-exportkadapt[outevs_,name_]:=Module[{},
-Export[ToString[name]<>".h5",  {"/unique_elements/r_indicies"->{"Data"-> DeleteDuplicates[outevs[[All,1]]]},
-"/unique_elements/radius"-> {"Data"-> DeleteDuplicates[outevs[[All,2]]],"Attributes"-> {"Units"-> "Centimeters"}},
-"/unique_elements/k"-> {"Data"-> DeleteDuplicates[outevs[[All,3]]],"Attributes"-> {"Units"-> "Ergs"}},
-"/unique_elements/evs"-> {"Data"-> DeleteDuplicates[outevs[[All,4]]],"Attributes"-> {"Units"-> "Ergs"}},
-"/unique_elements/Vsi"-> {"Data"-> DeleteDuplicates[outevs[[All,5]]],"Attributes"-> {"Units"-> "Ergs"}}
-}]
+exportkadapt[outevs_,name_]:=
+Export[ToString[name]<>".h5",  {
+"/grid_elements/ri"->{"Data"-> outevs[[1,All,1]]},
+"/grid_elements/radius"-> {"Data"-> outevs[[1,All,2]],"Attributes"-> {"Units"-> "Centimeters"}},
+"/grid_elements/k"-> {"Data"-> outevs[[1,All,3]],"Attributes"-> {"Units"-> "Ergs"}},
+"/grid_elements/evs_Re"-> {"Data"-> Re[outevs[[1,All,4,1]]],"Attributes"-> {"Units"-> "Ergs"}},
+"/grid_elements/evs_Im"-> {"Data"-> Im[outevs[[1,All,4,1]]],"Attributes"-> {"Units"-> "Ergs"}},
+"/grid_elements/evecs_nu_Re"-> {"Data"-> Re[outevs[[1,All,4,2]][[All,All,1;;10]]],"Attributes"-> {"Norm?"-> "Unnormalized"}},
+"/grid_elements/evecs_nu_Im"-> {"Data"-> Im[outevs[[1,All,4,2]][[All,All,1;;10]]],"Attributes"-> {"Norm?"-> "Unnormalized"}},
+"/grid_elements/evecs_nubar_Re"-> {"Data"-> Re[outevs[[1,All,4,2]][[All,All,11;;20]]],"Attributes"-> {"Norm?"-> "Unnormalized"}},
+"/grid_elements/evecs_nubar_Im"-> {"Data"-> Im[outevs[[1,All,4,2]][[All,All,11;;20]]],"Attributes"-> {"Norm?"-> "Unnormalized"}},
+"/grid_elements/Vsi"-> {"Data"-> outevs[[1,All,5]],"Attributes"-> {"Units"-> "Ergs"}},
+"/settings/options"-> {"Data"-> ToString[outevs[[2]]],"Attributes"-> {"Order"-> "xflavor value, inverse value,krange"}},
+"/settings/inputs"-> {"Data"-> ToString[outevs[[3]]],"Attributes"-> {"Order"-> "file,rsrt,rend,testE,hi,nstep"}}
+}
 ];
-
+(*
+---Indicies Guide for Editing---
+kAdapt calculates data via 2 loops, one over radial position, and one over k.  For each r and k, kAdapt outputs the following, called "evout";
+{Radial Index, Radial position in cm, k in ergs, eigensystem information, sipotential (\[Sqrt]2}Subscript[G, f](total neutrinos +total anti-neutrinos)}
+---
+The Eigensystem information is itself a list containing {eigenvalues, eigenvectors}, where the eigenvalues are a list of 2Subscript[n, \[Theta]] eigenvalues, an the eigenvectors contain 2Subscript[n, \[Theta]] vectors each of length 2Subscript[n, \[Theta].]
+---
+Thus, evout is a list of length number of Subscript[\[CapitalDelta]r, i] x nstep(1+1/2), where nstep is the number of k points in the positive direction (plus half as much in the negative k direction),
+with each entry of evout being of length 5, with the length of the 4th entry (the eigensystem) having 2 parts, with the first part holding a 2Subscript[n, \[Theta]] list, and the second part holding a 2Subscript[n, \[Theta]] list with each entry being a 2Subscript[n, \[Theta]] list.
+---
+kAdapt itself exports a list of 3 entries; {evout, {List of Options},{list of inputs}.
+The list of options is length 3: {xflavor, inverse, krange}. 
+The length of the list of inputs is 6: {infile,rstrt,rend,testE,hi,nstep}.
+---
+To export grid elements, we export [[1,All,i]]; 1 for the evout entry, all for all r/k combinations, and i for a particular part of evout.  Example; For radial positions, the second entry in kadapt, [[1,All,2]].
+To export eigenvalues, we jsut export all of the first entries of the 4th entry of evout. [[1,All,4,1]]
+To export eigenvectors, we export the second part of the 4th entry, [[1,All,4,2]].  
+To pick out just the first (or last) 10 entries of each eigenvector (the neutrino entries), we need to additionally pick out the first ten entries of each vector, for each eigenvalue So we need [[1,All,4,2]] then [[All,All,1;;10]].
+---
+Finally, to export outputs we jsut take the second list, and for the inputs the third.
+*)
 (*This currently outputs several datasets, each containing the unique elements from a run of kadapt, belonging to the group unique_elements.  Will add in groups that are, for instance, sorted by r. i.e. all k and omega combinations for a given radial index.*)
 
 
@@ -407,7 +461,7 @@ arg\[Chi]=((2 cg/ag)-1);
 \[Chi]g=ArcTanh[arg\[Chi]]; (*box transform c=a/2( tanh[\[Chi]]+1 *)
 Assert[Between[arg\[Beta],{-1.01,1.01}]];
 Assert[Between[arg\[Chi],{-1.01,1.01}]];
-Print[{ag,bg,cg,arg\[Beta],arg\[Chi]}];
+(*Print[{ag,bg,cg,arg\[Beta],arg\[Chi]}];*)
 Return[{ag,\[Beta]g,\[Chi]g}]
 ];
 
