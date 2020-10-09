@@ -67,7 +67,7 @@ debugdata=Transpose@{kdebug[[1,All,3]],Table[kdebug[[1,All,4,1]][[i]]//Im//Max,{
 plot1=ListLogPlot[{debugdata},ImageSize-> Scaled[0.25]]; (*Current data as calculated by kadapt*)
 plot2=ListLogPlot[{OldData},ImageSize-> Scaled[0.25]]; (*Old reference data set*)
 diffplot=ListPlot[debugdata[[All,2]]-OldData[[All,2]],Joined-> True,ImageSize->Scaled[0.25]]; (*Plot of the difference between OldData and current data*)
-GraphicsRow[{plot1,plot2,diffplot},Frame-> True];
+rowplot=GraphicsRow[{plot1,plot2,diffplot},Frame-> True];
 
 
 
@@ -267,7 +267,7 @@ Reap[
 		,{i,1,2(*Length[griddata["evs_Re"][[testpos]]]*)}
 		]
 ][[2,1]];
-Return[Transpose@{dischecks,mindiff[[1;;2]]}];
+Return[Transpose@{dischecks,mindiff[[1;;2]],test\[CapitalOmega]s[[1;;2]]}];
 ]; (*Returns a list of ordered pairs for each of the 20 eigenvalues tests where the first component is the result of the dispersion check, and the second contains a "" or error message*)
 
 
@@ -277,13 +277,20 @@ dispouts=realdatadispcalc[infile,hdffile,ri];
 (*Check each pair, returns true if the disp passes OR the percent difference is very small.*)
 checks=Reap[
 	Do[ 
-		Sow[ If[dispouts[[j,1]]<10^-3 \[Or] dispouts[[j,2]]< 10^-10,True,False]
-		]
-	, {j,1,Length[dispouts]}]
-	][[2,1]];
+		Sow[ 
+			If[dispouts[[j,1]]<10^-3 \[Or] dispouts[[j,2]]< 10^-10,True,False];
+		,"test"]; (*This Sow collects whether or not the check should pass, conditionally or naturally*)
+		Sow[{dispouts[[j,3]],
+			Which[dispouts[[j,1]]<10^-3, True,
+				dispouts[[j,2]]< 10^-10 \[And] dispouts[[j,1]]>10^-3,False
+				](*Close Which*)
+			} (*Close ordered pair in sow*)
+		,"display"]; (*Close Sow*) (*This sow collects a list of eigenvalues and the percent diff, to isolate which pass naturally and which pass conditionally*)
+	, {j,1,Length[dispouts]}];
+	,{"test","display"}][[2]];
 
-ans=Apply[And,checks];	(*Checks whether all elements of checks are true*)
-Return[ans];
+ans=Apply[And,checks[[1,1]]];	(*Checks whether all elements of checks are true*)
+Return[{ans,checks[[2,1]]}];
 ];
 
 
@@ -313,8 +320,13 @@ Return[ellipsefiterrors[moms[[1]],moms[[2]]//Abs,moms[[3]]]]
 (*Test Report*)
 
 
- tr=TestReport["testfiles.wlt"]
+ tr=TestReport["testfiles.wlt"];
+Show[rowplot]
 Table[tr["TestResults"][i],{i,1,12}]//MatrixForm
+rddcnow=realdatadispersioncheck[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_now_nox.h5",250][[2]]; (*Check with no \[Omega]*)
+rddc=realdatadispersioncheck[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_nox.h5",250][[2]]; (*Check with nonzero \[Omega]*)
+Grid[{rddcnow[[All,1]],rddcnow[[All,2]]},Frame-> All] (*Grid of eigenvalues and pass method; True=> Passes naturally, False=> Passes conditionally. If test in .wlt fails totally, then this chart is meaningless*)
+Grid[{rddc[[All,1]],rddc[[All,2]]},Frame-> All]
 
 
 
