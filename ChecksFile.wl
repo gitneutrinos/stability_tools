@@ -181,18 +181,18 @@ Idis[data_,\[CapitalOmega]_,k_,En_,n_,xflavor_]:=Module[{cos\[Theta],\[Phi]0,\[P
 
 cos\[Theta]=data["mids"];
 {\[CapitalOmega]p,kp,\[Omega]}=IdisShifts[data,\[CapitalOmega],k,En,xflavor];
-\[CapitalOmega]minuskpcos\[Theta][i_]:=IdisBottom[data,\[CapitalOmega],k,En,xflavor][[i]];
+\[CapitalOmega]minuskpcos\[Theta]=Reap[Do[Sow[IdisBottom[data,\[CapitalOmega],k,En,xflavor][[i]]],{i,1,Length[cos\[Theta]]}]][[2,1]];
 
 (* neutrino number densities disguised as SI potentials *)
-mu[i_]:=   munits ndensities[data,"xflavor"->xflavor][[1,i,i]];
-mubar[i_]:=munits ndensities[data,"xflavor"->xflavor][[2,i,i]];
+mu=Reap[Do[Sow[munits ndensities[data,"xflavor"->xflavor][[1,i,i]]],{i,1,Length[cos\[Theta]]}]][[2,1]];
+mubar=Reap[Do[Sow[munits ndensities[data,"xflavor"->xflavor][[2,i,i]]],{i,1,Length[cos\[Theta]]}]][[2,1]];
 
 (* make sure the denominator is not tiny *)
 (*On[Assert];
 Do[Assert[(\[CapitalOmega]p-(kp cos\[Theta][[i]]))/(\[CapitalOmega]p+(kp cos\[Theta][[i]]))>= 1,"\[CapitalOmega]p' k'Cos[\[Theta]] percent difference less than 1"],{i,1,Length[cos\[Theta]]}]; 
 *)
 (*Definition of I from Gail's equation (41)*)
-result= Sum[cos\[Theta][[i]]^n (((mu[i]-mubar[i])\[CapitalOmega]minuskpcos\[Theta][i]) + (mu[i]+mubar[i])\[Omega]) / (\[CapitalOmega]minuskpcos\[Theta][i]^2-\[Omega]^2) ,{i,1,Length[cos\[Theta]]}];
+result= Sum[cos\[Theta][[i]]^n (((mu[[i]]-mubar[[i]])\[CapitalOmega]minuskpcos\[Theta][[i]]) + (mu[[i]]+mubar[[i]])\[Omega]) / (\[CapitalOmega]minuskpcos\[Theta][[i]]^2-\[Omega]^2) ,{i,1,Length[cos\[Theta]]}];
 Return[result];
 ];
 
