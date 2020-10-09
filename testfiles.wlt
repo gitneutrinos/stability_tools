@@ -57,7 +57,7 @@ VerificationTest[(* 7 *)
 ]
 
 VerificationTest[(* 8 *)
-	realdatadispersioncheck[StringJoin[inpath, "112Msun_100ms_DO.h5"], "112Msun_100ms_r200_r300_now_nox.h5", 250]
+	Part[realdatadispersioncheck[StringJoin[inpath, "112Msun_100ms_DO.h5"], "112Msun_100ms_r200_r300_now_nox.h5", 250], 1]
 	,
 	True	
 	,
@@ -65,11 +65,11 @@ VerificationTest[(* 8 *)
 ]
 
 VerificationTest[(* 9 *)
-	realdatadispersioncheck[StringJoin[inpath, "112Msun_100ms_DO.h5"], "112Msun_100ms_r200_r300_nox.h5", 250]
+	Part[realdatadispersioncheck[StringJoin[inpath, "112Msun_100ms_DO.h5"], "112Msun_100ms_r200_r300_nox.h5", 250], 1]
 	,
 	True	
 	,
-	{TestID-> "Real data Dispersion Check; \[Omega]!=0, no x flavor"}
+	TestID-> "Real data Dispersion Check; \[Omega]!=0, no x flavor"
 ]
 
 VerificationTest[(* 10 *)
@@ -85,7 +85,7 @@ VerificationTest[(* 11 *)
 	,
 	True
 	,
-	{Assert::asrtfl, FindRoot::jsing, Assert::asrtfl, FindRoot::jsing, Assert::asrtfl, General::stop, FindRoot::jsing, General::stop}
+	{FindRoot::jsing, FindRoot::jsing, FindRoot::jsing, General::stop}
 	,
 	TestID-> "Ellipse Fitting: Check ellipse fit error in moments for CSSN data"
 ]
