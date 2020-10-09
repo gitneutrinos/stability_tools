@@ -143,12 +143,12 @@ Idis\[Phi]s[data_,xflavor_]:=Module[{cos\[Theta],\[Phi]0,\[Phi]1,mu,mubar},
 cos\[Theta]=data["mids"];
 
 (* neutrino number densities disguised as SI potentials *)
-mu[i_]:=   munits ndensities[data,"xflavor"->xflavor][[1,i,i]];
-mubar[i_]:=munits ndensities[data,"xflavor"->xflavor][[2,i,i]];
+mu=Reap[Do[Sow[munits ndensities[data,"xflavor"->xflavor][[1,i,i]]],{i,1,Length[cos\[Theta]]}]][[2,1]];
+mubar=Reap[Do[Sow[munits ndensities[data,"xflavor"->xflavor][[2,i,i]]],{i,1,Length[cos\[Theta]]}]][[2,1]];
 
 (*Defined in Gail's Blue equation 30 and 31 *)
-\[Phi]0 = Sum[(mu[i]-mubar[i])         ,{i,1,Length[cos\[Theta]]}];
-\[Phi]1 = Sum[(mu[i]-mubar[i])cos\[Theta][[i]],{i,1,Length[cos\[Theta]]}];
+\[Phi]0 = Sum[(mu[[i]]-mubar[[i]])         ,{i,1,Length[cos\[Theta]]}];
+\[Phi]1 = Sum[(mu[[i]]-mubar[[i]])cos\[Theta][[i]],{i,1,Length[cos\[Theta]]}];
 
 Return[{\[Phi]0,\[Phi]1}];
 ]
@@ -314,7 +314,7 @@ Return[ellipsefiterrors[moms[[1]],moms[[2]]//Abs,moms[[3]]]]
 
 
  tr=TestReport["testfiles.wlt"]
-Table[tr["TestResults"][i],{i,1,9}]//MatrixForm
+Table[tr["TestResults"][i],{i,1,12}]//MatrixForm
 
 
 
