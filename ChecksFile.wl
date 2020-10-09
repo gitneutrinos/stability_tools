@@ -170,8 +170,8 @@ Return[{\[CapitalOmega]p,kp,\[Omega]}];
 IdisBottom[data_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{cos\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],mu,mubar,Vmatter,\[CapitalOmega]minuskpcos\[Theta],result,bottom},
 cos\[Theta]=data["mids"];
 {\[CapitalOmega]p,kp,\[Omega]}=IdisShifts[data,\[CapitalOmega],k,En,xflavor];
-bottom[i_]:=\[CapitalOmega]p-kp cos\[Theta][[i]];
-Return[Table[bottom[i],{i,1,Length[cos\[Theta]]}]];
+bottom=Reap[Do[Sow[\[CapitalOmega]p-kp cos\[Theta][[i]]],{i,1,Length[cos\[Theta]]}]][[2,1]];
+Return[bottom];
 ]
 
 
