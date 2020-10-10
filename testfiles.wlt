@@ -57,7 +57,7 @@ VerificationTest[(* 7 *)
 ]
 
 VerificationTest[(* 8 *)
-	Part[realdatadispersioncheck[StringJoin[inpath, "112Msun_100ms_DO.h5"], "112Msun_100ms_r200_r300_now_nox.h5", 250], 1]
+	realdatadispersioncheck[StringJoin[inpath, "112Msun_100ms_DO.h5"], "112Msun_100ms_r200_r300_now_nox.h5", 250]
 	,
 	True	
 	,
@@ -65,7 +65,7 @@ VerificationTest[(* 8 *)
 ]
 
 VerificationTest[(* 9 *)
-	Part[realdatadispersioncheck[StringJoin[inpath, "112Msun_100ms_DO.h5"], "112Msun_100ms_r200_r300_nox.h5", 250], 1]
+	realdatadispersioncheck[StringJoin[inpath, "112Msun_100ms_DO.h5"], "112Msun_100ms_r200_r300_nox.h5", 250]
 	,
 	True	
 	,
