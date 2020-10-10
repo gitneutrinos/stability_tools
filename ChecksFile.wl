@@ -275,22 +275,36 @@ Return[Transpose@{dischecks,mindiff[[1;;2]],test\[CapitalOmega]s[[1;;2]]}];
 realdatadispersioncheck[infile_,hdffile_,ri_]:=Module[{dispouts,checks},
 dispouts=realdatadispcalc[infile,hdffile,ri];
 (*Check each pair, returns true if the disp passes OR the percent difference is very small.*)
-checks=Reap[
+checks=
+Reap[
 	Do[ 
 		Sow[ 
-			If[dispouts[[j,1]]<10^-3 \[Or] dispouts[[j,2]]< 10^-10,True,False];
-		,"test"]; (*This Sow collects whether or not the check should pass, conditionally or naturally*)
+			If[dispouts[[j,1]]<10^(-3) \[Or] dispouts[[j,2]]< 10^(-10),True,False]
+		](*This Sow collects whether or not the check should pass, conditionally or naturally*)
+	, {j,1,Length[dispouts]}
+	]
+][[2,1]];
+
+ans=Apply[And,checks];	(*Checks whether all elements of checks are true*)
+Return[ans];
+];
+
+
+realdatadispersioncheckcondition[infile_,hdffile_,ri_]:=Module[{dispouts,dispcond},
+dispouts=realdatadispcalc[infile,hdffile,ri];
+dispcond=Reap[
+	Do[
 		Sow[{dispouts[[j,3]],
 			Which[dispouts[[j,1]]<10^-3, True,
 				dispouts[[j,2]]< 10^-10 \[And] dispouts[[j,1]]>10^-3,False
 				](*Close Which*)
 			} (*Close ordered pair in sow*)
-		,"display"]; (*Close Sow*) (*This sow collects a list of eigenvalues and the percent diff, to isolate which pass naturally and which pass conditionally*)
-	, {j,1,Length[dispouts]}];
-	,{"test","display"}][[2]];
+		] (*Close sow*)
+	,{j,1,Length[dispouts]}
+	] 
+][[2,1]];
 
-ans=Apply[And,checks[[1,1]]];	(*Checks whether all elements of checks are true*)
-Return[{ans,checks[[2,1]]}];
+Return[dispcond]
 ];
 
 
@@ -316,6 +330,18 @@ Return[ellipsefiterrors[moms[[1]],moms[[2]]//Abs,moms[[3]]]]
 (*Imports real CSSN data and then calls ellipse fit errors for the tests file*)
 
 
+realdatadispcalc[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_now_nox.h5",250]
+
+
+rd=%;
+
+
+rd[[1,3]]< 10^-14
+
+
+realdatadispersioncheck[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_now_nox.h5",250]
+
+
 (* ::Subsection::Closed:: *)
 (*Test Report*)
 
@@ -323,10 +349,13 @@ Return[ellipsefiterrors[moms[[1]],moms[[2]]//Abs,moms[[3]]]]
  tr=TestReport["testfiles.wlt"];
 Show[rowplot]
 Table[tr["TestResults"][i],{i,1,12}]//MatrixForm
-rddcnow=realdatadispersioncheck[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_now_nox.h5",250][[2]]; (*Check with no \[Omega]*)
-rddc=realdatadispersioncheck[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_nox.h5",250][[2]]; (*Check with nonzero \[Omega]*)
+rddcnow=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_now_nox.h5",250]; (*Check with no \[Omega]*)
+rddc=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_nox.h5",250]; (*Check with nonzero \[Omega]*)
 Grid[{rddcnow[[All,1]],rddcnow[[All,2]]},Frame-> All] (*Grid of eigenvalues and pass method; True=> Passes naturally, False=> Passes conditionally. If test in .wlt fails totally, then this chart is meaningless*)
 Grid[{rddc[[All,1]],rddc[[All,2]]},Frame-> All]
+
+
+
 
 
 
