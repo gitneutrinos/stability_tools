@@ -155,8 +155,8 @@ Return[{\[CapitalOmega]p,kp,\[Omega]}];
 
 
 
-IdisBottom[data_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{ndens,cos\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],mu,mubar,Vmatter,\[CapitalOmega]minuskpcos\[Theta],result,bottom},
-cos\[Theta]=data["mids"];
+IdisBottom[data_,cos\[Theta]_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{ndens,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],mu,mubar,Vmatter,\[CapitalOmega]minuskpcos\[Theta],result,bottom},
+
 (* neutrino number densities disguised as SI potentials *)
 ndens = ndensities[data,"xflavor"->xflavor];
 mu=munits Diagonal[ndens[[1]] ];
@@ -179,7 +179,7 @@ mu=munits Diagonal[ndens[[1]] ];
 mubar= munits Diagonal[ndens[[2]] ];
 
 {\[CapitalOmega]p,kp,\[Omega]}=IdisShifts[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,xflavor];
-\[CapitalOmega]minuskpcos\[Theta]=IdisBottom[data,\[CapitalOmega],k,En,xflavor];
+\[CapitalOmega]minuskpcos\[Theta]=IdisBottom[data,cos\[Theta],\[CapitalOmega],k,En,xflavor];
 
 (* make sure the denominator is not tiny *)
 (*On[Assert];
@@ -238,7 +238,7 @@ Print[test\[CapitalOmega]s];
 Print[ins["testE"]];
 *)
 (*Returns a list of ordered pairs of the maximum component of each of the {neutrino, antineutrino} eigenvectors*)
-bottoms=Table[IdisBottom[datasr,test\[CapitalOmega]s[[i]],testk,ins["testE"],ops["xflavor"]],{i,1,Length[test\[CapitalOmega]s]}]; (*Values of \[CapitalOmega]p-kpcos\[Theta] for each eigenvalue, and each angle.*)
+bottoms=Table[IdisBottom[datasr,cos\[Theta],test\[CapitalOmega]s[[i]],testk,ins["testE"],ops["xflavor"]],{i,1,Length[test\[CapitalOmega]s]}]; (*Values of \[CapitalOmega]p-kpcos\[Theta] for each eigenvalue, and each angle.*)
 sumbottoms=Table[2 test\[CapitalOmega]s[[i]]- bottoms[[i]],{i,1,Length[test\[CapitalOmega]s]}]; (*value of \[CapitalOmega]p+kpcos[\[Theta]] done via 2\[CapitalOmega]p-(\[CapitalOmega]ps-kpcos\[Theta])*)
 percentdiff=Table[bottoms[[i]]/sumbottoms[[i]],{i,1,Length[test\[CapitalOmega]s]}]; (*percent difference; (\[CapitalOmega]p-kpcos\[Theta])/(\[CapitalOmega]p+kpcos\[Theta]) for each \[CapitalOmega]p and angle*)
 mindiff=Table[Min[percentdiff[[i]]],{i,1,Length[percentdiff[[1]]]}]; (*For each eigenvalue, takes the minimum percent difference across the 10 angular bins*)
