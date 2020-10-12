@@ -261,6 +261,7 @@ Return[Transpose@{dischecks,mindiff[[1;;2]],test\[CapitalOmega]s[[1;;2]]}];
 
 
 (*Calls realdatadispcalc and performs the logic for the check on whether the disp checks are passing*)
+(*Returns a list of true/false for whether the test passed*)
 realdatadispersioncheck[infile_,hdffile_,ri_]:=Module[{dispouts,checks},
 dispouts=realdatadispcalc[infile,hdffile,ri];
 (*Check each pair, returns true if the disp passes OR the percent difference is very small.*)
@@ -279,6 +280,7 @@ Return[ans];
 ];
 
 
+(*Returns a list of true/false. True=actually passed/failed. False=passed artificially because acknowledging denominator subtractive cancellation*)
 realdatadispersioncheckcondition[infile_,hdffile_,ri_]:=Module[{dispouts,dispcond},
 dispouts=realdatadispcalc[infile,hdffile,ri];
 dispcond=Reap[
