@@ -142,8 +142,8 @@ Idis\[Phi]s[data_,xflavor_]:=Module[{cos\[Theta],\[Phi]0,\[Phi]1,mu,mubar},
 cos\[Theta]=data["mids"];
 
 (* neutrino number densities disguised as SI potentials *)
-mu=Reap[Do[Sow[munits ndensities[data,"xflavor"->xflavor][[1,i,i]]],{i,1,Length[cos\[Theta]]}]][[2,1]];
-mubar=Reap[Do[Sow[munits ndensities[data,"xflavor"->xflavor][[2,i,i]]],{i,1,Length[cos\[Theta]]}]][[2,1]];
+mu=munits Diagonal[ndensities[data,"xflavor"->xflavor][[1]] ];
+mubar= munits Diagonal[ndensities[data,"xflavor"->xflavor][[2]] ];
 
 (*Defined in Gail's Blue equation 30 and 31 *)
 \[Phi]0 = Sum[(mu[[i]]-mubar[[i]])         ,{i,1,Length[cos\[Theta]]}];
@@ -242,20 +242,14 @@ Print[test\[CapitalOmega]s];
 Print[ins["testE"]];
 *)
 (*Returns a list of ordered pairs of the maximum component of each of the {neutrino, antineutrino} eigenvectors*)
-bottoms=Reap[Do[Sow[IdisBottom[datasr,test\[CapitalOmega]s[[i]],testk,ins["testE"],ops["xflavor"]]],{i,1,Length[test\[CapitalOmega]s]}]][[2,1]]; (*Values of \[CapitalOmega]p-kpcos\[Theta] for each eigenvalue, and each angle.*)
-sumbottoms=Reap[Do[Sow[2 test\[CapitalOmega]s[[i]]- IdisBottom[datasr,test\[CapitalOmega]s[[i]],testk,ins["testE"],ops["xflavor"]]],{i,1,Length[test\[CapitalOmega]s]}]][[2,1]]; (*value of \[CapitalOmega]p+kpcos[\[Theta]] done via 2\[CapitalOmega]p-(\[CapitalOmega]ps-kpcos\[Theta])*)
-percentdiff=Reap[Do[Sow[bottoms[[i]]/sumbottoms[[i]]],{i,1,Length[test\[CapitalOmega]s]}]][[2,1]]; (*percent difference; (\[CapitalOmega]p-kpcos\[Theta])/(\[CapitalOmega]p+kpcos\[Theta]) for each \[CapitalOmega]p and angle*)
-mindiff=Reap[Do[Sow[Min[percentdiff[[i]]]],{i,1,Length[percentdiff[[1]]]}]][[2,1]]; (*For each eigenvalue, takes the minimum percent difference across the 10 angular bins*)
+bottoms=Table[IdisBottom[datasr,test\[CapitalOmega]s[[i]],testk,ins["testE"],ops["xflavor"]],{i,1,Length[test\[CapitalOmega]s]}]; (*Values of \[CapitalOmega]p-kpcos\[Theta] for each eigenvalue, and each angle.*)
+sumbottoms=Table[2 test\[CapitalOmega]s[[i]]- IdisBottom[datasr,test\[CapitalOmega]s[[i]],testk,ins["testE"],ops["xflavor"]],{i,1,Length[test\[CapitalOmega]s]}]; (*value of \[CapitalOmega]p+kpcos[\[Theta]] done via 2\[CapitalOmega]p-(\[CapitalOmega]ps-kpcos\[Theta])*)
+percentdiff=Table[bottoms[[i]]/sumbottoms[[i]],{i,1,Length[test\[CapitalOmega]s]}]; (*percent difference; (\[CapitalOmega]p-kpcos\[Theta])/(\[CapitalOmega]p+kpcos\[Theta]) for each \[CapitalOmega]p and angle*)
+mindiff=Table[Min[percentdiff[[i]]],{i,1,Length[percentdiff[[1]]]}]; (*For each eigenvalue, takes the minimum percent difference across the 10 angular bins*)
 (*Performs a dispersion checks for each of the 20 eigenvalues, which should be 0. Collects all of the dispchecks*)
-dischecks=
-Reap[
-	Do[
-		Sow[
-			Abs[dispersionCheck[datasr,test\[CapitalOmega]s[[i]],testk,ins["testE"],ops["xflavor"]]]
-			]
-		,{i,1,2(*Length[griddata["evs_Re"][[testpos]]]*)}
-		]
-][[2,1]];
+dischecks=Table[
+	Abs[dispersionCheck[datasr,test\[CapitalOmega]s[[i]],testk,ins["testE"],ops["xflavor"]]],
+	{i,1,2(*Length[griddata["evs_Re"][[testpos]]]*)}];
 Return[Transpose@{dischecks,mindiff[[1;;2]],test\[CapitalOmega]s[[1;;2]]}];
 ]; (*Returns a list of ordered pairs for each of the 20 eigenvalues tests where the first component is the result of the dispersion check, and the second contains a "" or error message*)
 
@@ -265,15 +259,8 @@ Return[Transpose@{dischecks,mindiff[[1;;2]],test\[CapitalOmega]s[[1;;2]]}];
 realdatadispersioncheck[infile_,hdffile_,ri_]:=Module[{dispouts,checks},
 dispouts=realdatadispcalc[infile,hdffile,ri];
 (*Check each pair, returns true if the disp passes OR the percent difference is very small.*)
-checks=
-Reap[
-	Do[ 
-		Sow[ 
-			If[dispouts[[j,1]]<10^(-3) \[Or] dispouts[[j,2]]< 10^(-10),True,False]
-		](*This Sow collects whether or not the check should pass, conditionally or naturally*)
-	, {j,1,Length[dispouts]}
-	]
-][[2,1]];
+(*This collects whether or not the check should pass, conditionally or naturally*)
+checks=Table[dispouts[[j,1]]<10^(-3) \[Or] dispouts[[j,2]]< 10^(-10), {j,1,Length[dispouts]}];
 
 ans=Apply[And,checks];	(*Checks whether all elements of checks are true*)
 Return[ans];
@@ -325,10 +312,13 @@ Return[ellipsefiterrors[moms[[1]],moms[[2]]//Abs,moms[[3]]]]
 (*Test Report*)
 
 
-tr=TestReport["testfiles.wlt"];
+Timing[tr=TestReport["testfiles.wlt"];]
 Show[rowplot]
-Table[tr["TestResults"][i],{i,1,12}]//MatrixForm
+Table[tr["TestResults"][i],{i,1,11}]//MatrixForm
 rddcnow=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_now_nox.h5",250]; (*Check with no \[Omega]*)
 rddc=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_nox.h5",250]; (*Check with nonzero \[Omega]*)
 Grid[{rddcnow[[All,1]],rddcnow[[All,2]]},Frame-> All] (*Grid of eigenvalues and pass method; True=> Passes naturally, False=> Passes conditionally. If test in .wlt fails totally, then this chart is meaningless*)
 Grid[{rddc[[All,1]],rddc[[All,2]]},Frame-> All]
+
+
+
