@@ -312,11 +312,19 @@ Return[ellipsefiterrors[moms[[1]],moms[[2]]//Abs,moms[[3]]]]
 (*Test Report*)
 
 
+(* Generate the data for the dispersion check*)
+dispersionCheckRi=250;
+outevs = kAdapt[inpath <> "112Msun_100ms_DO.h5", dispersionCheckRi, dispersionCheckRi, Infinity, -1., 1, "xflavor" -> False];
+exportkadapt[outevs,"112Msun_100ms_r200_r300_now_nox" ]
+outevs = kAdapt[inpath <> "112Msun_100ms_DO.h5", dispersionCheckRi, dispersionCheckRi, 20., -1., 1,"xflavor" -> False];
+exportkadapt[outevs,"112Msun_100ms_r200_r300nox"]
+
+
 Timing[tr=TestReport["testfiles.wlt"];]
 Show[rowplot]
 Table[tr["TestResults"][i],{i,1,11}]//MatrixForm
-rddcnow=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_now_nox.h5",250]; (*Check with no \[Omega]*)
-rddc=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_nox.h5",250]; (*Check with nonzero \[Omega]*)
+rddcnow=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_now_nox.h5",dispersionCheckRi]; (*Check with no \[Omega]*)
+rddc=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_nox.h5",dispersionCheckRi]; (*Check with nonzero \[Omega]*)
 Grid[{rddcnow[[All,1]],rddcnow[[All,2]]},Frame-> All] (*Grid of eigenvalues and pass method; True=> Passes naturally, False=> Passes conditionally. If test in .wlt fails totally, then this chart is meaningless*)
 Grid[{rddc[[All,1]],rddc[[All,2]]},Frame-> All]
 
