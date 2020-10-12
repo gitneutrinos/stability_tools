@@ -169,12 +169,7 @@ Return[bottom];
 
 
 (*Calculates and Returns the nth I for the dispersion check.  Returns a single value of In*)
-Idis[data_,cos\[Theta]_,\[CapitalOmega]_,k_,En_,n_,xflavor_]:=Module[{ndens,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],mu,mubar,Vmatter,\[CapitalOmega]minuskpcos\[Theta],result},
-
-(* neutrino number densities disguised as SI potentials *)
-ndens = ndensities[data,"xflavor"->xflavor];
-mu=munits Diagonal[ndens[[1]] ];
-mubar= munits Diagonal[ndens[[2]] ];
+Idis[data_,cos\[Theta]_,mu_,mubar_,\[CapitalOmega]_,k_,En_,n_,xflavor_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],Vmatter,\[CapitalOmega]minuskpcos\[Theta],result},
 
 {\[CapitalOmega]p,kp,\[Omega]}=IdisShifts[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,xflavor];
 \[CapitalOmega]minuskpcos\[Theta]=IdisBottom[data,cos\[Theta],\[CapitalOmega],k,En,xflavor];
@@ -189,11 +184,16 @@ Return[result];
 ];
 
 
-dispersionCheck[data_,cos\[Theta]_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{I0,I1,I2},
+dispersionCheck[data_,cos\[Theta]_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{I0,I1,I2,ndens,mu,mubar},
+(* neutrino number densities disguised as SI potentials *)
+ndens = ndensities[data,"xflavor"->xflavor];
+mu=munits Diagonal[ndens[[1]] ];
+mubar= munits Diagonal[ndens[[2]] ];
+
 (*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
-I0 = Idis[data,cos\[Theta],\[CapitalOmega],k,En,0,xflavor];
-I1 = Idis[data,cos\[Theta],\[CapitalOmega],k,En,1,xflavor];
-I2 = Idis[data,cos\[Theta],\[CapitalOmega],k,En,2,xflavor];
+I0 = Idis[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,0,xflavor];
+I1 = Idis[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,1,xflavor];
+I2 = Idis[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,2,xflavor];
 Return[Abs[(I0+1.)(I2-1.)-I1^2]]
 ];
 
