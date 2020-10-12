@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*User Initialization*)
 
 
@@ -42,7 +42,7 @@ outfolder = outpath<>filename;
 
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Regression test for growth rate over a range of wavenumbers. The new results (blue) should match the old results (orange).*)
 
 
@@ -73,7 +73,7 @@ rowplot=GraphicsRow[{plot1,plot2,diffplot},Frame-> True];
 
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Two-beam test. Initialize data with neutrinos moving right and antineutrinos moving left. The real and imaginary parts of the eigenvalues should match the theoretical results from Chakraborty+2016 (Self-induced neutrino flavor conversion without flavor mixing)*)
 
 
@@ -106,7 +106,7 @@ cma[k_,\[Mu]ch_,a_,w_]:=cm[k,\[Mu]ch,w]/.{rb-> 0.,l-> 0.,r-> (1+a),lb-> -(1-a)};
 
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Real Data 4 beam 2 angle binning*)
 
 
@@ -135,7 +135,7 @@ Return[S2b]
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Preliminaries for Dispersion Checks*)
 
 
@@ -230,7 +230,7 @@ Return[dispersionCheck[data,\[CapitalOmega],k,En,xflavor]]
 
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Real data dispersion check*)
 
 
@@ -308,7 +308,7 @@ Return[dispcond]
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Check that ellipse construction results in the correct moments given hand-chosen moments*)
 
 
@@ -342,7 +342,7 @@ rd[[1,3]]< 10^-14
 realdatadispersioncheck[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_now_nox.h5",250]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Test Report*)
 
 
