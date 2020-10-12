@@ -326,12 +326,3 @@ Grid[{rddc[[All,1]],rddc[[All,2]]},Frame-> All]
 
 
 
-
-
-
-
-
-
-
-
-
