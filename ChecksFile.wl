@@ -169,9 +169,7 @@ Return[bottom];
 
 
 (*Calculates and Returns the nth I for the dispersion check.  Returns a single value of In*)
-Idis[data_,\[CapitalOmega]_,k_,En_,n_,xflavor_]:=Module[{ndens,cos\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],mu,mubar,Vmatter,\[CapitalOmega]minuskpcos\[Theta],result},
-
-cos\[Theta]=data["mids"];
+Idis[data_,cos\[Theta]_,\[CapitalOmega]_,k_,En_,n_,xflavor_]:=Module[{ndens,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],mu,mubar,Vmatter,\[CapitalOmega]minuskpcos\[Theta],result},
 
 (* neutrino number densities disguised as SI potentials *)
 ndens = ndensities[data,"xflavor"->xflavor];
@@ -191,27 +189,29 @@ Return[result];
 ];
 
 
-dispersionCheck[data_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{I0,I1,I2},
+dispersionCheck[data_,cos\[Theta]_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{I0,I1,I2},
 (*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
-I0 = Idis[data,\[CapitalOmega],k,En,0,xflavor];
-I1 = Idis[data,\[CapitalOmega],k,En,1,xflavor];
-I2 = Idis[data,\[CapitalOmega],k,En,2,xflavor];
+I0 = Idis[data,cos\[Theta],\[CapitalOmega],k,En,0,xflavor];
+I1 = Idis[data,cos\[Theta],\[CapitalOmega],k,En,1,xflavor];
+I2 = Idis[data,cos\[Theta],\[CapitalOmega],k,En,2,xflavor];
 Return[Abs[(I0+1.)(I2-1.)-I1^2]]
 ];
 
 
-test2bdispersionCheck[k_,En_,atest_,xflavor_]:=Module[{I0,I1,I2,\[CapitalOmega],data},
+test2bdispersionCheck[k_,En_,atest_,xflavor_]:=Module[{cos\[Theta],I0,I1,I2,\[CapitalOmega],data},
 data = get2bdata[]/.a-> atest;
+cos\[Theta]=data["mids"];
 \[CapitalOmega]=evscale[k,build2bMatrix[En,k]/.a-> 0.,kvar,"output"->"Eigenvalues"][[1]];
-Return[dispersionCheck[data,\[CapitalOmega],k,En,xflavor]]
+Return[dispersionCheck[data,cos\[Theta],\[CapitalOmega],k,En,xflavor]]
 ];
 
 
-test4bdispersionCheck[k_,En_,atest_,xflavor_]:=Module[{I0,I1,I2,\[CapitalOmega],data,equations},
+test4bdispersionCheck[k_,En_,atest_,xflavor_]:=Module[{cos\[Theta],I0,I1,I2,\[CapitalOmega],data,equations},
 data = get2bdata[]/.a-> atest;
+cos\[Theta]=data["mids"];
 equations = getEquations[data,En,-1.,k,"xflavor"->xflavor];
 \[CapitalOmega]=evscale[k,stabilityMatrix[data,equations,"xflavor"->xflavor],kx,"output"-> "Eigenvalues"][[1]];
-Return[dispersionCheck[data,\[CapitalOmega],k,En,xflavor]]
+Return[dispersionCheck[data,cos\[Theta],\[CapitalOmega],k,En,xflavor]]
 ];
 
 
@@ -244,7 +244,7 @@ percentdiff=Table[bottoms[[i]]/sumbottoms[[i]],{i,1,Length[test\[CapitalOmega]s]
 mindiff=Table[Min[percentdiff[[i]]],{i,1,Length[percentdiff[[1]]]}]; (*For each eigenvalue, takes the minimum percent difference across the 10 angular bins*)
 (*Performs a dispersion checks for each of the 20 eigenvalues, which should be 0. Collects all of the dispchecks*)
 dischecks=Table[
-	Abs[dispersionCheck[datasr,test\[CapitalOmega]s[[i]],testk,ins["testE"],ops["xflavor"]]],
+	Abs[dispersionCheck[datasr,cos\[Theta],test\[CapitalOmega]s[[i]],testk,ins["testE"],ops["xflavor"]]],
 	{i,1,2(*Length[griddata["evs_Re"][[testpos]]]*)}];
 Return[Transpose@{dischecks,mindiff[[1;;2]],test\[CapitalOmega]s[[1;;2]]}];
 ]; (*Returns a list of ordered pairs for each of the 20 eigenvalues tests where the first component is the result of the dispersion check, and the second contains a "" or error message*)
