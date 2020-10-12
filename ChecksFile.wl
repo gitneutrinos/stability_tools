@@ -105,7 +105,6 @@ cm[k_,\[Mu]ch_,w_]:=DiagonalMatrix[{w+k,-w-k,w-k,-w+k}]+2 \[Mu]ch{{l+lb,-lb,-l,0
 cma[k_,\[Mu]ch_,a_,w_]:=cm[k,\[Mu]ch,w]/.{rb-> 0.,l-> 0.,r-> (1+a),lb-> -(1-a)};
 
 
-
 (* ::Subsection:: *)
 (*Real Data 4 beam 2 angle binning*)
 
@@ -175,7 +174,6 @@ Return[bottom];
 ]
 
 
-
 (*Calculates and Returns the nth I for the dispersion check.  Returns a single value of In*)
 Idis[data_,\[CapitalOmega]_,k_,En_,n_,xflavor_]:=Module[{cos\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],mu,mubar,Vmatter,\[CapitalOmega]minuskpcos\[Theta],result},
 
@@ -212,11 +210,6 @@ data = get2bdata[]/.a-> atest;
 Return[dispersionCheck[data,\[CapitalOmega],k,En,xflavor]]
 ];
 
-(*This exists so that I can run the testfile thing without having to worry about context paths for the package.*)
-(*Will require similar modules in order to run in the testfile*)
-
-
-
 
 test4bdispersionCheck[k_,En_,atest_,xflavor_]:=Module[{I0,I1,I2,\[CapitalOmega],data,equations},
 data = get2bdata[]/.a-> atest;
@@ -224,10 +217,6 @@ equations = getEquations[data,En,-1.,k,"xflavor"->xflavor];
 \[CapitalOmega]=evscale[k,stabilityMatrix[data,equations,"xflavor"->xflavor],kx,"output"-> "Eigenvalues"][[1]];
 Return[dispersionCheck[data,\[CapitalOmega],k,En,xflavor]]
 ];
-
-
-
-
 
 
 (* ::Subsection:: *)
@@ -330,32 +319,14 @@ Return[ellipsefiterrors[moms[[1]],moms[[2]]//Abs,moms[[3]]]]
 (*Imports real CSSN data and then calls ellipse fit errors for the tests file*)
 
 
-realdatadispcalc[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_now_nox.h5",250]
-
-
-rd=%;
-
-
-rd[[1,3]]< 10^-14
-
-
-realdatadispersioncheck[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_now_nox.h5",250]
-
-
 (* ::Subsection:: *)
 (*Test Report*)
 
 
- tr=TestReport["testfiles.wlt"];
+tr=TestReport["testfiles.wlt"];
 Show[rowplot]
 Table[tr["TestResults"][i],{i,1,12}]//MatrixForm
 rddcnow=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_now_nox.h5",250]; (*Check with no \[Omega]*)
 rddc=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_nox.h5",250]; (*Check with nonzero \[Omega]*)
 Grid[{rddcnow[[All,1]],rddcnow[[All,2]]},Frame-> All] (*Grid of eigenvalues and pass method; True=> Passes naturally, False=> Passes conditionally. If test in .wlt fails totally, then this chart is meaningless*)
 Grid[{rddc[[All,1]],rddc[[All,2]]},Frame-> All]
-
-
-
-
-
-
