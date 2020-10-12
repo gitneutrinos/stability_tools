@@ -138,11 +138,7 @@ Return[S2b]
 (*Preliminaries for Dispersion Checks*)
 
 
-IdisShifts[data_,cos\[Theta]_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],mu,mubar,Vmatter},
-
-(* neutrino number densities disguised as SI potentials *)
-mu=munits Diagonal[ndensities[data,"xflavor"->xflavor][[1]] ];
-mubar= munits Diagonal[ndensities[data,"xflavor"->xflavor][[2]] ];
+IdisShifts[data_,cos\[Theta]_,mu_,mubar_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],Vmatter},
 
 (*Defined in Gail's Blue equation 30 and 31 *)
 \[Phi]0 = Sum[(mu[[i]]-mubar[[i]])         ,{i,1,Length[cos\[Theta]]}];
@@ -161,7 +157,11 @@ Return[{\[CapitalOmega]p,kp,\[Omega]}];
 
 IdisBottom[data_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{cos\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],mu,mubar,Vmatter,\[CapitalOmega]minuskpcos\[Theta],result,bottom},
 cos\[Theta]=data["mids"];
-{\[CapitalOmega]p,kp,\[Omega]}=IdisShifts[data,cos\[Theta],\[CapitalOmega],k,En,xflavor];
+(* neutrino number densities disguised as SI potentials *)
+mu=munits Diagonal[ndensities[data,"xflavor"->xflavor][[1]] ];
+mubar= munits Diagonal[ndensities[data,"xflavor"->xflavor][[2]] ];
+
+{\[CapitalOmega]p,kp,\[Omega]}=IdisShifts[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,xflavor];
 bottom=\[CapitalOmega]p-kp cos\[Theta];
 Return[bottom];
 ]
@@ -171,12 +171,13 @@ Return[bottom];
 Idis[data_,\[CapitalOmega]_,k_,En_,n_,xflavor_]:=Module[{cos\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],mu,mubar,Vmatter,\[CapitalOmega]minuskpcos\[Theta],result},
 
 cos\[Theta]=data["mids"];
-{\[CapitalOmega]p,kp,\[Omega]}=IdisShifts[data,cos\[Theta],\[CapitalOmega],k,En,xflavor];
-\[CapitalOmega]minuskpcos\[Theta]=IdisBottom[data,\[CapitalOmega],k,En,xflavor];
 
 (* neutrino number densities disguised as SI potentials *)
-mu=Reap[Do[Sow[munits ndensities[data,"xflavor"->xflavor][[1,i,i]]],{i,1,Length[cos\[Theta]]}]][[2,1]];
-mubar=Reap[Do[Sow[munits ndensities[data,"xflavor"->xflavor][[2,i,i]]],{i,1,Length[cos\[Theta]]}]][[2,1]];
+mu=munits Diagonal[ndensities[data,"xflavor"->xflavor][[1]] ];
+mubar= munits Diagonal[ndensities[data,"xflavor"->xflavor][[2]] ];
+
+{\[CapitalOmega]p,kp,\[Omega]}=IdisShifts[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,xflavor];
+\[CapitalOmega]minuskpcos\[Theta]=IdisBottom[data,\[CapitalOmega],k,En,xflavor];
 
 (* make sure the denominator is not tiny *)
 (*On[Assert];
@@ -320,12 +321,6 @@ rddcnow=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_
 rddc=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_nox.h5",dispersionCheckRi]; (*Check with nonzero \[Omega]*)
 Grid[{rddcnow[[All,1]],rddcnow[[All,2]]},Frame-> All] (*Grid of eigenvalues and pass method; True=> Passes naturally, False=> Passes conditionally. If test in .wlt fails totally, then this chart is meaningless*)
 Grid[{rddc[[All,1]],rddc[[All,2]]},Frame-> All]
-
-
-
-
-
-
 
 
 
