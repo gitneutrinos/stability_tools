@@ -155,11 +155,12 @@ Return[{\[CapitalOmega]p,kp,\[Omega]}];
 
 
 
-IdisBottom[data_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{cos\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],mu,mubar,Vmatter,\[CapitalOmega]minuskpcos\[Theta],result,bottom},
+IdisBottom[data_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{ndens,cos\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],mu,mubar,Vmatter,\[CapitalOmega]minuskpcos\[Theta],result,bottom},
 cos\[Theta]=data["mids"];
 (* neutrino number densities disguised as SI potentials *)
-mu=munits Diagonal[ndensities[data,"xflavor"->xflavor][[1]] ];
-mubar= munits Diagonal[ndensities[data,"xflavor"->xflavor][[2]] ];
+ndens = ndensities[data,"xflavor"->xflavor];
+mu=munits Diagonal[ndens[[1]] ];
+mubar= munits Diagonal[ndens[[2]] ];
 
 {\[CapitalOmega]p,kp,\[Omega]}=IdisShifts[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,xflavor];
 bottom=\[CapitalOmega]p-kp cos\[Theta];
@@ -168,13 +169,14 @@ Return[bottom];
 
 
 (*Calculates and Returns the nth I for the dispersion check.  Returns a single value of In*)
-Idis[data_,\[CapitalOmega]_,k_,En_,n_,xflavor_]:=Module[{cos\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],mu,mubar,Vmatter,\[CapitalOmega]minuskpcos\[Theta],result},
+Idis[data_,\[CapitalOmega]_,k_,En_,n_,xflavor_]:=Module[{ndens,cos\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],mu,mubar,Vmatter,\[CapitalOmega]minuskpcos\[Theta],result},
 
 cos\[Theta]=data["mids"];
 
 (* neutrino number densities disguised as SI potentials *)
-mu=munits Diagonal[ndensities[data,"xflavor"->xflavor][[1]] ];
-mubar= munits Diagonal[ndensities[data,"xflavor"->xflavor][[2]] ];
+ndens = ndensities[data,"xflavor"->xflavor];
+mu=munits Diagonal[ndens[[1]] ];
+mubar= munits Diagonal[ndens[[2]] ];
 
 {\[CapitalOmega]p,kp,\[Omega]}=IdisShifts[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,xflavor];
 \[CapitalOmega]minuskpcos\[Theta]=IdisBottom[data,\[CapitalOmega],k,En,xflavor];
@@ -321,6 +323,9 @@ rddcnow=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_
 rddc=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_nox.h5",dispersionCheckRi]; (*Check with nonzero \[Omega]*)
 Grid[{rddcnow[[All,1]],rddcnow[[All,2]]},Frame-> All] (*Grid of eigenvalues and pass method; True=> Passes naturally, False=> Passes conditionally. If test in .wlt fails totally, then this chart is meaningless*)
 Grid[{rddc[[All,1]],rddc[[All,2]]},Frame-> All]
+
+
+
 
 
 
