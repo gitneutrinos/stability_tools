@@ -250,7 +250,7 @@ Return[Transpose@{dischecks,mindiff[[1;;2]],test\[CapitalOmega]s[[1;;2]]}];
 
 (*Calls realdatadispcalc and performs the logic for the check on whether the disp checks are passing*)
 (*Returns a list of true/false for whether the test passed*)
-realdatadispersioncheck[infile_,hdffile_,ri_]:=Module[{dispouts,checks},
+realdatadispersioncheck[infile_,hdffile_,ri_]:=Module[{dispouts,checks,ans},
 dispouts=realdatadispcalc[infile,hdffile,ri];
 (*Check each pair, returns true if the disp passes OR the percent difference is very small.*)
 (*This collects whether or not the check should pass, conditionally or naturally*)
@@ -321,6 +321,9 @@ rddcnow=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_
 rddc=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_nox.h5",dispersionCheckRi]; (*Check with nonzero \[Omega]*)
 Grid[{rddcnow[[All,1]],rddcnow[[All,2]]},Frame-> All] (*Grid of eigenvalues and pass method; True=> Passes naturally, False=> Passes conditionally. If test in .wlt fails totally, then this chart is meaningless*)
 Grid[{rddc[[All,1]],rddc[[All,2]]},Frame-> All]
+
+
+
 
 
 
