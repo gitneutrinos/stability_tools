@@ -138,7 +138,7 @@ Return[S2b]
 (*Preliminaries for Dispersion Checks*)
 
 
-Idis\[Phi]s[data_,xflavor_]:=Module[{cos\[Theta],\[Phi]0,\[Phi]1,mu,mubar},
+IdisShifts[data_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{cos\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],mu,mubar,Vmatter},
 cos\[Theta]=data["mids"];
 
 (* neutrino number densities disguised as SI potentials *)
@@ -149,12 +149,6 @@ mubar= munits Diagonal[ndensities[data,"xflavor"->xflavor][[2]] ];
 \[Phi]0 = Sum[(mu[[i]]-mubar[[i]])         ,{i,1,Length[cos\[Theta]]}];
 \[Phi]1 = Sum[(mu[[i]]-mubar[[i]])cos\[Theta][[i]],{i,1,Length[cos\[Theta]]}];
 
-Return[{\[Phi]0,\[Phi]1}];
-]
-
-
-IdisShifts[data_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{cos\[Theta],\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],mu,mubar,Vmatter},
-{\[Phi]0,\[Phi]1}=Idis\[Phi]s[data,xflavor];
 (* "Shifted" Eigenvalue and k*)
 Vmatter = munits data["Yes"] data["matters"]/mp;
 \[CapitalOmega]p = N[\[CapitalOmega]-Vmatter-\[Phi]0];
@@ -327,6 +321,9 @@ rddcnow=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_
 rddc=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_nox.h5",dispersionCheckRi]; (*Check with nonzero \[Omega]*)
 Grid[{rddcnow[[All,1]],rddcnow[[All,2]]},Frame-> All] (*Grid of eigenvalues and pass method; True=> Passes naturally, False=> Passes conditionally. If test in .wlt fails totally, then this chart is meaningless*)
 Grid[{rddc[[All,1]],rddc[[All,2]]},Frame-> All]
+
+
+
 
 
 
