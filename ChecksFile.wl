@@ -179,7 +179,7 @@ Idis[data_,\[CapitalOmega]_,k_,En_,n_,xflavor_]:=Module[{cos\[Theta],\[Phi]0,\[P
 
 cos\[Theta]=data["mids"];
 {\[CapitalOmega]p,kp,\[Omega]}=IdisShifts[data,\[CapitalOmega],k,En,xflavor];
-\[CapitalOmega]minuskpcos\[Theta]=Reap[Do[Sow[IdisBottom[data,\[CapitalOmega],k,En,xflavor][[i]]],{i,1,Length[cos\[Theta]]}]][[2,1]];
+\[CapitalOmega]minuskpcos\[Theta]=IdisBottom[data,\[CapitalOmega],k,En,xflavor];
 
 (* neutrino number densities disguised as SI potentials *)
 mu=Reap[Do[Sow[munits ndensities[data,"xflavor"->xflavor][[1,i,i]]],{i,1,Length[cos\[Theta]]}]][[2,1]];
