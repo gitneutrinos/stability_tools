@@ -237,7 +237,7 @@ Print[ins["testE"]];
 *)
 (*Returns a list of ordered pairs of the maximum component of each of the {neutrino, antineutrino} eigenvectors*)
 bottoms=Table[IdisBottom[datasr,test\[CapitalOmega]s[[i]],testk,ins["testE"],ops["xflavor"]],{i,1,Length[test\[CapitalOmega]s]}]; (*Values of \[CapitalOmega]p-kpcos\[Theta] for each eigenvalue, and each angle.*)
-sumbottoms=Table[2 test\[CapitalOmega]s[[i]]- IdisBottom[datasr,test\[CapitalOmega]s[[i]],testk,ins["testE"],ops["xflavor"]],{i,1,Length[test\[CapitalOmega]s]}]; (*value of \[CapitalOmega]p+kpcos[\[Theta]] done via 2\[CapitalOmega]p-(\[CapitalOmega]ps-kpcos\[Theta])*)
+sumbottoms=Table[2 test\[CapitalOmega]s[[i]]- bottoms[[i]],{i,1,Length[test\[CapitalOmega]s]}]; (*value of \[CapitalOmega]p+kpcos[\[Theta]] done via 2\[CapitalOmega]p-(\[CapitalOmega]ps-kpcos\[Theta])*)
 percentdiff=Table[bottoms[[i]]/sumbottoms[[i]],{i,1,Length[test\[CapitalOmega]s]}]; (*percent difference; (\[CapitalOmega]p-kpcos\[Theta])/(\[CapitalOmega]p+kpcos\[Theta]) for each \[CapitalOmega]p and angle*)
 mindiff=Table[Min[percentdiff[[i]]],{i,1,Length[percentdiff[[1]]]}]; (*For each eigenvalue, takes the minimum percent difference across the 10 angular bins*)
 (*Performs a dispersion checks for each of the 20 eigenvalues, which should be 0. Collects all of the dispchecks*)
@@ -321,6 +321,9 @@ rddcnow=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_
 rddc=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_nox.h5",dispersionCheckRi]; (*Check with nonzero \[Omega]*)
 Grid[{rddcnow[[All,1]],rddcnow[[All,2]]},Frame-> All] (*Grid of eigenvalues and pass method; True=> Passes naturally, False=> Passes conditionally. If test in .wlt fails totally, then this chart is meaningless*)
 Grid[{rddc[[All,1]],rddc[[All,2]]},Frame-> All]
+
+
+
 
 
 
