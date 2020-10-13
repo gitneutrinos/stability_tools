@@ -198,9 +198,9 @@ Ab[i]={{0,ToExpression[StringJoin["Ab",name12,ToString[i]]]},{ToExpression[Strin
 Hm={{Ve,0.},{0.,0.}};
 Hvac=hi{{-\[Omega]/2,0.},{0.,\[Omega]/2}};
 m=munits ndensities[data,"xflavor"-> OptionValue["xflavor"]];
-\[Mu]=m[[1]];
-\[Mu]b=m[[2]];
-\[Mu]x=m[[3]];
+\[Mu]=m[[1]]-m[[3]]; (*With x flavor, \[Mu]\[Rule] (Subscript[\[Mu], e]-Subscript[\[Mu], x])*)
+\[Mu]b=m[[2]]-m[[3]]; (*Same for anti-neutrinos*)
+
 Do[
 Hsi[j]=Sum[\[Mu][[k,j]]\[Rho][k](1-Cos[\[Theta][[j]]]Cos[\[Theta][[k]]]),{k,1,n}]+Sum[-\[Mu]b[[k,j]]\[Rho]b[k](1-Cos[\[Theta][[j]]]Cos[\[Theta][[k]]]),{k,1,n}];
 ,{j,1,n}];
