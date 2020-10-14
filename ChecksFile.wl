@@ -298,7 +298,7 @@ Return[ellipsefiterrors[moms[[1]],moms[[2]]//Abs,moms[[3]]]]
 (*Imports real CSSN data and then calls ellipse fit errors for the tests file*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Test Report*)
 
 
