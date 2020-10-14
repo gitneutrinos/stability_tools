@@ -304,7 +304,8 @@ Return[ellipsefiterrors[moms[[1]],moms[[2]]//Abs,moms[[3]]]]
 
 (* Generate the data for the dispersion check*)
 dispersionCheckRi=250;
-outevs = kAdapt[inpath <> "112Msun_100ms_DO.h5", dispersionCheckRi, dispersionCheckRi, Infinity, -1., 2, "xflavor" -> False];
+(*Note, I changed this to take 2 ksteps, as otherwise there's an error from the way the formula for the log spacing is calculated (1/0 error)*)
+outevs = kAdapt[inpath <> "112Msun_100ms_DO.h5", dispersionCheckRi, dispersionCheckRi, Infinity, -1., 2, "xflavor" -> False]; 
 exportkadapt[outevs,"112Msun_100ms_r200_r300_now_nox_test" ]
 outevs = kAdapt[inpath <> "112Msun_100ms_DO.h5", dispersionCheckRi, dispersionCheckRi, 20., -1., 2,"xflavor" -> False];
 exportkadapt[outevs,"112Msun_100ms_r200_r300_nox_test"]
