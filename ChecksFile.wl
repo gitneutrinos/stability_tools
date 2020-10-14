@@ -47,23 +47,23 @@ outfolder = outpath<>filename;
 
 
 (*Test on kAdapt. Comparing to old data (below). Generates a plot which should look similar (different exact k values tested*)
-OldData={{3.943351801881396`*^-20,0},{6.403122930332929`*^-20,0},{1.0397242072440586`*^-19,6.475185304707499`*^-23},{1.6882799828943322`*^-19,0},
-{2.7413897654617433`*^-19,1.2805250574405962`*^-19},{4.451404934206825`*^-19,2.149878747929582`*^-19},{7.228087788874928`*^-19,2.877126337699488`*^-19},
-{1.173680082038912`*^-18,3.418162146974343`*^-19},{1.9057944164639052`*^-18,3.5031848436345418`*^-19},{3.0945846431298252`*^-18,2.6089021800081186`*^-19},
-{5.02491456096483`*^-18,7.0760561598301275`*^-22},{8.159339380505439`*^-18,7.514263464205905`*^-22},{1.3248945493211215`*^-17,7.789552045160011`*^-22},
-{2.1513329510655564`*^-17,7.961350592910255`*^-22},{3.493284404190471`*^-17,8.068054415566711`*^-22},{5.672313958895247`*^-17,8.134119405806582`*^-22},
-{9.210571463829571`*^-17,8.174940729310282`*^-22},{1.4955911697601837`*^-16,8.200132465051396`*^-22},{2.4285061527926315`*^-16,8.215666277345043`*^-22},
-{3.9433518018813854`*^-16,8.225240355557669`*^-22},{-3.943351801881396`*^-20,1.2187126603736879`*^-22},{-1.0972610632535474`*^-19,3.174638959109932`*^-20},
-{-3.053194088231941`*^-19,5.832887809619426`*^-20},{-8.495693916972988`*^-19,1.851851392271892`*^-21},{-2.3639772986947037`*^-18,1.1000927210473065`*^-21},
-{-6.577907259087188`*^-18,9.189580059662592`*^-22},{-1.830341769061953`*^-17,8.575191336733617`*^-22},{-5.0930346987557535`*^-17,8.360035843249597`*^-22},
-{-1.4171671586789936`*^-16,8.283420407361107`*^-22},{-3.9433518018813854`*^-16,8.255976606410335`*^-22}};
+OldData={{3.943351801881396`*^-20,0},{6.403122930332929`*^-20,0},{1.0397242072440586`*^-19,6.475185304707499`*^-23},{1.6882799828943322`*^-19,0},{2.7413897654617433`*^-19,1.2805250574405962`*^-19},
+{4.451404934206825`*^-19,2.149878747929582`*^-19},{7.228087788874928`*^-19,2.877126337699488`*^-19},{1.173680082038912`*^-18,3.418162146974343`*^-19},{1.9057944164639052`*^-18,3.5031848436345418`*^-19},
+{3.0945846431298252`*^-18,2.6089021800081186`*^-19},{5.02491456096483`*^-18,7.0760561598301275`*^-22},{8.159339380505439`*^-18,7.514263464205905`*^-22},{1.3248945493211215`*^-17,7.789552045160011`*^-22},
+{2.1513329510655564`*^-17,7.961350592910255`*^-22},{3.493284404190471`*^-17,8.068054415566711`*^-22},{5.672313958895247`*^-17,8.134119405806582`*^-22},{9.210571463829571`*^-17,8.174940729310282`*^-22},
+{1.4955911697601837`*^-16,8.200132465051396`*^-22},{2.4285061527926315`*^-16,8.215666277345043`*^-22},{3.9433518018813854`*^-16,8.225240355557669`*^-22},{-3.943351801881396`*^-20,1.2187126603736879`*^-22},
+{-6.403122930332929`*^-20,7.691141781968944`*^-22},{-1.0397242072440586`*^-19,2.607457007692258`*^-20},{-1.6882799828943322`*^-19,5.587693993721637`*^-20},{-2.7413897654617433`*^-19,6.185616237315653`*^-20},
+{-4.451404934206825`*^-19,5.810765742537203`*^-20},{-7.228087788874928`*^-19,1.6819680254319893`*^-20},{-1.173680082038912`*^-18,1.1963573929349437`*^-21},{-1.9057944164639052`*^-18,1.1670703933149374`*^-21},
+{-3.0945846431298252`*^-18,1.0322217805945945`*^-21},{-5.02491456096483`*^-18,9.494282367992625`*^-22},{-8.159339380505439`*^-18,9.001232424984445`*^-22},{-1.3248945493211215`*^-17,8.704722289137772`*^-22},
+{-2.1513329510655564`*^-17,8.524818134192752`*^-22},{-3.493284404190471`*^-17,8.415032243261679`*^-22},{-5.672313958895247`*^-17,8.347797496201637`*^-22},{-9.210571463829571`*^-17,8.306532421569712`*^-22},
+{-1.4955911697601837`*^-16,8.281172359470442`*^-22},{-2.4285061527926315`*^-16,8.265574524679777`*^-22},{-3.9433518018813854`*^-16,8.255976606410335`*^-22}};
 kdebug=Module[{data,ri=200,testE=20,hi=-1,kvar,nstep=20},
 file=inpath<>"1D_withV_withPairBrems_DO.h5";
 (*SCalcScale[ImportData[inpath<>file<>".h5"],ri,testE,hi,0][[3]]//MatrixForm*)
 (*buildkGrid[ImportData[inpath<>file<>".h5"],ri,testE,hi,40]*)
 kAdapt[file,ri,ri,testE,hi,nstep,"xflavor"-> False]
 ];
-debugdata=Transpose@{kdebug[[1,All,3]],Table[kdebug[[1,All,4,1]][[i]]//Im//Max,{i,1,30}]};
+debugdata=Transpose@{kdebug[[1,All,3]],Table[kdebug[[1,All,4,1]][[i]]//Im//Max,{i,1,40}]};
 plot1=ListLogPlot[{debugdata},ImageSize-> Scaled[0.25]]; (*Current data as calculated by kadapt*)
 plot2=ListLogPlot[{OldData},ImageSize-> Scaled[0.25]]; (*Old reference data set*)
 diffplot=ListPlot[debugdata[[All,2]]-OldData[[All,2]],Joined-> True,ImageSize->Scaled[0.25]]; (*Plot of the difference between OldData and current data*)
@@ -257,7 +257,7 @@ dispouts=realdatadispcalc[infile,hdffile,ri];
 (*Check each pair, returns true if the disp passes OR the percent difference is very small.*)
 (*This collects whether or not the check should pass, conditionally or naturally*)
 checks=Table[dispouts[[j,1]]<10^(-3) \[Or] dispouts[[j,2]]< 10^(-10), {j,1,Length[dispouts]}];
-
+Print[checks];
 ans=Apply[And,checks];	(*Checks whether all elements of checks are true*)
 Return[ans];
 ];
@@ -311,18 +311,19 @@ Return[ellipsefiterrors[moms[[1]],moms[[2]]//Abs,moms[[3]]]]
 (* Generate the data for the dispersion check*)
 dispersionCheckRi=250;
 outevs = kAdapt[inpath <> "112Msun_100ms_DO.h5", dispersionCheckRi, dispersionCheckRi, Infinity, -1., 1, "xflavor" -> False];
-exportkadapt[outevs,"112Msun_100ms_r200_r300_now_nox" ]
+exportkadapt[outevs,"112Msun_100ms_r200_r300_now_nox_test" ]
 outevs = kAdapt[inpath <> "112Msun_100ms_DO.h5", dispersionCheckRi, dispersionCheckRi, 20., -1., 1,"xflavor" -> False];
-exportkadapt[outevs,"112Msun_100ms_r200_r300_nox"]
+exportkadapt[outevs,"112Msun_100ms_r200_r300_nox_test"]
 
 
 Timing[tr=TestReport["testfiles.wlt"];]
 Show[rowplot]
 Table[tr["TestResults"][i],{i,1,11}]//MatrixForm
-rddcnow=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_now_nox.h5",dispersionCheckRi]; (*Check with no \[Omega]*)
-rddc=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_nox.h5",dispersionCheckRi]; (*Check with nonzero \[Omega]*)
+rddcnow=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_now_nox_test.h5",dispersionCheckRi]; (*Check with no \[Omega]*)
+rddc=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_nox_test.h5",dispersionCheckRi]; (*Check with nonzero \[Omega]*)
 Grid[{rddcnow[[All,1]],rddcnow[[All,2]]},Frame-> All] (*Grid of eigenvalues and pass method; True=> Passes naturally, False=> Passes conditionally. If test in .wlt fails totally, then this chart is meaningless*)
 Grid[{rddc[[All,1]],rddc[[All,2]]},Frame-> All]
+
 
 
 
