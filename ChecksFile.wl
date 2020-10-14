@@ -111,9 +111,9 @@ cma[k_,\[Mu]ch_,a_,w_]:=cm[k,\[Mu]ch,w]/.{rb-> 0.,l-> 0.,r-> (1+a),lb-> -(1-a)};
 
 realdatato4beam[datasr_]:=Module[{S2ba,S2b,data2b,nulefts,nublefts,nurights,nubrights},
 nulefts=Sum[Sum[Sum[datasr["Endensity"][[1,f,dt,dp]]/ (h (datasr["freqmid"][[f]])) ,{f,1,Length[datasr["freqs"]]-1}],{dp,1,Length[datasr["phis"]]-1}],{dt,1,5}];
-nurights=Sum[Sum[Sum[datasr["Endensity"][[1,f,dt,dp]]/ (h (datasr["freqmid"][[f]])) ,{f,1,Length[datasr["freqs"]]-1}],{dp,1,Length[datasr["phis"]]-1}],{dt,6,11}];
-nublefts=Sum[Sum[Sum[datasr["Endensity"][[1,f,dt,dp]]/ (h (datasr["freqmid"][[f]])) ,{f,1,Length[datasr["freqs"]]-1}],{dp,1,Length[datasr["phis"]]-1}],{dt,1,5}];
-nubrights=Sum[Sum[Sum[datasr["Endensity"][[1,f,dt,dp]]/ (h (datasr["freqmid"][[f]])) ,{f,1,Length[datasr["freqs"]]-1}],{dp,1,Length[datasr["phis"]]-1}],{dt,6,11}];
+nurights=Sum[Sum[Sum[datasr["Endensity"][[1,f,dt,dp]]/ (h (datasr["freqmid"][[f]])) ,{f,1,Length[datasr["freqs"]]-1}],{dp,1,Length[datasr["phis"]]-1}],{dt,6,10}];
+nublefts=Sum[Sum[Sum[datasr["Endensity"][[2,f,dt,dp]]/ (h (datasr["freqmid"][[f]])) ,{f,1,Length[datasr["freqs"]]-1}],{dp,1,Length[datasr["phis"]]-1}],{dt,1,5}];
+nubrights=Sum[Sum[Sum[datasr["Endensity"][[2,f,dt,dp]]/ (h (datasr["freqmid"][[f]])) ,{f,1,Length[datasr["freqs"]]-1}],{dp,1,Length[datasr["phis"]]-1}],{dt,6,10}];
 data2b=
  Association[
 "muss"-> {-1,0,1},
@@ -215,6 +215,17 @@ Return[dispersionCheck[data,cos\[Theta],\[CapitalOmega],k,En,xflavor]]
 ];
 
 
+testreal4bdispersionCheck[k_,En_,xflavor_]:=Module[{cos\[Theta],I0,I1,I2,\[CapitalOmega],data,equations,datasr,rebindata},
+data = ImportData[inpath <> "112Msun_100ms_DO.h5"];
+datasr=SelectSingleRadius[data,250];
+rebindata=realdatato4beam[datasr];
+cos\[Theta]=rebindata["mids"];
+equations = getEquations[rebindata,En,-1.,k,"xflavor"->xflavor];
+\[CapitalOmega]=evscale[k,stabilityMatrix[rebindata,equations,"xflavor"->xflavor],kx,"output"-> "Eigenvalues"][[1]];
+Return[dispersionCheck[rebindata,cos\[Theta],\[CapitalOmega],k,En,xflavor]]
+];
+
+
 (* ::Subsection::Closed:: *)
 (*Real data dispersion check*)
 
@@ -298,7 +309,7 @@ Return[ellipsefiterrors[moms[[1]],moms[[2]]//Abs,moms[[3]]]]
 (*Imports real CSSN data and then calls ellipse fit errors for the tests file*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Test Report*)
 
 
@@ -313,7 +324,7 @@ exportkadapt[outevs,"112Msun_100ms_r200_r300_nox_test"]
 
 Timing[tr=TestReport["testfiles.wlt"];]
 Show[rowplot]
-Table[tr["TestResults"][i],{i,1,11}]//MatrixForm
+Table[tr["TestResults"][i],{i,1,13}]//MatrixForm
 
 
 
