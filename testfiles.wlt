@@ -90,4 +90,20 @@ VerificationTest[(* 11 *)
 	TestID-> "Ellipse Fitting: Check ellipse fit error in moments for CSSN data"
 ]
 
+VerificationTest[(* 12 *)
+	CompoundExpression[Set[ncheckdata, SelectSingleRadius[ImportData[StringJoin[inpath, "112Msun_100ms_DO.h5"]], 250]], Greater[siPotential[ncheckdata, Rule["xflavor", True]], siPotential[ncheckdata, Rule["xflavor", False]]]]
+	,
+	True	
+	,
+	TestID-> "Check that the total number of neutrinos+antineutrinos increases with xflavor on"
+]
+
+VerificationTest[(* 13 *)
+	Equal[Plus[Plus[Tr[Part[ndensities[ncheckdata, Rule["xflavor", True]], 1]], Tr[Part[ndensities[ncheckdata, Rule["xflavor", True]], 3]]], Times[-1, Plus[Tr[Part[ndensities[ncheckdata, Rule["xflavor", True]], 2]], Tr[Part[ndensities[ncheckdata, Rule["xflavor", True]], 3]]]]], Plus[Plus[Tr[Part[ndensities[ncheckdata, Rule["xflavor", False]], 1]], Tr[Part[ndensities[ncheckdata, Rule["xflavor", False]], 3]]], Times[-1, Plus[Tr[Part[ndensities[ncheckdata, Rule["xflavor", False]], 2]], Tr[Part[ndensities[ncheckdata, Rule["xflavor", False]], 3]]]]]]
+	,
+	True	
+	,
+	TestID-> "Check that the net lepton current is not changed with xflavor on"
+]
+
 EndTestSection[]
