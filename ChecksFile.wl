@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*User Initialization*)
 
 
@@ -42,7 +42,7 @@ outfolder = outpath<>filename;
 
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Regression test for growth rate over a range of wavenumbers. The new results (blue) should match the old results (orange).*)
 
 
@@ -73,7 +73,7 @@ rowplot=GraphicsRow[{plot1,plot2,diffplot},Frame-> True];
 
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Two-beam test. Initialize data with neutrinos moving right and antineutrinos moving left. The real and imaginary parts of the eigenvalues should match the theoretical results from Chakraborty+2016 (Self-induced neutrino flavor conversion without flavor mixing)*)
 
 
@@ -105,7 +105,7 @@ cm[k_,\[Mu]ch_,w_]:=DiagonalMatrix[{w+k,-w-k,w-k,-w+k}]+2 \[Mu]ch{{l+lb,-lb,-l,0
 cma[k_,\[Mu]ch_,a_,w_]:=cm[k,\[Mu]ch,w]/.{rb-> 0.,l-> 0.,r-> (1+a),lb-> -(1-a)};
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Real Data 4 beam 2 angle binning*)
 
 
@@ -134,7 +134,7 @@ Return[S2b]
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Preliminaries for Dispersion Checks*)
 
 
@@ -215,7 +215,7 @@ Return[dispersionCheck[data,cos\[Theta],\[CapitalOmega],k,En,xflavor]]
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Real data dispersion check*)
 
 
@@ -252,37 +252,31 @@ Return[Transpose@{dischecks,mindiff[[1;;2]],test\[CapitalOmega]s[[1;;2]]}];
 
 (*Calls realdatadispcalc and performs the logic for the check on whether the disp checks are passing*)
 (*Returns a list of true/false for whether the test passed*)
-realdatadispersioncheck[infile_,hdffile_,ri_]:=Module[{dispouts,checks,ans},
+realdatadispersioncheck[infile_,hdffile_,ri_]:=Module[{dispouts,checks,ans,dispcond},
 dispouts=realdatadispcalc[infile,hdffile,ri];
 (*Check each pair, returns true if the disp passes OR the percent difference is very small.*)
 (*This collects whether or not the check should pass, conditionally or naturally*)
 checks=Table[dispouts[[j,1]]<10^(-3) \[Or] dispouts[[j,2]]< 10^(-10), {j,1,Length[dispouts]}];
-Print[checks];
 ans=Apply[And,checks];	(*Checks whether all elements of checks are true*)
-Return[ans];
-];
-
-
-(*Returns a list of true/false. True=actually passed/failed. False=passed artificially because acknowledging denominator subtractive cancellation*)
-realdatadispersioncheckcondition[infile_,hdffile_,ri_]:=Module[{dispouts,dispcond},
-dispouts=realdatadispcalc[infile,hdffile,ri];
+(*Discond is using for determining the condition by which the check passes.*)
 dispcond=Reap[
 	Do[
 		Sow[{dispouts[[j,3]],
-			Which[dispouts[[j,1]]<10^-3, True,
-				dispouts[[j,2]]< 10^-10 \[And] dispouts[[j,1]]>10^-3,False
+			Which[dispouts[[j,1]]<10^-3, "Natural Pass",
+				dispouts[[j,2]]< 10^-10 \[And] dispouts[[j,1]]>10^-3,"Conditional Pass"
 				](*Close Which*)
 			} (*Close ordered pair in sow*)
 		] (*Close sow*)
 	,{j,1,Length[dispouts]}
 	] 
 ][[2,1]];
-
-Return[dispcond]
+(*Print a grid with first row of eignevalues and second row pass conditions.*)
+Grid[{{hdffile,SpanFromLeft},dispcond[[All,1]],dispcond[[All,2]]},Frame-> All]//Print;
+Return[ans];
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Check that ellipse construction results in the correct moments given hand-chosen moments*)
 
 
@@ -304,26 +298,21 @@ Return[ellipsefiterrors[moms[[1]],moms[[2]]//Abs,moms[[3]]]]
 (*Imports real CSSN data and then calls ellipse fit errors for the tests file*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Test Report*)
 
 
 (* Generate the data for the dispersion check*)
 dispersionCheckRi=250;
-outevs = kAdapt[inpath <> "112Msun_100ms_DO.h5", dispersionCheckRi, dispersionCheckRi, Infinity, -1., 1, "xflavor" -> False];
+outevs = kAdapt[inpath <> "112Msun_100ms_DO.h5", dispersionCheckRi, dispersionCheckRi, Infinity, -1., 2, "xflavor" -> False];
 exportkadapt[outevs,"112Msun_100ms_r200_r300_now_nox_test" ]
-outevs = kAdapt[inpath <> "112Msun_100ms_DO.h5", dispersionCheckRi, dispersionCheckRi, 20., -1., 1,"xflavor" -> False];
+outevs = kAdapt[inpath <> "112Msun_100ms_DO.h5", dispersionCheckRi, dispersionCheckRi, 20., -1., 2,"xflavor" -> False];
 exportkadapt[outevs,"112Msun_100ms_r200_r300_nox_test"]
 
 
 Timing[tr=TestReport["testfiles.wlt"];]
 Show[rowplot]
 Table[tr["TestResults"][i],{i,1,11}]//MatrixForm
-rddcnow=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_now_nox_test.h5",dispersionCheckRi]; (*Check with no \[Omega]*)
-rddc=realdatadispersioncheckcondition[inpath<>"112Msun_100ms_DO.h5","112Msun_100ms_r200_r300_nox_test.h5",dispersionCheckRi]; (*Check with nonzero \[Omega]*)
-Grid[{rddcnow[[All,1]],rddcnow[[All,2]]},Frame-> All] (*Grid of eigenvalues and pass method; True=> Passes naturally, False=> Passes conditionally. If test in .wlt fails totally, then this chart is meaningless*)
-Grid[{rddc[[All,1]],rddc[[All,2]]},Frame-> All]
-
 
 
 
