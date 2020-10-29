@@ -84,7 +84,7 @@ munits=Sqrt[2] (Gf/Geverg^2 )(hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
 Begin["`Private`"]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Import Functions*)
 
 
@@ -132,7 +132,7 @@ ImportCalcInputs[infile_]:=Association[
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Neutrino Densities and Potentials*)
 
 
@@ -160,16 +160,17 @@ tot=(Tr[m[[1]]]+Tr[m[[2]]]+2 Tr[m[[3]]]);
 Return[tot]
 ]
 (*This function finds the asymetry factor between the electron (anti)neutrinos and the x (anti)neutrinos *)
+(*This is likely not needed and will need to be removed.*)
 Options[Bfactor]={"xflavor"-> True};
 Bfactor[data_,OptionsPattern[]]:=Module[{B,Bb,m},
 m=munits ndensities[data,"xflavor"-> OptionValue["xflavor"]];
-B=Tr[m[[3]]]/Tr[m[[1]]];
-Bb=Tr[m[[3]]]/Tr[m[[2]]];
-Return[{B,Bb}];
+B=0.(*Tr[m[[3]]]/Tr[m[[1]]]*);
+Bb=0.(*Tr[m[[3]]]/Tr[m[[2]]]*);
+Return[{B,Bb}]
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Stability Matrix Functions*)
 
 
@@ -309,7 +310,7 @@ Return[as]
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*k Grid and Adaptive k Solver*)
 
 
