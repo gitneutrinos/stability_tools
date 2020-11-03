@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*User Initialization*)
 
 
@@ -73,7 +73,7 @@ rowplot=GraphicsRow[{plot1,plot2,diffplot},Frame-> True];
 
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Two-beam test. Initialize data with neutrinos moving right and antineutrinos moving left. The real and imaginary parts of the eigenvalues should match the theoretical results from Chakraborty+2016 (Self-induced neutrino flavor conversion without flavor mixing)*)
 
 
@@ -293,7 +293,25 @@ Return[ellipsefiterrors[moms[[1]],moms[[2]]//Abs,moms[[3]]]]
 (*Imports real CSSN data and then calls ellipse fit errors for the tests file*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
+(*xflavor tests*)
+
+
+ncheck[file_,ri_]:=Module[{ncheckdata},
+ncheckdata=SelectSingleRadius[ImportData[file],ri];
+Return[siPotential[ncheckdata,"xflavor"->True]>siPotential[ncheckdata,"xflavor"->False]];
+];
+
+netleptoncheck[file_,ri_]:=Module[{ncheckdata},
+ncheckdata=SelectSingleRadius[ImportData[file],ri];
+Return[((Tr[ndensities[ncheckdata,"xflavor"-> True][[1]]]+Tr[ndensities[ncheckdata,"xflavor"-> True][[3]]])
+-(Tr[ndensities[ncheckdata,"xflavor"-> True][[2]]]+Tr[ndensities[ncheckdata,"xflavor"-> True][[3]]]))==
+((Tr[ndensities[ncheckdata,"xflavor"->False][[1]]]+Tr[ndensities[ncheckdata,"xflavor"-> False][[3]]])
+-(Tr[ndensities[ncheckdata,"xflavor"-> False][[2]]]+Tr[ndensities[ncheckdata,"xflavor"-> False][[3]]]))]
+];
+
+
+(* ::Subsection::Closed:: *)
 (*Test Report*)
 
 
@@ -311,26 +329,6 @@ Table[tr["TestResults"][i],{i,1,13}]//MatrixForm
 
 
 
-
-
-Clear[testr,testr2];
-testr=kAdapt[inpath <> "112Msun_100ms_DO.h5", dispersionCheckRi, dispersionCheckRi, Infinity, -1., 2, "xflavor" -> True];
-testr2=kAdapt[inpath <> "112Msun_100ms_DO.h5", dispersionCheckRi, dispersionCheckRi, Infinity, -1., 2, "xflavor" -> False];
-
-
-testr[[1,1,4,1]]
-testr2[[1,1,4,1]]
-(*Both*)
-
-
-testr[[1,1,4,1]]
-testr2[[1,1,4,1]]
-(*B=Bb=0*)
-
-
-testr[[1,1,4,1]]
-testr2[[1,1,4,1]]
-(*B's but not \[Mu]s*)
 
 
 
