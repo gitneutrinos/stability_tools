@@ -118,7 +118,7 @@ cm[k_,\[Mu]ch_,w_]:=DiagonalMatrix[{w+k,-w-k,w-k,-w+k}]+2 \[Mu]ch{{l+lb,-lb,-l,0
 cma[k_,\[Mu]ch_,a_,w_]:=cm[k,\[Mu]ch,w]/.{rb-> 0.,l-> 0.,r-> (1+a),lb-> -(1-a)};
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Preliminaries for Dispersion Checks*)
 
 
@@ -312,6 +312,36 @@ Return[((Tr[ndensities[ncheckdata,"xflavor"-> True][[1]]]+Tr[ndensities[ncheckda
 
 
 (* ::Subsection::Closed:: *)
+(*Morinaga Plot*)
+
+
+Options[MorinagaTestPlot]={"xflavor"->False};
+MorinagaTestPlot[ri_,\[Omega]_,res_,OptionsPattern[]]:=Module[{data,datain,cos\[Theta],datainsr,costheta,datapos,evspos,evsposre,kspos,mu,mubar,\[Phi]0,\[Phi]1,Vmatter,\[CapitalOmega]p,kp,pts,ptsre,p1,g1},
+exportkadapt[kAdapt["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5",ri,ri,\[Omega],-1,res,"xflavor"-> OptionValue["xflavor"],"ktarget"->4.22 10^-19,"krange"-> {0.6,1.4}],"MorinagaTestPlot"];
+data=ImportCalcGridData["C:\\Users\\Sam\\Documents\\GitHub\\stability_tools\\MorinagaTestPlot.h5"];
+datain=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
+datainsr=SelectSingleRadius[datain,ri];
+cos\[Theta]=datain["mids"];
+datapos=Position[data["ri"],ri];
+evspos=Table[Extract[data["evs_Im"],datapos[[i]]]//Max,{i,1,Length[datapos]}];
+evsposre=Table[Extract[data["evs_Re"],datapos[[i]]]//Max,{i,1,Length[datapos]}];
+kspos=Table[Extract[data["k"],datapos[[i]]],{i,1,Length[datapos]}];
+mu=munits Diagonal[ndensities[datainsr,"xflavor"->False][[1]]];
+mubar=munits Diagonal[ndensities[datainsr,"xflavor"->False][[2]]];
+\[Phi]0= Sum[(mu[[i]]-mubar[[i]])         ,{i,1,Length[cos\[Theta]]}];
+\[Phi]1=Sum[(mu[[i]]-mubar[[i]])cos\[Theta][[i]],{i,1,Length[cos\[Theta]]}];
+Vmatter =munits datainsr["Yes"] datainsr["matters"]/mp;
+\[CapitalOmega]p =Table[ N[evsposre[[i]]-Vmatter-\[Phi]0],{i,1,Length[evspos]}];
+kp = Table[kspos[[i]]-\[Phi]1,{i,1,Length[kspos]}];
+
+pts=Transpose@{1/(hbar c 10^-4) kp,1/(hbar c 10^-4) evspos};
+ptsre=Transpose@{1/(hbar c 10^-4) kp,1/(hbar c 10^-4) \[CapitalOmega]p};
+p1=ListPlot[pts,PlotRange-> {{-30,60},All},Filling-> Bottom,AxesLabel-> {Style["k' (\!\(\*SuperscriptBox[\(10\), \(-4\)]\) \!\(\*SuperscriptBox[\(cm\), \(-1\)]\))",FontSize-> 14,Bold],Style["Im[\[CapitalOmega]] (\!\(\*SuperscriptBox[\(10\), \(-4\)]\) \!\(\*SuperscriptBox[\(cm\), \(-1\)]\))",FontSize-> 14,Bold]},ImageSize-> Scaled[0.45],Frame-> False,PlotStyle-> Black];
+Return[p1]
+];
+
+
+(* ::Subsection:: *)
 (*Test Report*)
 
 
@@ -331,4 +361,4 @@ Table[tr["TestResults"][i],{i,1,13}]//MatrixForm
 
 
 
-
+MorinagaTestPlot[264,Infinity,4000]
