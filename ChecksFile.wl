@@ -118,7 +118,7 @@ cm[k_,\[Mu]ch_,w_]:=DiagonalMatrix[{w+k,-w-k,w-k,-w+k}]+2 \[Mu]ch{{l+lb,-lb,-l,0
 cma[k_,\[Mu]ch_,a_,w_]:=cm[k,\[Mu]ch,w]/.{rb-> 0.,l-> 0.,r-> (1+a),lb-> -(1-a)};
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Preliminaries for Dispersion Checks*)
 
 
@@ -341,7 +341,7 @@ Return[p1]
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Test Report*)
 
 
