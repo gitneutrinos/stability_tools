@@ -83,6 +83,12 @@ VerificationTest[(* 10 *)
 VerificationTest[(* 11 *)
 	And[Less[Part[ellipsefitrealdatacheck[], 1], Power[10, -3]], Less[Part[ellipsefitrealdatacheck[], 2], Power[10, -3]], Less[Part[ellipsefitrealdatacheck[], 3], Power[10, -3]]]
 	,
+	True	
+]
+
+VerificationTest[(* 12 *)
+	And[Less[Part[ellipsefitrealdatacheck[], 1], Power[10, -3]], Less[Part[ellipsefitrealdatacheck[], 2], Power[10, -3]], Less[Part[ellipsefitrealdatacheck[], 3], Power[10, -3]]]
+	,
 	True
 	,
 	{FindRoot::jsing, FindRoot::jsing, FindRoot::jsing, General::stop}
@@ -90,16 +96,16 @@ VerificationTest[(* 11 *)
 	TestID-> "Ellipse Fitting: Check ellipse fit error in moments for CSSN data"
 ]
 
-VerificationTest[(* 12 *)
-	CompoundExpression[Set[ncheckdata, SelectSingleRadius[ImportData[StringJoin[inpath, "112Msun_100ms_DO.h5"]], 250]], Greater[siPotential[ncheckdata, Rule["xflavor", True]], siPotential[ncheckdata, Rule["xflavor", False]]]]
+VerificationTest[(* 13 *)
+	ncheck["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5", 250]
 	,
 	True	
 	,
 	TestID-> "Check that the total number of neutrinos+antineutrinos increases with xflavor on"
 ]
 
-VerificationTest[(* 13 *)
-	Equal[Plus[Plus[Tr[Part[ndensities[ncheckdata, Rule["xflavor", True]], 1]], Tr[Part[ndensities[ncheckdata, Rule["xflavor", True]], 3]]], Times[-1, Plus[Tr[Part[ndensities[ncheckdata, Rule["xflavor", True]], 2]], Tr[Part[ndensities[ncheckdata, Rule["xflavor", True]], 3]]]]], Plus[Plus[Tr[Part[ndensities[ncheckdata, Rule["xflavor", False]], 1]], Tr[Part[ndensities[ncheckdata, Rule["xflavor", False]], 3]]], Times[-1, Plus[Tr[Part[ndensities[ncheckdata, Rule["xflavor", False]], 2]], Tr[Part[ndensities[ncheckdata, Rule["xflavor", False]], 3]]]]]]
+VerificationTest[(* 14 *)
+	netleptoncheck["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5", 250]
 	,
 	True	
 	,
