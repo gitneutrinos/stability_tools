@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*User Initialization*)
 
 
@@ -73,7 +73,7 @@ rowplot=GraphicsRow[{plot1,plot2,diffplot},Frame-> True];
 
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Two-beam test. Initialize data with neutrinos moving right and antineutrinos moving left. The real and imaginary parts of the eigenvalues should match the theoretical results from Chakraborty+2016 (Self-induced neutrino flavor conversion without flavor mixing)*)
 
 
@@ -91,6 +91,19 @@ data2b=
  "munits"-> munits
 ]
 ];
+get2bdatax[]:=Module[{S2ba,S2b,data2b},
+data2b=
+ Association[
+"muss"-> {-1,0,1},
+"matters"-> 0.,
+"Yes"-> 0.,
+"mids"-> {-1,1},
+"freqs"->{0,2},
+"Endensity"->{{{{0., 0.},{(1+a)/(munits/( h)),0.}}},{{{(1-a)/(munits/(h)),0.},{0.,0.}}}},
+ "freqmid"-> {1},
+ "munits"-> munits
+]
+];
 (*builds a 4x4 matrix with the two beam data, then reduces the size of the matrix *)
 build2bMatrix[En_,k_]:=Module[{fakeEn,S2ba,S2b},
 S2ba=stabilityMatrix[get2bdata[],getEquations[get2bdata[],En,-1.,k,"xflavor"-> False],"xflavor"-> False];
@@ -103,35 +116,6 @@ Return[S2b]
 \[CapitalOmega]ch[k_,\[Mu]ch_,a_,\[Omega]_]:=Sort[{2 a \[Mu]ch+Sqrt[(2 a \[Mu]ch)^2+(\[Omega]+k)((\[Omega]+k)-4 \[Mu]ch)],2 a \[Mu]ch-Sqrt[(2 a \[Mu]ch)^2+(\[Omega]+k)((\[Omega]+k)-4 \[Mu]ch)]}];
 cm[k_,\[Mu]ch_,w_]:=DiagonalMatrix[{w+k,-w-k,w-k,-w+k}]+2 \[Mu]ch{{l+lb,-lb,-l,0.},{-r,r+rb,0,-rb},{-r,0,r+rb,-rb},{0.,-lb,-l,l+lb}};
 cma[k_,\[Mu]ch_,a_,w_]:=cm[k,\[Mu]ch,w]/.{rb-> 0.,l-> 0.,r-> (1+a),lb-> -(1-a)};
-
-
-(* ::Subsection::Closed:: *)
-(*Real Data 4 beam 2 angle binning*)
-
-
-realdatato4beam[datasr_]:=Module[{S2ba,S2b,data2b,nulefts,nublefts,nurights,nubrights},
-nulefts=Sum[Sum[Sum[datasr["Endensity"][[1,f,dt,dp]]/ (h (datasr["freqmid"][[f]])) ,{f,1,Length[datasr["freqs"]]-1}],{dp,1,Length[datasr["phis"]]-1}],{dt,1,5}];
-nurights=Sum[Sum[Sum[datasr["Endensity"][[1,f,dt,dp]]/ (h (datasr["freqmid"][[f]])) ,{f,1,Length[datasr["freqs"]]-1}],{dp,1,Length[datasr["phis"]]-1}],{dt,6,10}];
-nublefts=Sum[Sum[Sum[datasr["Endensity"][[2,f,dt,dp]]/ (h (datasr["freqmid"][[f]])) ,{f,1,Length[datasr["freqs"]]-1}],{dp,1,Length[datasr["phis"]]-1}],{dt,1,5}];
-nubrights=Sum[Sum[Sum[datasr["Endensity"][[2,f,dt,dp]]/ (h (datasr["freqmid"][[f]])) ,{f,1,Length[datasr["freqs"]]-1}],{dp,1,Length[datasr["phis"]]-1}],{dt,6,10}];
-data2b=
- Association[
-"muss"-> {-1,0,1},
-"matters"-> 0.,
-"Yes"-> 0.,
-"mids"-> {-1,1},
-"freqs"->{0,2},
-"Endensity"-> munits{{{{nulefts, 0.},{nurights,0.}}},{{{nublefts,0.},{nubrights,0.}}}},
- "freqmid"-> {1},
- "munits"-> munits
-]
-];
-
-buildreal4bMatrix[datasr_,En_,k_]:=Module[{fakeEn,S2ba,S2b},
-S2ba=stabilityMatrix[realdatato4beam,getEquations[realdatato4beam,En,-1.,k,"xflavor"-> False],"xflavor"-> False];
-S2b={{S2ba[[2,2]],S2ba[[2,3]]},{S2ba[[3,2]],S2ba[[3,3]]}};
-Return[S2b]
-];
 
 
 (* ::Subsection::Closed:: *)
@@ -309,7 +293,7 @@ Return[ellipsefiterrors[moms[[1]],moms[[2]]//Abs,moms[[3]]]]
 (*Imports real CSSN data and then calls ellipse fit errors for the tests file*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Test Report*)
 
 
@@ -323,8 +307,30 @@ exportkadapt[outevs,"112Msun_100ms_r200_r300_nox_test"]
 
 
 Timing[tr=TestReport["testfiles.wlt"];]
-Show[rowplot]
 Table[tr["TestResults"][i],{i,1,13}]//MatrixForm
+
+
+
+
+
+Clear[testr,testr2];
+testr=kAdapt[inpath <> "112Msun_100ms_DO.h5", dispersionCheckRi, dispersionCheckRi, Infinity, -1., 2, "xflavor" -> True];
+testr2=kAdapt[inpath <> "112Msun_100ms_DO.h5", dispersionCheckRi, dispersionCheckRi, Infinity, -1., 2, "xflavor" -> False];
+
+
+testr[[1,1,4,1]]
+testr2[[1,1,4,1]]
+(*Both*)
+
+
+testr[[1,1,4,1]]
+testr2[[1,1,4,1]]
+(*B=Bb=0*)
+
+
+testr[[1,1,4,1]]
+testr2[[1,1,4,1]]
+(*B's but not \[Mu]s*)
 
 
 
