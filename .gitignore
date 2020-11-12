@@ -13,3 +13,5 @@ RunStuffTrial3(xflavor).m
 RunStuffTrial3(xflavor).nb
 RunStuff Template.nb
 *.nb
+*.h5
+*.m
