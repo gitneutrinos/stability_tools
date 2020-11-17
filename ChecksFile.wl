@@ -122,6 +122,9 @@ cma[k_,\[Mu]ch_,a_,w_]:=cm[k,\[Mu]ch,w]/.{rb-> 0.,l-> 0.,r-> (1+a),lb-> -(1-a)};
 (*Preliminaries for Dispersion Checks*)
 
 
+SIpotential[ndens_]:=munits{Diagonal[ndens[[1]]],Diagonal[ndens[[2]]]}
+
+
 IdisShifts[data_,cos\[Theta]_,mu_,mubar_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],Vmatter},
 
 (*Defined in Gail's Blue equation 30 and 31 *)
@@ -143,9 +146,7 @@ IdisBottom[data_,cos\[Theta]_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{ndens,\
 
 (* neutrino number densities disguised as SI potentials *)
 ndens = ndensities[data,"xflavor"->xflavor];
-mu=munits Diagonal[ndens[[1]] ];
-mubar= munits Diagonal[ndens[[2]] ];
-
+{mu,mubar} = SIpotential[ndens];
 {\[CapitalOmega]p,kp,\[Omega]}=IdisShifts[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,xflavor];
 bottom=\[CapitalOmega]p-kp cos\[Theta];
 Return[bottom];
@@ -171,8 +172,7 @@ Return[result];
 dispersionCheck[data_,cos\[Theta]_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{I0,I1,I2,ndens,mu,mubar},
 (* neutrino number densities disguised as SI potentials *)
 ndens = ndensities[data,"xflavor"->xflavor];
-mu=munits Diagonal[ndens[[1]] ];
-mubar= munits Diagonal[ndens[[2]] ];
+{mu,mubar}=SIpotential[ndens];
 
 (*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
 I0 = Idis[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,0,xflavor];
@@ -315,8 +315,7 @@ datapos=Position[data["ri"],ri];
 evspos=Table[Extract[data["evs_Im"],datapos[[i]]]//Max,{i,1,Length[datapos]}];
 evsposre=Table[Extract[data["evs_Re"],datapos[[i]]]//Max,{i,1,Length[datapos]}];
 kspos=Table[Extract[data["k"],datapos[[i]]],{i,1,Length[datapos]}];
-mu=munits Diagonal[ndensities[datainsr,"xflavor"->False][[1]]];
-mubar=munits Diagonal[ndensities[datainsr,"xflavor"->False][[2]]];
+{mu,mubar}=SIpotential[ndensities[datainsr,"xflavor"->False]];
 \[Phi]0= Sum[(mu[[i]]-mubar[[i]])         ,{i,1,Length[cos\[Theta]]}];
 \[Phi]1=Sum[(mu[[i]]-mubar[[i]])cos\[Theta][[i]],{i,1,Length[cos\[Theta]]}];
 Vmatter =munits datainsr["Yes"] datainsr["matters"]/mp;
