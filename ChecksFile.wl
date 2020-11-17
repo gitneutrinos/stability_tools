@@ -138,9 +138,8 @@ IdisShifts[data_,cos\[Theta]_,mu_,mubar_,\[CapitalOmega]_,k_,En_,xflavor_]:=Modu
 Vmatter = munits data["Yes"] data["matters"]/mp;
 \[CapitalOmega]p = N[\[CapitalOmega]-Vmatter-\[Phi]0];
 kp = k-\[Phi]1;
-\[Omega]=\[Omega]EMev[En];
 
-Return[{\[CapitalOmega]p,kp,\[Omega]}];
+Return[{\[CapitalOmega]p,kp}];
 ]
 
 
@@ -150,7 +149,8 @@ IdisBottom[data_,cos\[Theta]_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{ndens,\
 (* neutrino number densities disguised as SI potentials *)
 ndens = ndensities[data,"xflavor"->xflavor];
 {mu,mubar} = SIpotential[ndens];
-{\[CapitalOmega]p,kp,\[Omega]}=IdisShifts[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,xflavor];
+\[Omega]=\[Omega]EMev[En];
+{\[CapitalOmega]p,kp}=IdisShifts[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,xflavor];
 bottom=\[CapitalOmega]p-kp cos\[Theta];
 Return[bottom];
 ]
@@ -159,7 +159,8 @@ Return[bottom];
 (*Calculates and Returns the nth I for the dispersion check.  Returns a single value of In*)
 Idis[data_,cos\[Theta]_,mu_,mubar_,\[CapitalOmega]_,k_,En_,n_,xflavor_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],Vmatter,\[CapitalOmega]minuskpcos\[Theta],result},
 
-{\[CapitalOmega]p,kp,\[Omega]}=IdisShifts[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,xflavor];
+\[Omega]=\[Omega]EMev[En];
+{\[CapitalOmega]p,kp}=IdisShifts[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,xflavor];
 \[CapitalOmega]minuskpcos\[Theta]=IdisBottom[data,cos\[Theta],\[CapitalOmega],k,En,xflavor];
 
 (* make sure the denominator is not tiny *)
