@@ -91,7 +91,7 @@ VerificationTest[(* 11 *)
 ]
 
 VerificationTest[(* 12 *)
-	ncheck["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5", 250]
+	ncheck[inpath<>"112Msun_100ms_DO.h5", 250]
 	,
 	True	
 	,
@@ -99,7 +99,7 @@ VerificationTest[(* 12 *)
 ]
 
 VerificationTest[(* 13 *)
-	netleptoncheck["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5", 250]
+	netleptoncheck[inpath<>"112Msun_100ms_DO.h5", 250]
 	,
 	True	
 	,
