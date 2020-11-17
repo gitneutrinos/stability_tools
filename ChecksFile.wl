@@ -199,17 +199,6 @@ Return[dispersionCheck[data,cos\[Theta],\[CapitalOmega],k,En,xflavor]]
 ];
 
 
-testreal4bdispersionCheck[k_,En_,xflavor_]:=Module[{cos\[Theta],I0,I1,I2,\[CapitalOmega],data,equations,datasr,rebindata},
-data = ImportData[inpath <> "112Msun_100ms_DO.h5"];
-datasr=SelectSingleRadius[data,250];
-rebindata=realdatato4beam[datasr];
-cos\[Theta]=rebindata["mids"];
-equations = getEquations[rebindata,En,-1.,k,"xflavor"->xflavor];
-\[CapitalOmega]=evscale[k,stabilityMatrix[rebindata,equations,"xflavor"->xflavor],kx,"output"-> "Eigenvalues"][[1]];
-Return[dispersionCheck[rebindata,cos\[Theta],\[CapitalOmega],k,En,xflavor]]
-];
-
-
 (* ::Subsection::Closed:: *)
 (*Real data dispersion check*)
 
