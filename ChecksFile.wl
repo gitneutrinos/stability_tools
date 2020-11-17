@@ -317,9 +317,9 @@ Return[((Tr[ndensities[ncheckdata,"xflavor"-> True][[1]]]+Tr[ndensities[ncheckda
 
 Options[MorinagaTestPlot]={"xflavor"->False};
 MorinagaTestPlot[ri_,\[Omega]_,res_,OptionsPattern[]]:=Module[{data,datain,cos\[Theta],datainsr,costheta,datapos,evspos,evsposre,kspos,mu,mubar,\[Phi]0,\[Phi]1,Vmatter,\[CapitalOmega]p,kp,pts,ptsre,p1,g1},
-exportkadapt[kAdapt["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5",ri,ri,\[Omega],-1,res,"xflavor"-> OptionValue["xflavor"],"ktarget"->4.22 10^-19,"krange"-> {0.6,1.4}],"MorinagaTestPlot"];
-data=ImportCalcGridData["C:\\Users\\Sam\\Documents\\GitHub\\stability_tools\\MorinagaTestPlot.h5"];
-datain=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"];
+exportkadapt[kAdapt[inpath<>"112Msun_100ms_DO.h5",ri,ri,\[Omega],-1,res,"xflavor"-> OptionValue["xflavor"],"ktarget"->4.22 10^-19,"krange"-> {0.6,1.4}],"MorinagaTestPlot"];
+data=ImportCalcGridData["MorinagaTestPlot.h5"];
+datain=ImportData[inpath<>"112Msun_100ms_DO.h5"];
 datainsr=SelectSingleRadius[datain,ri];
 cos\[Theta]=datain["mids"];
 datapos=Position[data["ri"],ri];
@@ -361,4 +361,4 @@ Table[tr["TestResults"][i],{i,1,13}]//MatrixForm
 
 
 
-MorinagaTestPlot[264,Infinity,4000]
+MorinagaTestPlot[264,Infinity,400]
