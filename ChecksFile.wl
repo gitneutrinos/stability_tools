@@ -128,11 +128,7 @@ SIpotential[ndens_]:=munits{Diagonal[ndens[[1]]],Diagonal[ndens[[2]]]}
 Phi[rank_,mu_,mubar_,cos\[Theta]_]:=Sum[(mu[[i]]-mubar[[i]])cos\[Theta][[i]]^rank,{i,1,Length[cos\[Theta]]}];
 
 
-IdisShifts[data_,cos\[Theta]_,mu_,mubar_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],Vmatter},
-
-(*Defined in Gail's Blue equation 30 and 31 *)
-\[Phi]0 = Phi[0,mu,mubar,cos\[Theta]];
-\[Phi]1 = Phi[1,mu,mubar,cos\[Theta]];
+IdisShifts[data_,\[Phi]0_,\[Phi]1_,\[CapitalOmega]_,k_]:=Module[{\[CapitalOmega]p,kp,\[Omega],Vmatter},
 
 (* "Shifted" Eigenvalue and k*)
 Vmatter = munits data["Yes"] data["matters"]/mp;
@@ -144,24 +140,19 @@ Return[{\[CapitalOmega]p,kp}];
 
 
 
-IdisBottom[data_,cos\[Theta]_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{ndens,\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],mu,mubar,Vmatter,\[CapitalOmega]minuskpcos\[Theta],result,bottom},
-
-(* neutrino number densities disguised as SI potentials *)
-ndens = ndensities[data,"xflavor"->xflavor];
-{mu,mubar} = SIpotential[ndens];
-\[Omega]=\[Omega]EMev[En];
-{\[CapitalOmega]p,kp}=IdisShifts[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,xflavor];
-bottom=\[CapitalOmega]p-kp cos\[Theta];
-Return[bottom];
-]
+IdisBottom[\[CapitalOmega]p_,kp_,cos\[Theta]_]:=\[CapitalOmega]p-kp cos\[Theta]
 
 
 (*Calculates and Returns the nth I for the dispersion check.  Returns a single value of In*)
-Idis[data_,cos\[Theta]_,mu_,mubar_,\[CapitalOmega]_,k_,En_,n_,xflavor_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],Vmatter,\[CapitalOmega]minuskpcos\[Theta],result},
+Idis[data_,cos\[Theta]_,mu_,mubar_,\[CapitalOmega]_,k_,En_,n_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],Vmatter,\[CapitalOmega]minuskpcos\[Theta],result},
+
+(*Defined in Gail's Blue equation 30 and 31 *)
+\[Phi]0 = Phi[0,mu,mubar,cos\[Theta]];
+\[Phi]1 = Phi[1,mu,mubar,cos\[Theta]];
 
 \[Omega]=\[Omega]EMev[En];
-{\[CapitalOmega]p,kp}=IdisShifts[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,xflavor];
-\[CapitalOmega]minuskpcos\[Theta]=IdisBottom[data,cos\[Theta],\[CapitalOmega],k,En,xflavor];
+{\[CapitalOmega]p,kp}=IdisShifts[data,\[Phi]0,\[Phi]1,\[CapitalOmega],k];
+\[CapitalOmega]minuskpcos\[Theta]=IdisBottom[\[CapitalOmega]p,kp,cos\[Theta]];
 
 (* make sure the denominator is not tiny *)
 (*On[Assert];
@@ -179,9 +170,9 @@ ndens = ndensities[data,"xflavor"->xflavor];
 {mu,mubar}=SIpotential[ndens];
 
 (*The condition is that Equatrion (43), below, should be 0 if the vacuum is*)
-I0 = Idis[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,0,xflavor];
-I1 = Idis[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,1,xflavor];
-I2 = Idis[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,2,xflavor];
+I0 = Idis[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,0];
+I1 = Idis[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,1];
+I2 = Idis[data,cos\[Theta],mu,mubar,\[CapitalOmega],k,En,2];
 Return[Abs[(I0+1.)(I2-1.)-I1^2]]
 ];
 
@@ -208,7 +199,7 @@ Return[dispersionCheck[data,cos\[Theta],\[CapitalOmega],k,En,xflavor]]
 
 
 (*Calculates the dispersion relation based on a hdf file of a stability calculation. Then, returns ordered pairs of the dispersion relation together with the percent difference of \[CapitalOmega]p-kpcos\[Theta]*)
-realdatadispcalc[infile_,hdffile_,ri_]:=Module[{data,datasr,pos,testpos,griddata,testk,test\[CapitalOmega]s,evecchecks,dischecks,ops,ins,bottoms,cos\[Theta],sumbottoms,percentdiff,mindiff},
+realdatadispcalc[infile_,hdffile_,ri_]:=Module[{data,datasr,pos,testpos,griddata,testk,test\[CapitalOmega]s,evecchecks,dischecks,ops,ins,bottoms,cos\[Theta],sumbottoms,percentdiff,mindiff,\[CapitalOmega]p,kp,\[Phi]0,\[Phi]1,ndens,mu,mubar},
 data=ImportData[infile];
 datasr=SelectSingleRadius[data,ri];
 cos\[Theta]=data["mids"];
@@ -226,7 +217,12 @@ Print[test\[CapitalOmega]s];
 Print[ins["testE"]];
 *)
 (*Returns a list of ordered pairs of the maximum component of each of the {neutrino, antineutrino} eigenvectors*)
-bottoms=Table[IdisBottom[datasr,cos\[Theta],test\[CapitalOmega]s[[i]],testk,ins["testE"],ops["xflavor"]],{i,1,Length[test\[CapitalOmega]s]}]; (*Values of \[CapitalOmega]p-kpcos\[Theta] for each eigenvalue, and each angle.*)
+ndens = ndensities[datasr,"xflavor"->ops["xflavor"]];
+{mu,mubar} = SIpotential[ndens];
+\[Phi]0 = Phi[0,mu,mubar,cos\[Theta]];
+\[Phi]1 = Phi[1,mu,mubar,cos\[Theta]];
+{\[CapitalOmega]p,kp}=Transpose@Table[IdisShifts[datasr,\[Phi]0,\[Phi]1,test\[CapitalOmega]s[[i]],testk],{i,1,Length[test\[CapitalOmega]s]}];
+bottoms=Table[IdisBottom[\[CapitalOmega]p[[i]],kp[[i]],cos\[Theta]],{i,1,Length[test\[CapitalOmega]s]}]; (*Values of \[CapitalOmega]p-kpcos\[Theta] for each eigenvalue, and each angle.*)
 sumbottoms=Table[2 test\[CapitalOmega]s[[i]]- bottoms[[i]],{i,1,Length[test\[CapitalOmega]s]}]; (*value of \[CapitalOmega]p+kpcos[\[Theta]] done via 2\[CapitalOmega]p-(\[CapitalOmega]ps-kpcos\[Theta])*)
 percentdiff=Table[bottoms[[i]]/sumbottoms[[i]],{i,1,Length[test\[CapitalOmega]s]}]; (*percent difference; (\[CapitalOmega]p-kpcos\[Theta])/(\[CapitalOmega]p+kpcos\[Theta]) for each \[CapitalOmega]p and angle*)
 mindiff=Table[Min[percentdiff[[i]]],{i,1,Length[percentdiff[[1]]]}]; (*For each eigenvalue, takes the minimum percent difference across the 10 angular bins*)
@@ -319,12 +315,10 @@ datapos=Position[data["ri"],ri];
 evspos=Table[Extract[data["evs_Im"],datapos[[i]]]//Max,{i,1,Length[datapos]}];
 evsposre=Table[Extract[data["evs_Re"],datapos[[i]]]//Max,{i,1,Length[datapos]}];
 kspos=Table[Extract[data["k"],datapos[[i]]],{i,1,Length[datapos]}];
-{mu,mubar}=SIpotential[ndensities[datainsr,"xflavor"->False]];
+{mu,mubar}=SIpotential[ndensities[datainsr,"xflavor"->OptionValue["xflavor"]]];
 \[Phi]0 = Phi[0,mu,mubar,cos\[Theta]];
 \[Phi]1 = Phi[1,mu,mubar,cos\[Theta]];
-Vmatter =munits datainsr["Yes"] datainsr["matters"]/mp;
-\[CapitalOmega]p =Table[ N[evsposre[[i]]-Vmatter-\[Phi]0],{i,1,Length[evspos]}];
-kp = Table[kspos[[i]]-\[Phi]1,{i,1,Length[kspos]}];
+{\[CapitalOmega]p,kp}=Transpose@Table[IdisShifts[datainsr,\[Phi]0,\[Phi]1,evsposre[[i]],kspos[[i]]],{i,1,Length[evspos]}];
 
 pts=Transpose@{1/(hbar c 10^-4) kp,1/(hbar c 10^-4) evspos};
 ptsre=Transpose@{1/(hbar c 10^-4) kp,1/(hbar c 10^-4) \[CapitalOmega]p};
