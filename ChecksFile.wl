@@ -125,11 +125,14 @@ cma[k_,\[Mu]ch_,a_,w_]:=cm[k,\[Mu]ch,w]/.{rb-> 0.,l-> 0.,r-> (1+a),lb-> -(1-a)};
 SIpotential[ndens_]:=munits{Diagonal[ndens[[1]]],Diagonal[ndens[[2]]]}
 
 
+Phi[rank_,mu_,mubar_,cos\[Theta]_]:=Sum[(mu[[i]]-mubar[[i]])cos\[Theta][[i]]^rank,{i,1,Length[cos\[Theta]]}];
+
+
 IdisShifts[data_,cos\[Theta]_,mu_,mubar_,\[CapitalOmega]_,k_,En_,xflavor_]:=Module[{\[Phi]0,\[Phi]1,\[CapitalOmega]p,kp,\[Omega],Vmatter},
 
 (*Defined in Gail's Blue equation 30 and 31 *)
-\[Phi]0 = Sum[(mu[[i]]-mubar[[i]])         ,{i,1,Length[cos\[Theta]]}];
-\[Phi]1 = Sum[(mu[[i]]-mubar[[i]])cos\[Theta][[i]],{i,1,Length[cos\[Theta]]}];
+\[Phi]0 = Phi[0,mu,mubar,cos\[Theta]];
+\[Phi]1 = Phi[1,mu,mubar,cos\[Theta]];
 
 (* "Shifted" Eigenvalue and k*)
 Vmatter = munits data["Yes"] data["matters"]/mp;
@@ -316,8 +319,8 @@ evspos=Table[Extract[data["evs_Im"],datapos[[i]]]//Max,{i,1,Length[datapos]}];
 evsposre=Table[Extract[data["evs_Re"],datapos[[i]]]//Max,{i,1,Length[datapos]}];
 kspos=Table[Extract[data["k"],datapos[[i]]],{i,1,Length[datapos]}];
 {mu,mubar}=SIpotential[ndensities[datainsr,"xflavor"->False]];
-\[Phi]0= Sum[(mu[[i]]-mubar[[i]])         ,{i,1,Length[cos\[Theta]]}];
-\[Phi]1=Sum[(mu[[i]]-mubar[[i]])cos\[Theta][[i]],{i,1,Length[cos\[Theta]]}];
+\[Phi]0 = Phi[0,mu,mubar,cos\[Theta]];
+\[Phi]1 = Phi[1,mu,mubar,cos\[Theta]];
 Vmatter =munits datainsr["Yes"] datainsr["matters"]/mp;
 \[CapitalOmega]p =Table[ N[evsposre[[i]]-Vmatter-\[Phi]0],{i,1,Length[evspos]}];
 kp = Table[kspos[[i]]-\[Phi]1,{i,1,Length[kspos]}];
