@@ -448,7 +448,7 @@ Return[out] (*Close reap over r*)
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Ellipse Fitting Approximations*)
 
 
@@ -482,7 +482,7 @@ Return[{esbox[0],esbox[1],esbox[2]}]
 ellipseSimpMoments[af_,bf_,cxf_]:=Module[{ebox,esbox,esimp,essimp},
 esimp[a_,b_,cx_,m_]:=(b (b m cx+a Sqrt[b^2 m^2-a^2 (-1+m^2)+(-1+m^2) cx^2]))/(a^2+(-a^2+b^2) m^2);
 essimp[mom_]:=2 Pi/c NIntegrate[m^mom esimp[af,bf,cxf,m],{m,-1.,1.},MinRecursion-> 16,MaxRecursion->60];
-Return[{esbox[0],esbox[1],esbox[2]}]
+Return[{essimp[0],essimp[1],essimp[2]}]
 ];
 
 
@@ -535,16 +535,18 @@ out=Reap[
 		igs=Table[Apply[getInitialGuess,moms[[i]] ],{i,1,3}], (*simple parametrers!*)
 		igs=paras
 		];
-	simpparas=Apply[eSimpFitToMoments,Join[moms,{igs}]];
-	boxparas=Apply[eBoxFitToMoments,Join[moms,{Apply[boxToSimp,igs]}]]; (*Converted guesses to box*)
-	simperrs=1/3 Sum[Abs[Apply[ellipseparaerrors,Join[simpparas[[i]],moms[[i]]]]],{i,1,3}]; (*Average relative error of the simple parameters*)
-	boxerrs=1/3 Sum[Abs[Apply[ellipseparaerrors,Join[Apply[boxToSimp,boxparas[[i]]],moms[[i]]]]],{i,1,3}];
+	simpparas=Table[Apply[eSimpFitToMoments,Join[moms[[i]],{igs[[i]]}]],{i,1,3}];
+	boxparas=Table[Apply[eBoxFitToMoments,Join[moms[[i]],{Apply[boxToSimp,igs[[i]]]}]],{i,1,3}]; (*Converted guesses to box*)
+	(*Average relative error of the simple parameters. j sums over the 3 parameters, i is a table index over the 3 species*)
+	simperrs=Table[1/3 Sum[Abs[Apply[ellipseparaerrors,Join[simpparas[[i,j]],moms[[i,j]]]]],{j,1,3}],{i,1,3}]; 
+	boxerrs=Table[1/3 Sum[Abs[Apply[ellipseparaerrors,Join[Apply[boxToSimp,boxparas[[i,j]]],moms[[i,j]]]]],{j,1,3}],{i,1,3}];
 	Which[
-		simperrs<= boxerrs,
-			Sow[{simpparas,Apply[ellipseparaerrors,Join[simpparas,moms]]}];
+	(*Picks which parameter set to keep based on the average of the average relative error over the 3 species*)
+		1/3 Sum[simperrs[[i]],{i,1,3}]<= 1/3 Sum[boxerrs[[i]],{i,1,3}],
+			Sow[{simpparas,Table[Apply[ellipseparaerrors,Join[simpparas[[i]],moms]],{i,1,3}]}];
 			paras=simpparas;,
-		boxerrs<simperrs,
-			Sow[{Apply[boxToSimp,boxparas],Apply[ellipseparaerrors,Join[Apply[boxToSimp,boxparas],moms]]}];
+		1/3 Sum[boxerrs[[i]],{i,1,3}]<1/3 Sum[simperrs[[i]],{i,1,3}],
+			Sow[{Apply[boxToSimp,boxparas],Table[Apply[ellipseparaerrors,Join[Apply[boxToSimp,boxparas[[i]]],moms]],{i,1,3}]}];
 			paras=Apply[boxToSimp,boxparas];
 		];
 	,{ri,1,5}];
