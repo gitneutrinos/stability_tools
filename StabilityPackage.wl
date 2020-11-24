@@ -52,6 +52,8 @@ ellipseSimpMoments::usage=
 "calculate the moments from an ellipse (simple fit) with parameters a, b, cx"
 eBoxFitToMoments::usage=
 "given 3 input moments and set of guess parameters, fits ellipse parameters to moments"
+eSimpFitToMoments::usage=
+"given 3 input moments and set of guess parameters, fits ellipse parameters to moments"
 getMoments::usage=
 "takes moments out of moment data for a given file, radius, species. Energy integrated"
 exportkadapt::usage=
@@ -501,10 +503,17 @@ Return[{a,\[Beta],\[Chi]}]
 
 
 (*Given 3 moments, fit parameters a, \[Beta], and \[Chi] so ellipseMoments match*)
-eBoxFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,\[Beta]f,\[Chi]f},
-(*Evaluate eboxfittommometns once*)
-br=FindRoot[{ellipseMoments[af,\[Beta]f,\[Chi]f][[1]]-m0,ellipseMoments[af,\[Beta]f,\[Chi]f][[2]]-m1,ellipseMoments[af,\[Beta]f,\[Chi]f][[3]]-m2},{{af,g0[[1]]},{\[Beta]f,g0[[2]]},{\[Chi]f,g0[[3]]}},Evaluated->False,MaxIterations-> 1000,AccuracyGoal-> Infinity];
+eBoxFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,\[Beta]f,\[Chi]f,momeqns},
+momeqns=ellipseBoxMoments[af,\[Beta]f,\[Chi]f];
+br=FindRoot[{momeqns[[1]]-m0,momeqns[[2]]-m1,momeqns[[3]]-m2},{{af,g0[[1]]},{\[Beta]f,g0[[2]]},{\[Chi]f,g0[[3]]}},Evaluated->False,MaxIterations-> 1000,AccuracyGoal-> Infinity];
 Return[{af/.br,\[Beta]f/.br,\[Chi]f/.br}]
+];
+
+
+eSimpFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,bf,cf,momeqns},
+momeqns=ellipseSimpMoments[af,bf,cf];
+br=FindRoot[{momeqns[[1]]-m0,momeqns[[2]]-m1,momeqns[[3]]-m2},{{af,g0[[1]]},{bf,g0[[2]]},{cf,g0[[3]]}},Evaluated->False,MaxIterations-> 1000,AccuracyGoal-> Infinity];
+Return[{af/.br,bf/.br,cf/.br}]
 ];
 
 
@@ -526,7 +535,7 @@ out=Reap[
 		igs=Table[Apply[getInitialGuess,moms[[i]] ],{i,1,3}],
 		igs=paras
 		];
-	simpparas=Table[Apply[eBoxFitToMoments,Join[moms[[i]],{igs[[i]]}]],{i,1,3}];
+	paras=Table[Apply[eBoxFitToMoments,Join[moms[[i]],{igs[[i]]}]],{i,1,3}];
 	errs=Table[Apply[ellipseparaerrors,Join[paras[[i]],moms[[i]]]],{i,1,3}];
 		Sow[{paras,errs}
 		];
