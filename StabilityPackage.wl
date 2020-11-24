@@ -479,7 +479,7 @@ Return[{esbox[0],esbox[1],esbox[2]}]
 ];
 
 
-ellipseSimpMoments[af_,bf_,cxf_]:=Module[{ebox,esbox,esimp,es},
+ellipseSimpMoments[af_,bf_,cxf_]:=Module[{ebox,esbox,esimp,essimp},
 esimp[a_,b_,cx_,m_]:=(b (b m cx+a Sqrt[b^2 m^2-a^2 (-1+m^2)+(-1+m^2) cx^2]))/(a^2+(-a^2+b^2) m^2);
 essimp[mom_]:=2 Pi/c NIntegrate[m^mom esimp[af,bf,cxf,m],{m,-1.,1.},MinRecursion-> 16,MaxRecursion->60];
 Return[{esbox[0],esbox[1],esbox[2]}]
@@ -536,19 +536,19 @@ out=Reap[
 		igs=paras
 		];
 	simpparas=Apply[eSimpFitToMoments,Join[moms,{igs}]];
-	boxparas=Apply[eBoxFitToMoments,Join[moms,{boxToSimp[igs]}]]; (*Converted guesses to box*)
+	boxparas=Apply[eBoxFitToMoments,Join[moms,{Apply[boxToSimp,igs]}]]; (*Converted guesses to box*)
 	simperrs=1/3 Sum[Abs[Apply[ellipseparaerrors,Join[simpparas[[i]],moms[[i]]]]],{i,1,3}]; (*Average relative error of the simple parameters*)
-	boxerrs=1/3 Sum[Abs[Apply[ellipseparaerrors,Join[boxToSimp[boxparas[[i]]],moms[[i]]]]],{i,1,3}];
+	boxerrs=1/3 Sum[Abs[Apply[ellipseparaerrors,Join[Apply[boxToSimp,boxparas[[i]]],moms[[i]]]]],{i,1,3}];
 	Which[
 		simperrs<= boxerrs,
 			Sow[{simpparas,Apply[ellipseparaerrors,Join[simpparas,moms]]}];
 			paras=simpparas;,
 		boxerrs<simperrs,
-			Sow[{boxToSimp[boxparas],Apply[ellipseparaerrors,Join[boxToSimp[boxparas],moms]]}];
-			paras=boxToSimp[boxparas];
+			Sow[{Apply[boxToSimp,boxparas],Apply[ellipseparaerrors,Join[Apply[boxToSimp,boxparas],moms]]}];
+			paras=Apply[boxToSimp,boxparas];
 		];
-	,{ri,1,50}];
-][[2,1]];
+	,{ri,1,5}];
+];
 Return[out];
 ];
 
