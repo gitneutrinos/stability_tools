@@ -62,6 +62,10 @@ ImportCalcOptions::usage=
 "Imports 3 option settings, xflavor,inverse,krange"
 ImportCalcInputs::usage=
 "Imports the calc file, rsrt, rend,testE,hi,nstep used in the calculation"
+ellipsefitfile::usage=
+"gets ellipse parameters for a moments file"
+ellipseparaerrors::usage=
+"gives the errors in the ellisope fit approx for some given parameters"
 
 
 (* ::Subsection::Closed:: *)
@@ -84,7 +88,7 @@ munits=Sqrt[2] (Gf/Geverg^2 )(hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
 Begin["`Private`"]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Import Functions*)
 
 
@@ -132,7 +136,7 @@ ImportCalcInputs[infile_]:=Association[
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Neutrino Densities and Potentials*)
 
 
@@ -170,7 +174,7 @@ Return[{B,Bb}]
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Stability Matrix Functions*)
 
 
@@ -310,7 +314,7 @@ Return[as]
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*k Grid and Adaptive k Solver*)
 
 
@@ -441,9 +445,10 @@ Return[out] (*Close reap over r*)
 
 
 getMoments[file_,r_,species_]:= Module[{data,datasr,moments},
-data=ImportData[file];
+data=ImportData[file]//Quiet;
 datasr=SelectSingleRadius[data,r];
-moments={Sum[datasr["Endensity"][[species,E,1]],{E,1,Length[data["freqs"]]-1}],Sum[datasr["Endensity"][[species,E,2]],{E,1,Length[data["freqs"]]-1}],Sum[datasr["Endensity"][[species,E,3]],{E,1,Length[data["freqs"]]-1}]};
+moments={Sum[(datasr["Endensity"][[species,E,1]])/(h 0.5(data["freqs"][[E+1]]-data["freqs"][[E]])),{E,1,Length[data["freqs"]]-1}],Sum[(datasr["Endensity"][[species,E,2]])/(h 0.5(data["freqs"][[E+1]]-data["freqs"][[E]])),{E,1,Length[data["freqs"]]-1}],Sum[(datasr["Endensity"][[species,E,3]])/(h 0.5(data["freqs"][[E+1]]-data["freqs"][[E]])),{E,1,Length[data["freqs"]]-1}]};
+If[moments[[2]]< 0., moments[[2]]=10^-8];
 Return[moments];
 ];
 
@@ -453,15 +458,12 @@ foc1234[x_,y_,z_]:=(1/(4 Pi ) )(m0 + 3 z m1+(5/2 (3 (m0 -m2 )/2 x^2+3 (m0 -m2 )/
 ag=0.5 (foc1234[Sin[ArcCos[-1.]],0.,-1.]+foc1234[Sin[ArcCos[1.]],0.,1.]); (*semi-major axis guess*)
 cg=Abs[foc1234[Sin[ArcCos[1.]],0.,1.]-ag]; (*horizontal shift from the center *)
 bg=Sqrt[foc1234[Sin[ArcCos[0.]],0.,0.]^2/(1-(cg/ag)^2)]; (*semi-minor axis*)
-Assert[bg<= ag]; (*Assert the semi-major axis is larger than the semi-minor*)
-If[bg> ag, Assert[bg/ag<= 1.001]]; (* If bg>ag, assert that the difference is small*)
 If[bg> ag && bg/ag<= 1.001, ag=ag+2(bg-ag)]; (* If bg>ag, and the difference is small, switches them in the transform*)
 arg\[Beta]=((2 bg/ag)-1);
 arg\[Chi]=((2 cg/ag)-1);
 \[Beta]g=ArcTanh[arg\[Beta]]; (*box transform b= a/2( tanh[\[Beta]]+1 *)
 \[Chi]g=ArcTanh[arg\[Chi]]; (*box transform c=a/2( tanh[\[Chi]]+1 *)
-Assert[Between[arg\[Beta],{-1.01,1.01}]];
-Assert[Between[arg\[Chi],{-1.01,1.01}]];
+If[cg==0.,\[Chi]g=-1000];
 (*Print[{ag,bg,cg,arg\[Beta],arg\[Chi]}];*)
 Return[{ag,\[Beta]g,\[Chi]g}]
 ];
@@ -470,15 +472,44 @@ Return[{ag,\[Beta]g,\[Chi]g}]
 ellipseMoments[af_,\[Beta]f_,\[Chi]f_]:=Module[{ebox,esbox},
 ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])+a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2
 +1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
-esbox[mom_]:=2 Pi NIntegrate[m^mom ebox[af,\[Beta]f,\[Chi]f,m],{m,-1.,1.},MinRecursion-> 8,MaxRecursion->16];
+esbox[mom_]:=2 Pi NIntegrate[m^mom ebox[af,\[Beta]f,\[Chi]f,m],{m,-1.,1.},MinRecursion-> 16,MaxRecursion->60];
 Return[{esbox[0],esbox[1],esbox[2]}]
 ];
 
 
 (*Given 3 moments, fit parameters a, \[Beta], and \[Chi] so ellipseMoments match*)
 eBoxFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,\[Beta]f,\[Chi]f},
-br=FindRoot[{ellipseMoments[af,\[Beta]f,\[Chi]f][[1]]-m0,ellipseMoments[af,\[Beta]f,\[Chi]f][[2]]-m1,ellipseMoments[af,\[Beta]f,\[Chi]f][[3]]-m2},{{af,g0[[1]]},{\[Beta]f,g0[[2]]},{\[Chi]f,g0[[3]]}},Evaluated->False,MaxIterations-> 700];
+(*Evaluate eboxfittommometns once*)
+br=FindRoot[{ellipseMoments[af,\[Beta]f,\[Chi]f][[1]]-m0,ellipseMoments[af,\[Beta]f,\[Chi]f][[2]]-m1,ellipseMoments[af,\[Beta]f,\[Chi]f][[3]]-m2},{{af,g0[[1]]},{\[Beta]f,g0[[2]]},{\[Chi]f,g0[[3]]}},Evaluated->False,MaxIterations-> 1000,AccuracyGoal-> Infinity];
 Return[{af/.br,\[Beta]f/.br,\[Chi]f/.br}]
+];
+
+
+ellipseparaerrors[a_,\[Beta]_,\[Chi]_,m0_,m1_,m2_]:=Module[{er0,er1,er2,fits},
+(*again evaluate only once*)
+er0=(ellipseMoments[a,\[Beta],\[Chi]][[1]]-m0)/m0;
+er1=(ellipseMoments[a,\[Beta],\[Chi]][[2]]-m1)/m0;
+er2=(ellipseMoments[a,\[Beta],\[Chi]][[3]]-m2)/m0;
+(*Print["Initial Guess: ", getInitialGuess[m0,m1,m2]];*)
+Return[{er0,er1,er2}];
+];
+
+
+ellipsefitfile[file_]:=Module[{moms,igs,paras,errs,out},
+out=Reap[
+	Do[
+	moms={getMoments[file,ri,1],getMoments[file,ri,2],getMoments[file,ri,3]};
+		If[ri==1,
+		igs=Table[Apply[getInitialGuess,moms[[i]] ],{i,1,3}],
+		igs=paras
+		];
+	paras=Table[Apply[eBoxFitToMoments,Join[moms[[i]],{igs[[i]]}]],{i,1,3}];
+	errs=Table[Apply[ellipseparaerrors,Join[paras[[i]],moms[[i]]]],{i,1,3}];
+		Sow[{paras,errs}
+		];
+	,{ri,1,50}];
+][[2,1]];
+Return[out];
 ];
 
 
