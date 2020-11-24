@@ -66,6 +66,10 @@ ellipsefitfile::usage=
 "gets ellipse parameters for a moments file"
 ellipseparaerrors::usage=
 "gives the errors in the ellisope fit approx for some given parameters"
+boxToSimp::usage=
+"converts from box transform to simple ellipses parameters"
+simpToBox::usage=
+"converts from simple ellipse parameters to box transform"
 
 
 (* ::Subsection::Closed:: *)
@@ -472,8 +476,24 @@ Return[{ag,\[Beta]g,\[Chi]g}]
 ellipseMoments[af_,\[Beta]f_,\[Chi]f_]:=Module[{ebox,esbox},
 ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])+a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2
 +1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
-esbox[mom_]:=2 Pi NIntegrate[m^mom ebox[af,\[Beta]f,\[Chi]f,m],{m,-1.,1.},MinRecursion-> 16,MaxRecursion->60];
+esbox[mom_]:=2 Pi/c NIntegrate[m^mom ebox[af,\[Beta]f,\[Chi]f,m],{m,-1.,1.},MinRecursion-> 16,MaxRecursion->60];
 Return[{esbox[0],esbox[1],esbox[2]}]
+];
+
+
+(*Converts the 3 box transform parameters to the simple ellipse parameters*)
+boxToSimp[a_,\[Beta]_,\[Chi]_]:=Module[{b,cx},
+b=a/2 (Tanh[\[Beta]]+1);
+cx=a/2 (Tanh[\[Chi]]+1);
+Return[{a,b,cx}]
+];
+
+
+(*Converts the 3 simple elipse parameters into the box transform parameters*)
+simpToBox[a_,b_,cx_]:=Module[{\[Beta],\[Chi]},
+\[Beta]=ArcTanh[(2 b)/a-1];
+\[Chi]=ArcTanh[(2 cx)/a-1];
+Return[{a,\[Beta],\[Chi]}]
 ];
 
 
@@ -483,6 +503,9 @@ eBoxFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,\[Beta
 br=FindRoot[{ellipseMoments[af,\[Beta]f,\[Chi]f][[1]]-m0,ellipseMoments[af,\[Beta]f,\[Chi]f][[2]]-m1,ellipseMoments[af,\[Beta]f,\[Chi]f][[3]]-m2},{{af,g0[[1]]},{\[Beta]f,g0[[2]]},{\[Chi]f,g0[[3]]}},Evaluated->False,MaxIterations-> 1000,AccuracyGoal-> Infinity];
 Return[{af/.br,\[Beta]f/.br,\[Chi]f/.br}]
 ];
+
+
+eSimpFitToMoments[m0_,m1_,m2_,guesses_]:=
 
 
 ellipseparaerrors[a_,\[Beta]_,\[Chi]_,m0_,m1_,m2_]:=Module[{er0,er1,er2,fits},
