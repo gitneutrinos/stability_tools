@@ -517,27 +517,35 @@ Return[{af/.br,bf/.br,cf/.br}]
 ];
 
 
-ellipseparaerrors[a_,\[Beta]_,\[Chi]_,m0_,m1_,m2_]:=Module[{er0,er1,er2,fits},
+ellipseparaerrors[a_,b_,cx_,m0_,m1_,m2_]:=Module[{er0,er1,er2,fits},
 (*again evaluate only once*)
-er0=(ellipseMoments[a,\[Beta],\[Chi]][[1]]-m0)/m0;
-er1=(ellipseMoments[a,\[Beta],\[Chi]][[2]]-m1)/m0;
-er2=(ellipseMoments[a,\[Beta],\[Chi]][[3]]-m2)/m0;
-(*Print["Initial Guess: ", getInitialGuess[m0,m1,m2]];*)
+er0=(ellipseSimpMoments[a,b,cx][[1]]-m0)/m0;
+er1=(ellipseSimpMoments[a,b,cx][[2]]-m1)/m0;
+er2=(ellipseSimpMoments[a,b,cx][[3]]-m2)/m0;
 Return[{er0,er1,er2}];
 ];
 
 
-ellipsefitfile[file_]:=Module[{moms,igs,paras,errs,out},
+(*Fits a file to ellispes by trying both the simpel ellipse method and the box method. For each radius, it keeps the fit with the lowerst error.  the default parameters are the simple parameters a, b, and cx.*)
+ellipsefitfile[file_]:=Module[{moms,igs,paras,errs,out,simpparas,boxparas,simperrs,boxerrs},
 out=Reap[
 	Do[
 	moms={getMoments[file,ri,1],getMoments[file,ri,2],getMoments[file,ri,3]};
 		If[ri==1,
-		igs=Table[Apply[getInitialGuess,moms[[i]] ],{i,1,3}],
+		igs=Table[Apply[getInitialGuess,moms[[i]] ],{i,1,3}], (*simple parametrers!*)
 		igs=paras
 		];
-	paras=Table[Apply[eBoxFitToMoments,Join[moms[[i]],{igs[[i]]}]],{i,1,3}];
-	errs=Table[Apply[ellipseparaerrors,Join[paras[[i]],moms[[i]]]],{i,1,3}];
-		Sow[{paras,errs}
+	simpparas=Apply[eSimpFitToMoments,Join[moms,{igs}]];
+	boxparas=Apply[eBoxFitToMoments,Join[moms,{boxToSimp[igs]}]]; (*Converted guesses to box*)
+	simperrs=1/3 Sum[Abs[Apply[ellipseparaerrors,Join[simpparas[[i]],moms[[i]]]]],{i,1,3}]; (*Average relative error of the simple parameters*)
+	boxerrs=1/3 Sum[Abs[Apply[ellipseparaerrors,Join[boxToSimp[boxparas[[i]]],moms[[i]]]]],{i,1,3}];
+	Which[
+		simperrs<= boxerrs,
+			Sow[{simpparas,Apply[ellipseparaerrors,Join[simpparas,moms]]}];
+			paras=simpparas;,
+		boxerrs<simperrs,
+			Sow[{boxToSimp[boxparas],Apply[ellipseparaerrors,Join[boxToSimp[boxparas],moms]]}];
+			paras=boxToSimp[boxparas];
 		];
 	,{ri,1,50}];
 ][[2,1]];
