@@ -46,8 +46,10 @@ eBoxFitSingleRadius::usage=
 "fit a single radius using the box fit parameters"
 Com::usage=
 "test"
-ellipseMoments::usage=
+ellipseBoxMoments::usage=
 "calculate the moments from an ellipse (box fit) with parameters a, \[Beta], \[Chi]"
+ellipseSimpMoments::usage=
+"calculate the moments from an ellipse (simple fit) with parameters a, b, cx"
 eBoxFitToMoments::usage=
 "given 3 input moments and set of guess parameters, fits ellipse parameters to moments"
 getMoments::usage=
@@ -467,10 +469,17 @@ Return[{ag,bg,cg}]
 ];
 
 
-ellipseMoments[af_,\[Beta]f_,\[Chi]f_]:=Module[{ebox,esbox},
+ellipseBoxMoments[af_,\[Beta]f_,\[Chi]f_]:=Module[{ebox,esbox},
 ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])+a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2
 +1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
 esbox[mom_]:=2 Pi/c NIntegrate[m^mom ebox[af,\[Beta]f,\[Chi]f,m],{m,-1.,1.},MinRecursion-> 16,MaxRecursion->60];
+Return[{esbox[0],esbox[1],esbox[2]}]
+];
+
+
+ellipseSimpMoments[af_,bf_,cxf_]:=Module[{ebox,esbox},
+esimp[a_,b_,cx_,m_]:=(b (b m cx+a Sqrt[b^2 m^2-a^2 (-1+m^2)+(-1+m^2) cx^2]))/(a^2+(-a^2+b^2) m^2);
+essimp[mom_]:=2 Pi/c NIntegrate[m^mom esimp[af,bf,cxf,m],{m,-1.,1.},MinRecursion-> 16,MaxRecursion->60];
 Return[{esbox[0],esbox[1],esbox[2]}]
 ];
 
@@ -517,7 +526,7 @@ out=Reap[
 		igs=Table[Apply[getInitialGuess,moms[[i]] ],{i,1,3}],
 		igs=paras
 		];
-	paras=Table[Apply[eBoxFitToMoments,Join[moms[[i]],{igs[[i]]}]],{i,1,3}];
+	simpparas=Table[Apply[eBoxFitToMoments,Join[moms[[i]],{igs[[i]]}]],{i,1,3}];
 	errs=Table[Apply[ellipseparaerrors,Join[paras[[i]],moms[[i]]]],{i,1,3}];
 		Sow[{paras,errs}
 		];
