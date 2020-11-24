@@ -499,9 +499,6 @@ Return[{af/.br,\[Beta]f/.br,\[Chi]f/.br}]
 ];
 
 
-eSimpFitToMoments[m0_,m1_,m2_,guesses_]:=
-
-
 ellipseparaerrors[a_,\[Beta]_,\[Chi]_,m0_,m1_,m2_]:=Module[{er0,er1,er2,fits},
 (*again evaluate only once*)
 er0=(ellipseMoments[a,\[Beta],\[Chi]][[1]]-m0)/m0;
