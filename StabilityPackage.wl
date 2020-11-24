@@ -448,7 +448,7 @@ Return[out] (*Close reap over r*)
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Ellipse Fitting Approximations*)
 
 
