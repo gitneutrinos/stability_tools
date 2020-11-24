@@ -463,13 +463,7 @@ ag=0.5 (foc1234[Sin[ArcCos[-1.]],0.,-1.]+foc1234[Sin[ArcCos[1.]],0.,1.]); (*semi
 cg=Abs[foc1234[Sin[ArcCos[1.]],0.,1.]-ag]; (*horizontal shift from the center *)
 bg=Sqrt[foc1234[Sin[ArcCos[0.]],0.,0.]^2/(1-(cg/ag)^2)]; (*semi-minor axis*)
 If[bg> ag && bg/ag<= 1.001, ag=ag+2(bg-ag)]; (* If bg>ag, and the difference is small, switches them in the transform*)
-arg\[Beta]=((2 bg/ag)-1);
-arg\[Chi]=((2 cg/ag)-1);
-\[Beta]g=ArcTanh[arg\[Beta]]; (*box transform b= a/2( tanh[\[Beta]]+1 *)
-\[Chi]g=ArcTanh[arg\[Chi]]; (*box transform c=a/2( tanh[\[Chi]]+1 *)
-If[cg==0.,\[Chi]g=-1000];
-(*Print[{ag,bg,cg,arg\[Beta],arg\[Chi]}];*)
-Return[{ag,\[Beta]g,\[Chi]g}]
+Return[{ag,bg,cg}]
 ];
 
 
