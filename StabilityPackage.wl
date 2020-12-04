@@ -455,18 +455,25 @@ Return[out] (*Close reap over r*)
 getMoments[file_,r_,species_]:= Module[{data,datasr,moments},
 data=ImportData[file]//Quiet;
 datasr=SelectSingleRadius[data,r];
-moments={Sum[(datasr["Endensity"][[species,E,1]])/(h 0.5(data["freqs"][[E+1]]-data["freqs"][[E]])),{E,1,Length[data["freqs"]]-1}],Sum[(datasr["Endensity"][[species,E,2]])/(h 0.5(data["freqs"][[E+1]]-data["freqs"][[E]])),{E,1,Length[data["freqs"]]-1}],Sum[(datasr["Endensity"][[species,E,3]])/(h 0.5(data["freqs"][[E+1]]-data["freqs"][[E]])),{E,1,Length[data["freqs"]]-1}]};
+moments={
+Sum[(datasr["Endensity"][[species,E,1]])/(h data["freqmid"][[E]]),{E,1,Length[data["freqs"]]-1}],
+Sum[(datasr["Endensity"][[species,E,2]])/(h data["freqmid"][[E]]),{E,1,Length[data["freqs"]]-1}],
+Sum[(datasr["Endensity"][[species,E,3]])/(h data["freqmid"][[E]]),{E,1,Length[data["freqs"]]-1}]
+};
 If[moments[[2]]< 0., moments[[2]]=10^-8];
 Return[moments];
 ];
 
 
 getInitialGuess[m0_,m1_,m2_]:=Module[{foc1234,ag,\[Beta]g,\[Chi]g,cg,bg,arg\[Beta],arg\[Chi]},
-foc1234[x_,y_,z_]:=(1/(4 Pi ) )(m0 + 3 z m1+(5/2 (3 (m0 -m2 )/2 x^2+3 (m0 -m2 )/2 y^2+3 m2 z^2-m0)));
-ag=0.5 (foc1234[Sin[ArcCos[-1.]],0.,-1.]+foc1234[Sin[ArcCos[1.]],0.,1.]); (*semi-major axis guess*)
+ag=m0; 
+bg=0.9 ag;
+cg=10^-8 ag;
+(*(*semi-major axis guess*)
 cg=Abs[foc1234[Sin[ArcCos[1.]],0.,1.]-ag]; (*horizontal shift from the center *)
 bg=Sqrt[foc1234[Sin[ArcCos[0.]],0.,0.]^2/(1-(cg/ag)^2)]; (*semi-minor axis*)
 If[bg> ag && bg/ag<= 1.001, ag=ag+2(bg-ag)]; (* If bg>ag, and the difference is small, switches them in the transform*)
+*)
 Return[{ag,bg,cg}]
 ];
 
@@ -474,14 +481,14 @@ Return[{ag,bg,cg}]
 ellipseBoxMoments[af_,\[Beta]f_,\[Chi]f_]:=Module[{ebox,esbox},
 ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])+a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2
 +1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
-esbox[mom_]:=2 Pi/c NIntegrate[m^mom ebox[af,\[Beta]f,\[Chi]f,m],{m,-1.,1.},MinRecursion-> 16,MaxRecursion->60];
+esbox[mom_]:=  NIntegrate[m^mom ebox[af,\[Beta]f,\[Chi]f,m],{m,-1.,1.},MinRecursion-> 16,MaxRecursion-> 100];
 Return[{esbox[0],esbox[1],esbox[2]}]
 ];
 
 
 ellipseSimpMoments[af_,bf_,cxf_]:=Module[{ebox,esbox,esimp,essimp},
 esimp[a_,b_,cx_,m_]:=(b (b m cx+a Sqrt[b^2 m^2-a^2 (-1+m^2)+(-1+m^2) cx^2]))/(a^2+(-a^2+b^2) m^2);
-essimp[mom_]:=2 Pi/c NIntegrate[m^mom esimp[af,bf,cxf,m],{m,-1.,1.},MinRecursion-> 16,MaxRecursion->60];
+essimp[mom_]:=  NIntegrate[m^mom esimp[af,bf,cxf,m],{m,-1.,1.},MinRecursion-> 16,MaxRecursion-> 100];
 Return[{essimp[0],essimp[1],essimp[2]}]
 ];
 
@@ -530,27 +537,36 @@ Return[{er0,er1,er2}];
 ellipsefitfile[file_]:=Module[{moms,igs,paras,errs,out,simpparas,boxparas,simperrs,boxerrs},
 out=Reap[
 	Do[
+	(*moms is a list with 3 entires, one for each species. Each entry is a list of 3 moments.
+	mom[[species,moment]]*)
 	moms={getMoments[file,ri,1],getMoments[file,ri,2],getMoments[file,ri,3]};
 		If[ri==1,
+		(*igs=a list with 3 entries, one for each species. Each entry is a list of 3 parameters.
+		igs[[species,ellispe parameter]]*)
 		igs=Table[Apply[getInitialGuess,moms[[i]] ],{i,1,3}], (*simple parametrers!*)
 		igs=paras
 		];
+	(*simpparas is a list with 3 entires, one for each species. Each entry is a list of 3 ellipse parameters
+	simppparas[[species,parameter]]
+	same for box paras*)
 	simpparas=Table[Apply[eSimpFitToMoments,Join[moms[[i]],{igs[[i]]}]],{i,1,3}];
 	boxparas=Table[Apply[eBoxFitToMoments,Join[moms[[i]],{Apply[boxToSimp,igs[[i]]]}]],{i,1,3}]; (*Converted guesses to box*)
-	(*Average relative error of the simple parameters. j sums over the 3 parameters, i is a table index over the 3 species*)
-	simperrs=Table[1/3 Sum[Abs[Apply[ellipseparaerrors,Join[simpparas[[i,j]],moms[[i,j]]]]],{j,1,3}],{i,1,3}]; 
-	boxerrs=Table[1/3 Sum[Abs[Apply[ellipseparaerrors,Join[Apply[boxToSimp,boxparas[[i,j]]],moms[[i,j]]]]],{j,1,3}],{i,1,3}];
+	(*simperrs is a list with 3 entries, one per species. Each entry is alist of 3 errors, one for each parameters
+	simperrs[[species,error in parameter i]]
+	same for boxerrs*)
+	simperrs=Table[Apply[ellipseparaerrors,Join[simpparas[[i]],moms[[i]]]],{i,1,3}]; 
+	boxerrs=Table[Apply[ellipseparaerrors,Join[Apply[boxToSimp,boxparas[[i]]],moms[[i]]]],{i,1,3}];
 	Which[
 	(*Picks which parameter set to keep based on the average of the average relative error over the 3 species*)
-		1/3 Sum[simperrs[[i]],{i,1,3}]<= 1/3 Sum[boxerrs[[i]],{i,1,3}],
+		Round[1/3 Total[Table[1/3 Total[simperrs[[i]]],{i,1,3}]]] <= Round[1/3 Total[Table[1/3 Total[boxerrs[[i]]],{i,1,3}]]],
 			Sow[{simpparas,Table[Apply[ellipseparaerrors,Join[simpparas[[i]],moms]],{i,1,3}]}];
 			paras=simpparas;,
-		1/3 Sum[boxerrs[[i]],{i,1,3}]<1/3 Sum[simperrs[[i]],{i,1,3}],
+		Round[1/3 Total[Table[1/3 Total[simperrs[[i]]],{i,1,3}]]] > Round[1/3 Total[Table[1/3 Total[boxerrs[[i]]],{i,1,3}]]],
 			Sow[{Apply[boxToSimp,boxparas],Table[Apply[ellipseparaerrors,Join[Apply[boxToSimp,boxparas[[i]]],moms]],{i,1,3}]}];
 			paras=Apply[boxToSimp,boxparas];
 		];
-	,{ri,1,5}];
-];
+	,{ri,1,10}];
+][[2,1]];
 Return[out];
 ];
 
