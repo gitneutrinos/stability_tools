@@ -355,7 +355,7 @@ Reap[
 		S=stabilityMatrix[singleRadiusData,ea,"xflavor"-> OptionValue["xflavor"]];
 
 		kl=buildkGrid[singleRadiusData,nstep,"ktarget"-> OptionValue["ktarget"],"krange"-> OptionValue["krange"],"xflavor"-> OptionValue["xflavor"]];
-		Do[
+		ParallelDo[
 		
 			eout=evscale[kl[[kx]],S,kvar,"output"->OptionValue["koutput"]];
 			
