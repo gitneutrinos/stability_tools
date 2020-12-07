@@ -355,7 +355,7 @@ Reap[
 		S=stabilityMatrix[singleRadiusData,ea,"xflavor"-> OptionValue["xflavor"]];
 
 		kl=buildkGrid[singleRadiusData,nstep,"ktarget"-> OptionValue["ktarget"],"krange"-> OptionValue["krange"],"xflavor"-> OptionValue["xflavor"]];
-		ParallelDo[
+		Do[
 		
 			eout=evscale[kl[[kx]],S,kvar,"output"->OptionValue["koutput"]];
 			
@@ -376,10 +376,10 @@ Export[ToString[name]<>".h5",  {
 "/grid_elements/k"-> {"Data"-> outevs[[1,All,3]],"Attributes"-> {"Units"-> "Ergs"}},
 "/grid_elements/evs_Re"-> {"Data"-> Re[outevs[[1,All,4,1]]],"Attributes"-> {"Units"-> "Ergs"}},
 "/grid_elements/evs_Im"-> {"Data"-> Im[outevs[[1,All,4,1]]],"Attributes"-> {"Units"-> "Ergs"}},
-"/grid_elements/evecs_nu_Re"-> {"Data"-> Re[outevs[[1,All,4,2]][[All,All,1;;1/2 Length[outevs[[1,All,4,2]][[All,All]]] ]] ],"Attributes"-> {"Norm?"-> "Unnormalized"}},
-"/grid_elements/evecs_nu_Im"-> {"Data"-> Im[outevs[[1,All,4,2]][[All,All,1;;1/2 Length[outevs[[1,All,4,2]][[All,All]]]]]],"Attributes"-> {"Norm?"-> "Unnormalized"}},
-"/grid_elements/evecs_nubar_Re"-> {"Data"-> Re[outevs[[1,All,4,2]][[All,All,1+1/2 Length[outevs[[1,All,4,2]][[All,All]]];;Length[outevs[[1,All,4,2]][[All,All]]]]]],"Attributes"-> {"Norm?"-> "Unnormalized"}},
-"/grid_elements/evecs_nubar_Im"-> {"Data"-> Im[outevs[[1,All,4,2]][[All,All,1+1/2 Length[outevs[[1,All,4,2]][[All,All]]];;Length[outevs[[1,All,4,2]][[All,All]]]]]],"Attributes"-> {"Norm?"-> "Unnormalized"}},
+"/grid_elements/evecs_nu_Re"-> {"Data"-> Re[outevs[[1,All,4,2]][[All,All,1;;1/2 Length[outevs[[1,All,4,2]][[All,All]][[1]]] ]] ],"Attributes"-> {"Norm?"-> "Unnormalized"}},
+"/grid_elements/evecs_nu_Im"-> {"Data"-> Im[outevs[[1,All,4,2]][[All,All,1;;1/2 Length[outevs[[1,All,4,2]][[All,All]][[1]]]]]],"Attributes"-> {"Norm?"-> "Unnormalized"}},
+"/grid_elements/evecs_nubar_Re"-> {"Data"-> Re[outevs[[1,All,4,2]][[All,All,1+(1/2 Length[outevs[[1,All,4,2]][[All,All]][[1]]]);;Length[outevs[[1,All,4,2]][[All,All]][[1]]]]]],"Attributes"-> {"Norm?"-> "Unnormalized"}},
+"/grid_elements/evecs_nubar_Im"-> {"Data"-> Im[outevs[[1,All,4,2]][[All,All,1+(1/2 Length[outevs[[1,All,4,2]][[All,All]][[1]]]);;Length[outevs[[1,All,4,2]][[All,All]][[1]]]]]],"Attributes"-> {"Norm?"-> "Unnormalized"}},
 "/grid_elements/Vsi"-> {"Data"-> outevs[[1,All,5]],"Attributes"-> {"Units"-> "Ergs"}},
 "/settings/options"-> {"Data"-> ToString[outevs[[2]]],"Attributes"-> {"Order"-> "xflavor value, inverse value,krange"}},
 "/settings/inputs"-> {"Data"-> ToString[outevs[[3]]],"Attributes"-> {"Order"-> "file,rsrt,rend,testE,hi,nstep"}}
