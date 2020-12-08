@@ -488,7 +488,7 @@ Return[{esbox[0],esbox[1],esbox[2]}]
 
 ellipseSimpMoments[af_,bf_,cxf_]:=Module[{ebox,esbox,esimp,essimp},
 esimp[a_,b_,cx_,m_]:=(b (b m cx+a Sqrt[b^2 m^2-a^2 (-1+m^2)+(-1+m^2) cx^2]))/(a^2+(-a^2+b^2) m^2);
-essimp[mom_]:=  NIntegrate[m^mom esimp[af,bf,cxf,m],{m,-1.,1.},MinRecursion-> 16,MaxRecursion-> 100];
+essimp[mom_]:=  NIntegrate[m^mom esimp[af,bf,cxf,m],{m,-1.,1.},MaxRecursion-> 16];
 Return[{essimp[0],essimp[1],essimp[2]}]
 ];
 
