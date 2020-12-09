@@ -74,6 +74,8 @@ boxToSimp::usage=
 "converts from box transform to simple ellipses parameters"
 simpToBox::usage=
 "converts from simple ellipse parameters to box transform"
+ellipseFitSingleSpecies::usage=
+"fits a single species to an ellispe from rsrt to rend"
 
 
 (* ::Subsection::Closed:: *)
@@ -530,6 +532,20 @@ er0=(ellipseSimpMoments[a,b,cx][[1]]-m0)/m0;
 er1=(ellipseSimpMoments[a,b,cx][[2]]-m1)/m0;
 er2=(ellipseSimpMoments[a,b,cx][[3]]-m2)/m0;
 Return[{er0,er1,er2}];
+];
+
+
+ellipseFitSingleSpecies[file_,species_,rsrt_,rend_]:=Module[{{moms,igs,paras,errs,out,simpparas,boxparas,simperrs,boxerrs}},
+out=
+Reap[
+	Do[
+		moms=getMoments[file,ri,species];
+		igs=Apply[getInitialGuess,moms];
+		simpparas=Apply[eSimpFitToMoments,Join[moms,{igs}]];
+		simperrs=Apply[ellipseparaerrors,Join[simpparas,moms]];
+		Sow[{simpparas,simperrs}]
+	,{ri,rsrt,rend}](*Clsoe Do *)
+][[2,1]](*Close Reap*)
 ];
 
 
