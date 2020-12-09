@@ -466,7 +466,7 @@ Return[moments];
 
 
 getInitialGuess[m0_,m1_,m2_]:=Module[{foc1234,ag,\[Beta]g,\[Chi]g,cg,bg,arg\[Beta],arg\[Chi]},
-ag=m0; 
+ag=1/2 m0; 
 bg=0.9 ag;
 cg=10^-8 ag;
 (*(*semi-major axis guess*)
