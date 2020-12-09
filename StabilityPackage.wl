@@ -543,10 +543,10 @@ Reap[
 		igs=Apply[getInitialGuess,moms];
 		simpparas=Apply[eSimpFitToMoments,Join[moms,{igs}]];
 		simperrs=Apply[ellipseparaerrors,Join[simpparas,moms]];
-		Sow[{simpparas,simperrs}]
+		Sow[{simpparas,simperrs}];
 	,{ri,rsrt,rend}](*Clsoe Do *)
-][[2,1]](*Close Reap*)
-];
+][[2,1]];(*Close Reap*)
+Return[out]];
 
 
 (*Fits a file to ellispes by trying both the simpel ellipse method and the box method. For each radius, it keeps the fit with the lowerst error.  the default parameters are the simple parameters a, b, and cx.*)
