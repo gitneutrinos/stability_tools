@@ -535,9 +535,8 @@ Return[{er0,er1,er2}];
 ];
 
 
-ellipseFitSingleSpecies[file_,species_,rsrt_,rend_]:=Module[{{moms,igs,paras,errs,out,simpparas,boxparas,simperrs,boxerrs}},
-out=
-Reap[
+ellipseFitSingleSpecies[file_,species_,rsrt_,rend_]:=Module[{moms,igs,paras,errs,out,simpparas,boxparas,simperrs,boxerrs},
+out=Reap[
 	Do[
 		moms=getMoments[file,ri,species];
 		igs=Apply[getInitialGuess,moms];
@@ -546,7 +545,8 @@ Reap[
 		Sow[{simpparas,simperrs}];
 	,{ri,rsrt,rend}](*Clsoe Do *)
 ][[2,1]];(*Close Reap*)
-Return[out]];
+Return[out];
+];
 
 
 (*Fits a file to ellispes by trying both the simpel ellipse method and the box method. For each radius, it keeps the fit with the lowerst error.  the default parameters are the simple parameters a, b, and cx.*)
