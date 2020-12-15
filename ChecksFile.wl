@@ -13,7 +13,9 @@ id=ChoiceDialog[
  inpath="G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\";
  outpath="G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\stability_data\\";
 SetDirectory["C:\\Users\\Sam\\Documents\\GitHub\\stability_tools"];
-Get["StabilityPackage`",Path->"."];
+ParallelEvaluate[$ProcessorCount];
+ParallelEvaluate[Get["StabilityPackage`",Path->"."]];
+ParallelNeeds["StabililtyPackage`"];
 SetOptions[EvaluationNotebook[],
 DockedCells-> 
 Cell[BoxData[ToBoxes[
@@ -24,6 +26,9 @@ Grid[{{Item[Style["Stability Tools",FontFamily->"Helvetica",12,Bold],Alignment->
  id=="Sherwood",
  inpath="/mnt/data/SamFlynn/lotsadata/";
  outpath="/mnt/data/SamFlynn/stability_data/";
+ParallelEvaluate[$ProcessorCount];
+ParallelEvaluate[Get["StabilityPackage`"];
+ParallelNeeds["StabililtyPackage`"];
 Get["StabilityPackage`"];
  ,
  id=="Other",
