@@ -472,7 +472,7 @@ Return[moments];
 getInitialGuess[m0_,m1_,m2_]:=Module[{foc1234,ag,\[Beta]g,\[Chi]g,cg,bg,arg\[Beta],arg\[Chi]},
 ag=0.5 m0; 
 bg=0.9 ag;
-cg=10^-8 ag;
+cg=0.5 m1;
 (*(*semi-major axis guess*)
 cg=Abs[foc1234[Sin[ArcCos[1.]],0.,1.]-ag]; (*horizontal shift from the center *)
 bg=Sqrt[foc1234[Sin[ArcCos[0.]],0.,0.]^2/(1-(cg/ag)^2)]; (*semi-minor axis*)
@@ -536,7 +536,7 @@ Return[{af/.br,\[Beta]f/.br,\[Chi]f/.br}]
 
 eSimpFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,bf,cf,momeqns},
 momeqns=ellipseSimpMoments[af,bf,cf];
-br=FindRoot[{momeqns[[1]]-m0,momeqns[[2]]-m1,momeqns[[3]]-m2},{{af,g0[[1]]},{bf,g0[[2]]},{cf,g0[[3]]}},Evaluated->False,MaxIterations-> 1000,AccuracyGoal-> Infinity];
+br=FindRoot[{(momeqns[[1]]-m0)/m0,(momeqns[[2]]-m1)/m0,(momeqns[[3]]-m2)/m0},{{af,g0[[1]]},{bf,g0[[2]]},{cf,g0[[3]]}},Evaluated->False,MaxIterations-> 1000,AccuracyGoal-> Infinity];
 Return[{af/.br,bf/.br,cf/.br}]
 ];
 
@@ -555,7 +555,7 @@ out=Reap[
 	Do[
 		moms=getMoments[file,ri,species];
 		igs=Apply[getInitialGuess,moms];
-		simpparas=Apply[eSimpFitToMoments,Join[moms,{igs}]];
+		simpparas=Apply[eSimpFitToMoments,Join[moms,{igs}]]//Re;
 		simperrs=Apply[ellipseparaerrors,Join[simpparas,moms]];
 		Sow[{simpparas,simperrs}];
 	,{ri,rsrt,rend}](*Clsoe Do *)
