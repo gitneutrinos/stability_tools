@@ -76,6 +76,8 @@ simpToBox::usage=
 "converts from simple ellipse parameters to box transform"
 ellipseFitSingleSpecies::usage=
 "fits a single species to an ellispe from rsrt to rend"
+getInitialBoxGuess::usage=
+"gets intiial guess for box transform coordinates"
 
 
 (* ::Subsection::Closed:: *)
