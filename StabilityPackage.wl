@@ -468,7 +468,7 @@ Return[moments];
 
 
 getInitialGuess[m0_,m1_,m2_]:=Module[{foc1234,ag,\[Beta]g,\[Chi]g,cg,bg,arg\[Beta],arg\[Chi]},
-ag=1/2 m0; 
+ag=0.5 m0; 
 bg=0.9 ag;
 cg=10^-8 ag;
 (*(*semi-major axis guess*)
@@ -480,10 +480,23 @@ Return[{ag,bg,cg}]
 ];
 
 
+getInitialBoxGuess[m0_,m1_,m2_]:=Module[{foc1234,ag,\[Beta]g,\[Chi]g,cg,bg,arg\[Beta],arg\[Chi]},
+ag=0.5 m0; 
+\[Beta]g=0.;
+\[Chi]g=-10;
+(*(*semi-major axis guess*)
+cg=Abs[foc1234[Sin[ArcCos[1.]],0.,1.]-ag]; (*horizontal shift from the center *)
+bg=Sqrt[foc1234[Sin[ArcCos[0.]],0.,0.]^2/(1-(cg/ag)^2)]; (*semi-minor axis*)
+If[bg> ag && bg/ag<= 1.001, ag=ag+2(bg-ag)]; (* If bg>ag, and the difference is small, switches them in the transform*)
+*)
+Return[{ag,\[Beta]g,\[Chi]g}]
+];
+
+
 ellipseBoxMoments[af_,\[Beta]f_,\[Chi]f_]:=Module[{ebox,esbox},
 ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])+a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2
 +1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
-esbox[mom_]:=  NIntegrate[m^mom ebox[af,\[Beta]f,\[Chi]f,m],{m,-1.,1.},MinRecursion-> 16,MaxRecursion-> 100];
+esbox[mom_]:=  NIntegrate[m^mom ebox[af,\[Beta]f,\[Chi]f,m],{m,-1.,1.},MaxRecursion-> 16];
 Return[{esbox[0],esbox[1],esbox[2]}]
 ];
 
