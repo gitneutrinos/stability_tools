@@ -13,9 +13,7 @@ id=ChoiceDialog[
  inpath="G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\";
  outpath="G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\stability_data\\";
 SetDirectory["C:\\Users\\Sam\\Documents\\GitHub\\stability_tools"];
-ParallelEvaluate[$ProcessorCount];
-ParallelEvaluate[Get["StabilityPackage`",Path->"."]];
-ParallelNeeds["StabililtyPackage`"];
+Get["StabilityPackage`",Path->"."];
 SetOptions[EvaluationNotebook[],
 DockedCells-> 
 Cell[BoxData[ToBoxes[
@@ -26,9 +24,6 @@ Grid[{{Item[Style["Stability Tools",FontFamily->"Helvetica",12,Bold],Alignment->
  id=="Sherwood",
  inpath="/mnt/data/SamFlynn/lotsadata/";
  outpath="/mnt/data/SamFlynn/stability_data/";
-ParallelEvaluate[$ProcessorCount];
-ParallelEvaluate[Get["StabilityPackage`"];
-ParallelNeeds["StabililtyPackage`"];
 Get["StabilityPackage`"];
  ,
  id=="Other",
@@ -44,6 +39,9 @@ outfolder = outpath<>filename;
 *)
 (*Note: this used to contain a variable called "out_path". Be careful with the underscores; in Mathematica they are either function inputs or patterns.  If the font turn green, that's why.*)
 (*Constants*)
+
+
+
 
 
 
@@ -67,15 +65,35 @@ file=inpath<>"1D_withV_withPairBrems_DO.h5";
 (*SCalcScale[ImportData[inpath<>file<>".h5"],ri,testE,hi,0][[3]]//MatrixForm*)
 (*buildkGrid[ImportData[inpath<>file<>".h5"],ri,testE,hi,40]*)
 kAdapt[file,ri,ri,testE,hi,nstep,"xflavor"-> False]
-];
+]
 debugdata=Transpose@{kdebug[[1,All,3]],Table[kdebug[[1,All,4,1]][[i]]//Im//Max,{i,1,40}]};
 plot1=ListLogPlot[{debugdata},ImageSize-> Scaled[0.25]]; (*Current data as calculated by kadapt*)
 plot2=ListLogPlot[{OldData},ImageSize-> Scaled[0.25]]; (*Old reference data set*)
 diffplot=ListPlot[debugdata[[All,2]]-OldData[[All,2]],Joined-> True,ImageSize->Scaled[0.25]]; (*Plot of the difference between OldData and current data*)
-rowplot=GraphicsRow[{plot1,plot2,diffplot},Frame-> True];
+rowplot=GraphicsRow[{plot1,plot2,diffplot},Frame-> True]
 
 
 
+
+
+(* ::InheritFromParent:: *)
+(*Graphics[{{}, {Inset[Graphics[{{}, {}, {{}, {}}}, AspectRatio -> GoldenRatio^(-1), Axes -> {True, True}, AxesLabel -> {None, None}, AxesOrigin -> {0., -1.1565113500597373`}, DisplayFunction -> Identity, Frame -> {{False, False}, {False, False}}, FrameLabel -> {{None, None}, {None, None}}, FrameTicks -> {{Charting`ScaledTicks[{Log, Exp}], Charting`ScaledFrameTicks[{Identity, Identity}]}, {Automatic, Automatic}}, GridLines -> {None, None}, GridLinesStyle -> Directive[GrayLevel[0.5, 0.4]], ImagePadding -> {{5.671874999999986, 3.671875}, {15.931461996864073`, 0.5}}, ImageSize -> Scaled[0.25], Method -> {"OptimizePlotMarkers" -> True, "OptimizePlotMarkers" -> True, "CoordinatesToolOptions" -> {"DisplayFunction" -> ({Identity[Part[#, 1]], Exp[Part[#, 2]]}& ), "CopiedValueFunction" -> ({Identity[Part[#, 1]], Exp[Part[#, 2]]}& )}}, PlotRange -> {{-1, 1}, {-1.1565113500597373`, 1}}, PlotRangeClipping -> True, PlotRangePadding -> {{Scaled[0.02], Scaled[0.02]}, {Scaled[0.02], Scaled[0.05]}}, Ticks -> {Automatic, Charting`ScaledTicks[{Log, Exp}]}], {134.9125, -89.25}, ImageScaled[{0.5, 0.5}], {251, 170}], Inset[Graphics[{{}, {{RGBColor[0.368417, 0.506779, 0.709798], PointSize[0.012833333333333334`], AbsoluteThickness[1.6], Point[CompressedData["*)
+(*1:eJxTTMoPSmViYGBQBWIQPb8ySer9+n/WXtsV527t9jxQrpu6P8xKxCaXW7vJ*)
+(*5oDrgVOXv6y2zlGwkb4exveq1vXA9XsCKXtWadm4eUpLzotwPbCtY7t6zzJT*)
+(*m0cxJef7nVwPzDe4yflusqNNFPuK7Vn2rgfWsIQtftjlY/M/QeG2SqrrgR4p*)
+(*Adt4nXAbi54FG+ZFehyQ/N7ZmHMhyebRA5sTbwM9Dky94cR5pifP5sx9q+NB*)
+(*vh4HTIP0LOaerbBJtTN+3+7lceCi9usOXeUWm6Btu1df9vA44K8sfCE3coJN*)
+(*bd7swhPuHgdS99oeMu6ZZfNhd0aGCpC/NVnlzcHepTZMIn+n7nfzONBzSW72*)
+(*2fqNNgYaOpMagfze3Jc2xll7bOaesc+IBvI5gg6Hsbk/391jUc9x2MrzQN12*)
+(*YSmBZ5923/nxIOWzn8cBaHjtnvj9tdynbrcD0uWrTVVecey5rGy9OEnLDRZ+*)
+(*exZ+3lIYL+sGC789F7NKX8arusHCb8+iPde+8x9xg4XfnhaTjVPSxDxg4bfH*)
+(*ujtq1yRJD1j47XFjvCnqpekBC7892d+/Hv9rDA+/PQUzztletIKH357sP5ZX*)
+(*pezh4bdn5fYDGscd4eG3566s6rN8Z3j47cmc/OVQmQs8/PboWM9QkXSFh98e*)
+(*M/7MsFpXePjtce1vkN3tCg+/PUZyn/QfAvkAe6IgFA==*)
+(*"]]}, {{RGBColor[0.368417, 0.506779, 0.709798], PointSize[0.012833333333333334`], AbsoluteThickness[1.6]}, {}}, {{RGBColor[0.368417, 0.506779, 0.709798], PointSize[0.012833333333333334`], AbsoluteThickness[1.6]}, {}}}, {{}, {}}}, AspectRatio -> GoldenRatio^(-1), Axes -> {True, True}, AxesLabel -> {None, None}, AxesOrigin -> {0, -51.76416848606965}, DisplayFunction -> Identity, Frame -> {{False, False}, {False, False}}, FrameLabel -> {{None, None}, {None, None}}, FrameTicks -> {{Charting`ScaledTicks[{Log, Exp}], Charting`ScaledFrameTicks[{Identity, Identity}]}, {Automatic, Automatic}}, GridLines -> {None, None}, GridLinesStyle -> Directive[GrayLevel[0.5, 0.4]], ImagePadding -> {{0.5, 2.000060757754767}, {15.931461996864073`, 0.5}}, ImageSize -> Scaled[0.25], Method -> {"OptimizePlotMarkers" -> True, "OptimizePlotMarkers" -> True, "CoordinatesToolOptions" -> {"DisplayFunction" -> ({Identity[Part[#, 1]], Exp[Part[#, 2]]}& ), "CopiedValueFunction" -> ({Identity[Part[#, 1]], Exp[Part[#, 2]]}& )}}, PlotRange -> {{-8.605331804262226*^-17, 8.605331804262226*^-17}, {-51.76416848606965, -42.49544425682571}}, PlotRangeClipping -> True, PlotRangePadding -> {{Scaled[0.02], Scaled[0.02]}, {Scaled[0.02], Scaled[0.05]}}, Ticks -> {Automatic, Charting`ScaledTicks[{Log, Exp}]}], {404.73749999999995`, -89.25}, ImageScaled[{0.5, 0.5}], {251, 170}], Inset[Graphics[{{}, {}, {{}, {}}}, AspectRatio -> GoldenRatio^(-1), Axes -> {True, True}, AxesLabel -> {None, None}, AxesOrigin -> {0., 0}, DisplayFunction -> Identity, Frame -> {{False, False}, {False, False}}, FrameLabel -> {{None, None}, {None, None}}, FrameTicks -> {{Automatic, Automatic}, {Automatic, Automatic}}, GridLines -> {None, None}, GridLinesStyle -> Directive[GrayLevel[0.5, 0.4]], ImagePadding -> {{5.671875, 3.6718750000000284`}, {15.931461996864073`, 0.5}}, ImageSize -> Scaled[0.25], Method -> {"OptimizePlotMarkers" -> True, "OptimizePlotMarkers" -> True, "CoordinatesToolOptions" -> {"DisplayFunction" -> ({Identity[Part[#, 1]], Identity[Part[#, 2]]}& ), "CopiedValueFunction" -> ({Identity[Part[#, 1]], Identity[Part[#, 2]]}& )}}, PlotRange -> {{-1, 1}, {-1, 1}}, PlotRangeClipping -> True, PlotRangePadding -> {{Scaled[0.02], Scaled[0.02]}, {Scaled[0.05], Scaled[0.05]}}, Ticks -> {Automatic, Automatic}], {674.5625, -89.25}, ImageScaled[{0.5, 0.5}], {251, 170}]}, Style[{{}, {Line[{{0, 0}, {0, -178.5}}], Line[{{809.4749999999999, 0}, {809.4749999999999, -178.5}}], Line[{{0, 0}, {269.825, 0}}], Line[{{269.825, 0}, {539.65, 0}}], Line[{{539.65, 0}, {809.4749999999999, 0}}], Line[{{0, -178.5}, {269.825, -178.5}}], Line[{{269.825, -178.5}, {539.65, -178.5}}], Line[{{539.65, -178.5}, {809.4749999999999, -178.5}}]}}, Antialiasing -> False]}, ImageSize -> {UpTo[600], UpTo[155]}, PlotRange -> {{0, 809.4749999999999}, {-178.5, 0}}, PlotRangePadding -> {6, 5}]*)
+
+
+?kAdapt
 
 
 (* ::Subsection::Closed:: *)
