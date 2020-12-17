@@ -471,7 +471,7 @@ Return[moments];
 
 getInitialGuess[m0_,m1_,m2_]:=Module[{foc1234,ag,\[Beta]g,\[Chi]g,cg,bg,arg\[Beta],arg\[Chi]},
 ag=0.5 m0; 
-bg=0.9 ag;
+bg=0.5 m2;
 cg=0.5 m1;
 (*(*semi-major axis guess*)
 cg=Abs[foc1234[Sin[ArcCos[1.]],0.,1.]-ag]; (*horizontal shift from the center *)
@@ -536,16 +536,16 @@ Return[{af/.br,\[Beta]f/.br,\[Chi]f/.br}]
 
 eSimpFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,bf,cf,momeqns},
 momeqns=ellipseSimpMoments[af,bf,cf];
-br=FindRoot[{(momeqns[[1]]-m0)/m0,(momeqns[[2]]-m1)/m0,(momeqns[[3]]-m2)/m0},{{af,g0[[1]]},{bf,g0[[2]]},{cf,g0[[3]]}},Evaluated->False,MaxIterations-> 1000,AccuracyGoal-> Infinity];
+br=FindRoot[{(momeqns[[1]]-m0)^2/m0^2,(momeqns[[2]]-m1)^2/m0^2,(momeqns[[3]]-m2)^2/m0^2},{{af,g0[[1]]},{bf,g0[[2]]},{cf,g0[[3]]}},Evaluated->False,MaxIterations-> 1000,AccuracyGoal-> Infinity];
 Return[{af/.br,bf/.br,cf/.br}]
 ];
 
 
 ellipseparaerrors[a_,b_,cx_,m0_,m1_,m2_]:=Module[{er0,er1,er2,fits},
 (*again evaluate only once*)
-er0=(ellipseSimpMoments[a,b,cx][[1]]-m0)/m0;
-er1=(ellipseSimpMoments[a,b,cx][[2]]-m1)/m0;
-er2=(ellipseSimpMoments[a,b,cx][[3]]-m2)/m0;
+er0=(ellipseSimpMoments[a,b,cx][[1]]-m0)^2/m0^2;
+er1=(ellipseSimpMoments[a,b,cx][[2]]-m1)^2/m0^2;
+er2=(ellipseSimpMoments[a,b,cx][[3]]-m2)^2/m0^2;
 Return[{er0,er1,er2}];
 ];
 
