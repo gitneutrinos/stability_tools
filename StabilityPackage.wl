@@ -232,7 +232,7 @@ Return[{H,Hb,\[Rho],\[Rho]b,A,Ab,\[Delta]H,\[Delta]Hb}]
 ];
 
 
-Com[A_,B_]:=Module[{a=A,b=B},Return[A.B-B.A]];
+Com[A_,B_]:=Module[{a=A,b=B},Return[A . B-B . A]];
 
 
 (*Calculates the equations of motion by computing the relvant commutators. 
@@ -471,7 +471,7 @@ Return[moments];
 
 getInitialGuess[m0_,m1_,m2_]:=Module[{foc1234,ag,\[Beta]g,\[Chi]g,cg,bg,arg\[Beta],arg\[Chi]},
 ag=0.5 m0; 
-bg=0.5 m2;
+bg=0.5 m0 3/2 (1- m2/m0);
 cg=0.5 m1;
 (*(*semi-major axis guess*)
 cg=Abs[foc1234[Sin[ArcCos[1.]],0.,1.]-ag]; (*horizontal shift from the center *)
@@ -503,9 +503,9 @@ Return[{esbox[0],esbox[1],esbox[2]}]
 ];
 
 
-ellipseSimpMoments[af_,bf_,cxf_]:=Module[{ebox,esbox,esimp,essimp},
+ellipseSimpMoments[af_?NumericQ,bf_?NumericQ,cxf_?NumericQ]:=Module[{ebox,esbox,esimp,essimp},
 esimp[a_,b_,cx_,m_]:=(b (b m cx+a Sqrt[b^2 m^2-a^2 (-1+m^2)+(-1+m^2) cx^2]))/(a^2+(-a^2+b^2) m^2);
-essimp[mom_]:=  NIntegrate[m^mom esimp[af,bf,cxf,m],{m,-1.,1.},MaxRecursion-> 16];
+essimp[mom_]:=  NIntegrate[m^mom esimp[af,bf,cxf,m],{m,-1.,1.},MaxRecursion-> 16,AccuracyGoal->6];
 Return[{essimp[0],essimp[1],essimp[2]}]
 ];
 
@@ -536,16 +536,16 @@ Return[{af/.br,\[Beta]f/.br,\[Chi]f/.br}]
 
 eSimpFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,bf,cf,momeqns},
 momeqns=ellipseSimpMoments[af,bf,cf];
-br=FindRoot[{(momeqns[[1]]-m0)^2/m0^2,(momeqns[[2]]-m1)^2/m0^2,(momeqns[[3]]-m2)^2/m0^2},{{af,g0[[1]]},{bf,g0[[2]]},{cf,g0[[3]]}},Evaluated->False,MaxIterations-> 1000,AccuracyGoal-> Infinity];
+br=FindRoot[{(momeqns[[1]]-m0)/m0,(momeqns[[2]]-m1)/m0,(momeqns[[3]]-m2)/m0},{{af,g0[[1]]},{bf,g0[[2]]},{cf,g0[[3]]}},Evaluated->False,MaxIterations-> 1000,AccuracyGoal-> 6];
 Return[{af/.br,bf/.br,cf/.br}]
 ];
 
 
 ellipseparaerrors[a_,b_,cx_,m0_,m1_,m2_]:=Module[{er0,er1,er2,fits},
 (*again evaluate only once*)
-er0=(ellipseSimpMoments[a,b,cx][[1]]-m0)^2/m0^2;
-er1=(ellipseSimpMoments[a,b,cx][[2]]-m1)^2/m0^2;
-er2=(ellipseSimpMoments[a,b,cx][[3]]-m2)^2/m0^2;
+er0=(ellipseSimpMoments[a,b,cx][[1]]-m0)/m0;
+er1=(ellipseSimpMoments[a,b,cx][[2]]-m1)/m0;
+er2=(ellipseSimpMoments[a,b,cx][[3]]-m2)/m0;
 Return[{er0,er1,er2}];
 ];
 
