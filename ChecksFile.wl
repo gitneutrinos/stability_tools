@@ -287,20 +287,22 @@ Return[ans];
 (*Check that ellipse construction results in the correct moments given hand-chosen moments*)
 
 
-ellipsefiterrors[m0_,m1_,m2_]:=Module[{er0,er1,er2,fits},
-fits=eBoxFitToMoments[m0,m1,m2,getInitialGuess[m0,m1,m2]];
-er0=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[1]]-m0)/m0;
-er1=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[2]]-m1)/m1;
-er2=(ellipseMoments[fits[[1]],fits[[2]],fits[[3]]][[3]]-m2)/m2;
-(*Print["Initial Guess: ", getInitialGuess[m0,m1,m2]];*)
-Return[{er0,er1,er2}];
-]
-(*Ellipse fits to 3 moments and returns the percent errors*)
+(*Ellipse fits to artifical parameters*)
+eCheckArtificial[]:= Module[{pans,ans,mom,igs},
+mom={1., 1. 10^-8, N[1/3]};
+igs=Apply[getInitialGuess,mom];
+pans=Apply[eSimpFitToMoments,Join[mom,{igs}]];
+ans=Apply[ellipseparaerrors,Join[pans,mom]];
+Return[ans]
+];
 
-ellipsefitrealdatacheck[]:=Module[{file,moms},
+ellipsefitrealdatacheck[]:=Module[{file,moms,igs,paras,errs},
 file=inpath<>"4timesHigh_1D_withV_withPairBrems_MC_moments.h5";
-moms=Quiet[Quiet[getMoments[file,1,1],{Import::general}],{Import::noelem}]; (*quiets only the import complaint that there are no midpoints for moments*)
-Return[ellipsefiterrors[moms[[1]],moms[[2]]//Abs,moms[[3]]]]
+moms=getMoments[file,220,1];
+igs=Apply[getInitialGuess,moms];
+paras=Apply[eSimpFitToMoments,Join[moms,{igs}]];
+errs=Apply[ellipseparaerrors,Join[paras,moms]];
+Return[errs]
 ];
 (*Imports real CSSN data and then calls ellipse fit errors for the tests file*)
 
@@ -370,4 +372,4 @@ Table[tr["TestResults"][i],{i,1,13}]//MatrixForm
 
 
 
-MorinagaTestPlot[264,Infinity,400]
+
