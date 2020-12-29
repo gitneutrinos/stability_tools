@@ -73,7 +73,7 @@ VerificationTest[(* 9 *)
 ]
 
 VerificationTest[(* 10 *)
-	And[Less[Part[ellipsefiterrors[1.`, Power[10.`, -8], Times[1.`, Power[3.`, -1]]], 1], Power[10, -5]], Less[Part[ellipsefiterrors[1.`, Power[10.`, -8], Times[1.`, Power[3.`, -1]]], 2], Power[10, -5]], Less[Part[ellipsefiterrors[1.`, Power[10.`, -8], Times[1.`, Power[3.`, -1]]], 3], Power[10, -5]]]
+	And[LessEqual[Part[eCheckArtificial[], 1], Power[10, -4]], LessEqual[Part[eCheckArtificial[], 2], Power[10, -4]], LessEqual[Part[eCheckArtificial[], 3], Power[10, -4]]]
 	,
 	True	
 	,
@@ -83,15 +83,13 @@ VerificationTest[(* 10 *)
 VerificationTest[(* 11 *)
 	And[Less[Part[ellipsefitrealdatacheck[], 1], Power[10, -3]], Less[Part[ellipsefitrealdatacheck[], 2], Power[10, -3]], Less[Part[ellipsefitrealdatacheck[], 3], Power[10, -3]]]
 	,
-	True
+	True	
 	,
-	{FindRoot::jsing, FindRoot::jsing, FindRoot::jsing, General::stop}
-	,
-	TestID-> "Ellipse Fitting: Check ellipse fit error in moments for CSSN data"
+	TestID-> "Ellipse Fitting: Check ellipse fit error in moments for CSSN data: ri=220"
 ]
 
 VerificationTest[(* 12 *)
-	ncheck[inpath<>"112Msun_100ms_DO.h5", 250]
+	CompoundExpression[Set[ncheckdata, SelectSingleRadius[ImportData[StringJoin[inpath, "112Msun_100ms_DO.h5"]], 250]], Greater[siPotential[ncheckdata, Rule["xflavor", True]], siPotential[ncheckdata, Rule["xflavor", False]]]]
 	,
 	True	
 	,
@@ -99,7 +97,7 @@ VerificationTest[(* 12 *)
 ]
 
 VerificationTest[(* 13 *)
-	netleptoncheck[inpath<>"112Msun_100ms_DO.h5", 250]
+	Equal[Plus[Plus[Tr[Part[ndensities[ncheckdata, Rule["xflavor", True]], 1]], Tr[Part[ndensities[ncheckdata, Rule["xflavor", True]], 3]]], Times[-1, Plus[Tr[Part[ndensities[ncheckdata, Rule["xflavor", True]], 2]], Tr[Part[ndensities[ncheckdata, Rule["xflavor", True]], 3]]]]], Plus[Plus[Tr[Part[ndensities[ncheckdata, Rule["xflavor", False]], 1]], Tr[Part[ndensities[ncheckdata, Rule["xflavor", False]], 3]]], Times[-1, Plus[Tr[Part[ndensities[ncheckdata, Rule["xflavor", False]], 2]], Tr[Part[ndensities[ncheckdata, Rule["xflavor", False]], 3]]]]]]
 	,
 	True	
 	,
