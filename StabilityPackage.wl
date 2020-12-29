@@ -537,7 +537,7 @@ Return[{af/.br,\[Beta]f/.br,\[Chi]f/.br}]
 eSimpFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,bf,cf,momeqns},
 momeqns=ellipseSimpMoments[af,bf,cf];
 br=FindRoot[{(momeqns[[1]]-m0)/m0,(momeqns[[2]]-m1)/m0,(momeqns[[3]]-m2)/m0},{{af,g0[[1]]},{bf,g0[[2]]},{cf,g0[[3]]}},Evaluated->False,MaxIterations-> 1000,AccuracyGoal-> 6];
-Return[{af/.br,bf/.br,cf/.br}]
+Return[{af/.br//Re,bf/.br//Re,cf/.br//Re}]
 ];
 
 
