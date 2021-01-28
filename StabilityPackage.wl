@@ -616,5 +616,21 @@ Return[data];
 ];
 
 
+(*Exports a DOtoMoments dodata file in h5 format.*)
+exportDOasMoments[dodata_,name_]:= 
+Export[name<>".h5",{
+"distribution(erg|ccm,lab)"-> {"Data"-> dodata["Endensity"]},
+"rho(g|ccm,com)"-> {"Data"-> dodata["matters"]},
+"Ye"-> {"Data"-> dodata["Yes"]},
+"distribution_frequency_grid(Hz,lab)"-> {"Data"->dodata["freqs"]},
+"distribution_frequency_mid(Hz,lab)"-> {"Data"-> dodata["freqmid"]},
+"distribution_costheta_grid(lab)"-> {"Data"-> dodata["muss"]},
+"distribution_costheta_mid(lab)"-> {"Data"-> dodata["mids"]},
+"r(cm)"-> {"Data"-> dodata["radius"]},
+"/distribution_phi_grid(radians,lab)"-> {"Data"-> dodata["phis"]}
+}
+]
+
+
 End[]
 EndPackage[]
