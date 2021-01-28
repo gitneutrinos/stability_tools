@@ -568,45 +568,6 @@ Return[out];
 ];
 
 
-(*Fits a file to ellispes by trying both the simpel ellipse method and the box method. For each radius, it keeps the fit with the lowerst error.  the default parameters are the simple parameters a, b, and cx.*)
-ellipsefitfile[file_]:=Module[{moms,igs,paras,errs,out,simpparas,boxparas,simperrs,boxerrs},
-out=Reap[
-	Do[
-	(*moms is a list with 3 entires, one for each species. Each entry is a list of 3 moments.
-	mom[[species,moment]]*)
-	moms={getMoments[file,ri,1],getMoments[file,ri,2],getMoments[file,ri,3]};
-		If[ri==1,
-		(*igs=a list with 3 entries, one for each species. Each entry is a list of 3 parameters.
-		igs[[species,ellispe parameter]]*)
-		igs=Table[Apply[getInitialGuess,moms[[i]] ],{i,1,3}], (*simple parametrers!*)
-		igs=paras
-		];
-	(*simpparas is a list with 3 entires, one for each species. Each entry is a list of 3 ellipse parameters
-	simppparas[[species,parameter]]
-	same for box paras*)
-	simpparas=Table[Apply[eSimpFitToMoments,Join[moms[[i]],{igs[[i]]}]],{i,1,3}];
-	boxparas=Table[Apply[eBoxFitToMoments,Join[moms[[i]],{Apply[boxToSimp,igs[[i]]]}]],{i,1,3}]; (*Converted guesses to box*)
-	(*simperrs is a list with 3 entries, one per species. Each entry is alist of 3 errors, one for each parameters
-	simperrs[[species,error in parameter i]]
-	same for boxerrs*)
-	simperrs=Table[Apply[ellipseparaerrors,Join[simpparas[[i]],moms[[i]]]],{i,1,3}]; 
-	boxerrs=Table[Apply[ellipseparaerrors,Join[Apply[boxToSimp,boxparas[[i]]],moms[[i]]]],{i,1,3}];
-	Which[
-	(*Picks which parameter set to keep based on the average of the average relative error over the 3 species*)
-		Round[1/3 Total[Table[1/3 Total[simperrs[[i]]],{i,1,3}]]] <= Round[1/3 Total[Table[1/3 Total[boxerrs[[i]]],{i,1,3}]]],
-			Sow[{simpparas,Table[Apply[ellipseparaerrors,Join[simpparas[[i]],moms]],{i,1,3}]}];
-			paras=simpparas;,
-		Round[1/3 Total[Table[1/3 Total[simperrs[[i]]],{i,1,3}]]] > Round[1/3 Total[Table[1/3 Total[boxerrs[[i]]],{i,1,3}]]],
-			Sow[{Apply[boxToSimp,boxparas],Table[Apply[ellipseparaerrors,Join[Apply[boxToSimp,boxparas[[i]]],moms]],{i,1,3}]}];
-			paras=Apply[boxToSimp,boxparas];
-		];
-	,{ri,1,10}];
-][[2,1]];
-Return[out];
-];
-
-
-
 (* Caclulates the 3 angular moments from a DO file and returns a list of the 3 moments from radial index rsrt to radial index rend. *)
 getDOmoments[dofile_,rsrt_,rend_]:=Module[{dat,srdat,out,emom,fmom,pmom},
 dat=ImportData[dofile];
