@@ -78,6 +78,10 @@ ellipseFitSingleSpecies::usage=
 "fits a single species to an ellispe from rsrt to rend"
 getInitialBoxGuess::usage=
 "gets intiial guess for box transform coordinates"
+getDOmoments::usage=
+"calculate moments from a do file"
+DOtoMoments::usage=
+"convert a do file to a moment file"
 
 
 (* ::Subsection::Closed:: *)
@@ -529,14 +533,14 @@ Return[{a,\[Beta],\[Chi]}]
 (*Given 3 moments, fit parameters a, \[Beta], and \[Chi] so ellipseMoments match*)
 eBoxFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,\[Beta]f,\[Chi]f,momeqns},
 momeqns=ellipseBoxMoments[af,\[Beta]f,\[Chi]f];
-br=FindRoot[{momeqns[[1]]-m0,momeqns[[2]]-m1,momeqns[[3]]-m2},{{af,g0[[1]]},{\[Beta]f,g0[[2]]},{\[Chi]f,g0[[3]]}},Evaluated->False,MaxIterations-> 1000,AccuracyGoal-> Infinity];
+br=FindRoot[{momeqns[[1]]-m0,momeqns[[2]]-m1,momeqns[[3]]-m2},{{af,g0[[1]]},{\[Beta]f,g0[[2]]},{\[Chi]f,g0[[3]]}},Evaluated->False,MaxIterations-> 20,AccuracyGoal-> Infinity];
 Return[{af/.br,\[Beta]f/.br,\[Chi]f/.br}]
 ];
 
 
 eSimpFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,bf,cf,momeqns},
 momeqns=ellipseSimpMoments[af,bf,cf];
-br=FindRoot[{(momeqns[[1]]-m0)/m0,(momeqns[[2]]-m1)/m0,(momeqns[[3]]-m2)/m0},{{af,g0[[1]]},{bf,g0[[2]]},{cf,g0[[3]]}},Evaluated->False,MaxIterations-> 1000,AccuracyGoal-> 6];
+br=FindRoot[{(momeqns[[1]]-m0)/m0,(momeqns[[2]]-m1)/m0,(momeqns[[3]]-m2)/m0},{{af,g0[[1]]},{bf,g0[[2]]},{cf,g0[[3]]}},Evaluated->False,MaxIterations-> 20,AccuracyGoal-> 6];
 Return[{af/.br//Re,bf/.br//Re,cf/.br//Re}]
 ];
 
@@ -601,6 +605,54 @@ out=Reap[
 Return[out];
 ];
 
+
+
+(* Caclulates the 3 angular moments from a DO file and returns a list of the 3 moments from radial index rsrt to radial index rend. *)
+getDOmoments[dofile_,rsrt_,rend_]:=Module[{dat,srdat,out,emom,fmom,pmom},
+dat=ImportData[dofile];
+out=Reap[
+	Do[
+srdat=SelectSingleRadius[dat,ri];
+emom={Sum[Sum[Sum[srdat["Endensity"][[1,f,dt,dp]] / (h (srdat["freqmid"][[f]])),{f,1,Length[dat["freqs"]]-1}],{dp,1,Length[dat["phis"]]-1}],{dt,1,Length[srdat["mids"]]}],
+Sum[Sum[Sum[srdat["Endensity"][[2,f,dt,dp]] / (h (srdat["freqmid"][[f]])),{f,1,Length[dat["freqs"]]-1}],{dp,1,Length[dat["phis"]]-1}],{dt,1,Length[srdat["mids"]]}],
+Sum[Sum[Sum[srdat["Endensity"][[3,f,dt,dp]] / (h (srdat["freqmid"][[f]])),{f,1,Length[dat["freqs"]]-1}],{dp,1,Length[dat["phis"]]-1}],{dt,1,Length[srdat["mids"]]}]
+};
+fmom={Sum[Sum[Sum[srdat["Endensity"][[1,f,dt,dp]] srdat["mids"][[dt]]/ (h (srdat["freqmid"][[f]])),{f,1,Length[dat["freqs"]]-1}],{dp,1,Length[dat["phis"]]-1}],{dt,1,Length[srdat["mids"]]}],
+Sum[Sum[Sum[srdat["Endensity"][[2,f,dt,dp]] srdat["mids"][[dt]]/ (h (srdat["freqmid"][[f]])),{f,1,Length[dat["freqs"]]-1}],{dp,1,Length[dat["phis"]]-1}],{dt,1,Length[srdat["mids"]]}],
+Sum[Sum[Sum[srdat["Endensity"][[3,f,dt,dp]] srdat["mids"][[dt]]/ (h (srdat["freqmid"][[f]])),{f,1,Length[dat["freqs"]]-1}],{dp,1,Length[dat["phis"]]-1}],{dt,1,Length[srdat["mids"]]}]
+};
+pmom={Sum[Sum[Sum[srdat["Endensity"][[1,f,dt,dp]] srdat["mids"][[dt]]^2/ (h (srdat["freqmid"][[f]])) ,{f,1,Length[dat["freqs"]]-1}],{dp,1,Length[dat["phis"]]-1}],{dt,1,Length[srdat["mids"]]}],
+Sum[Sum[Sum[srdat["Endensity"][[2,f,dt,dp]] srdat["mids"][[dt]]^2/ (h (srdat["freqmid"][[f]])) ,{f,1,Length[dat["freqs"]]-1}],{dp,1,Length[dat["phis"]]-1}],{dt,1,Length[srdat["mids"]]}],
+Sum[Sum[Sum[srdat["Endensity"][[3,f,dt,dp]] srdat["mids"][[dt]]^2/ (h (srdat["freqmid"][[f]])) ,{f,1,Length[dat["freqs"]]-1}],{dp,1,Length[dat["phis"]]-1}],{dt,1,Length[srdat["mids"]]}]
+};
+Sow[{emom,fmom,pmom}];
+,{ri,rsrt,rend}]
+][[2,1]];
+Return[out];
+];
+
+
+(*Take a discrete ordinates file, pull out it's moments, and export a h5 moment file.  
+nref is a integer \[GreaterEqual] 0 indicating the number of times the angular bins should be doubled; this ASSUMES a nref=0 is a 10 angular bin grid.
+*)
+DOtoMoments[dofile_,rsrt_,rend_,nref_]:=Module[{data,nup,nbp,nxp,dodat,domom,walls,middles},
+walls=Import["walls.m"];(*Walls indicate where bin walls should be for a 10,20,40,80,160, or 320 bin grid. This is currently hardcoded in a .m file*)
+middles=Import["middles.m"];(*Middles works the same as walls but for the bin centers.*)
+dodat=ImportData[dofile];
+domom=getDOmoments[dofile,rsrt,rend];
+data= Association[
+"muss"-> walls[[nref+1]],
+"matters"-> dodat["matters"],
+"Yes"-> dodat["Yes"],
+"mids"-> middles[[nref+1]],
+"freqs"->{0,2},
+"Endensity"->Table[domom[[r,s,m]],{r,1,Length[domom]},{s,1,3},{f,1,1},{m,1,3}], (*Indicies; r is radial bin, s is species, f is freq bin, m is moments *)
+ "freqmid"-> {1/h},
+"phis"-> {0,2},
+"radius"-> Table[dodat["radius"][[i]],{i,rsrt,rend}]
+];
+Return[data];
+];
 
 
 End[]
