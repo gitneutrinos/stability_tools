@@ -82,6 +82,10 @@ getDOmoments::usage=
 "calculate moments from a do file"
 DOtoMoments::usage=
 "convert a do file to a moment file"
+getelipdata::usage=
+"ellipse fits a moment file from rsrt to rend and returns association"
+exportelipdata::usage=
+"exports ellipse fit data in .h5 format"
 
 
 (* ::Subsection::Closed:: *)
@@ -594,7 +598,8 @@ Return[out];
 
 
 (*Take a discrete ordinates file, pull out it's moments, and export a h5 moment file.  
-nref is a integer \[GreaterEqual] 0 indicating the number of times the angular bins should be doubled; this ASSUMES a nref=0 is a 10 angular bin grid.
+nref is a integer \[GreaterEqual] 0 indicating the number of times the angular bins should be doubled. nref=0 means no grid refinement.
+!!!This ASSUMES a nref=0 is a 10 angular bin grid.!!
 *)
 DOtoMoments[dofile_,rsrt_,rend_,nref_]:=Module[{data,nup,nbp,nxp,dodat,domom,walls,middles},
 walls=Import["walls.m"];(*Walls indicate where bin walls should be for a 10,20,40,80,160, or 320 bin grid. This is currently hardcoded in a .m file*)
@@ -628,6 +633,45 @@ Export[name<>".h5",{
 "distribution_costheta_mid(lab)"-> {"Data"-> dodata["mids"]},
 "r(cm)"-> {"Data"-> dodata["radius"]},
 "/distribution_phi_grid(radians,lab)"-> {"Data"-> dodata["phis"]}
+}
+]
+
+
+(*Given a moment file, ellipse fits and returns an association from rsrt to rend*)
+getelipdata[momentfile_,rsrt_,rend_]:=Module[{data,modat,efits,esimp},
+esimp[a_,b_,cx_,m_]:=(b (b m cx+a Sqrt[b^2 m^2-a^2 (-1+m^2)+(-1+m^2) cx^2]))/(a^2+(-a^2+b^2) m^2);
+modat=ImportData[momentfile];
+efits={ellipseFitSingleSpecies[momentfile,1,rsrt,rend][[All,1]],ellipseFitSingleSpecies[momentfile,2,rsrt,rend][[All,1]],ellipseFitSingleSpecies[momentfile,3,rsrt,rend][[All,1]]}; (*List of ellipse fits for the 3 species. 
+part[[All,1]] takes the parameters for all radii as ellipseFitSingleSpecies has dimmensions {parameters, errors}*)
+data= Association[
+"muss"-> modat["muss"],
+"matters"-> modat["matters"],
+"Yes"-> modat["Yes"],
+"mids"-> modat["mids"],
+"freqs"->{0,2}, (*This is arbitrary*)
+"Endensity"->
+(*Indicies; s is species, r is radius, dt is theta bin, f is frew bin, dp is phi bin.*)
+Abs[Table[esimp[efits[[s,r,1]],efits[[s,r,2]],efits[[s,r,3]],modat["mids"][[dt]]](modat["muss"][[dt+1]]-modat["muss"][[dt]]),{r,1,Length[efits[[1]]]},{s,1,3},{f,1,1},{dt,1,Length[modat["mids"]]},{dp,1,1}]],
+ "freqmid"-> {1/h},
+"phis"-> {0,2}, (*This is arbitrary*)
+"radius"-> Table[modat["radius"][[i]],{i,rsrt,rend}]
+];
+Return[data];
+];
+
+
+(*Exports elkipdata from getelipdata in the .h5 format*)
+exportelip[name_,elipdata_]:= 
+Export[name<>".h5",{
+"distribution(erg|ccm,lab)"-> {"Data"-> elipdata["Endensity"]},
+"rho(g|ccm,com)"-> {"Data"-> elipdata["matters"]},
+"Ye"-> {"Data"-> elipdata["Yes"]},
+"distribution_frequency_grid(Hz,lab)"-> {"Data"->elipdata["freqs"]},
+"distribution_frequency_mid(Hz,lab)"-> {"Data"-> elipdata["freqmid"]},
+"distribution_costheta_grid(lab)"-> {"Data"-> elipdata["muss"]},
+"distribution_costheta_mid(lab)"-> {"Data"-> elipdata["mids"]},
+"r(cm)"-> {"Data"-> elipdata["radius"]},
+"/distribution_phi_grid(radians,lab)"-> {"Data"-> elipdata["phis"]}
 }
 ]
 
