@@ -90,6 +90,7 @@ MorinagaPlotter::usage=
 "Make morinaga style plots"
 
 
+
 (* ::Subsection::Closed:: *)
 (*Units*)
 
@@ -663,7 +664,7 @@ Return[data];
 
 
 (*Exports elkipdata from getelipdata in the .h5 format*)
-exportelip[name_,elipdata_]:= 
+exportelipdata[name_,elipdata_]:= 
 Export[name<>".h5",{
 "distribution(erg|ccm,lab)"-> {"Data"-> elipdata["Endensity"]},
 "rho(g|ccm,com)"-> {"Data"-> elipdata["matters"]},
