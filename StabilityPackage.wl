@@ -652,12 +652,13 @@ Export[name<>".h5",{
 
 
 (*Given a moment file, ellipse fits and returns an association from rsrt to rend*)
-getelipdata[momentfile_,rsrt_,rend_,nref_]:=Module[{data,modat,efits,esimp,walls,middles},
+getelipdata[momentfile_,rsrt_,rend_,nref_]:=Module[{data,modat,efits,esimp,walls,middles,efitsord},
 esimp[a_,b_,cx_,m_]:=(b (b m cx+a Sqrt[b^2 m^2-a^2 (-1+m^2)+(-1+m^2) cx^2]))/(a^2+(-a^2+b^2) m^2);
 {walls,middles}=makeThetaGrid[nref];
 modat=ImportData[momentfile];
-efits={ellipseFitSingleSpecies[momentfile,1,rsrt,rend][[All,1]],ellipseFitSingleSpecies[momentfile,2,rsrt,rend][[All,1]],ellipseFitSingleSpecies[momentfile,3,rsrt,rend][[All,1]]}; (*List of ellipse fits for the 3 species. 
+efits={ellipseFitSingleSpecies[momentfile,1,rsrt,rend][[All,1]],ellipseFitSingleSpecies[momentfile,2,rsrt,rend][[All,1]],ellipseFitSingleSpecies[momentfile,3,rsrt,rend][[All,1]]};(*List of ellipse fits for the 3 species. 
 part[[All,1]] takes the parameters for all radii as ellipseFitSingleSpecies has dimmensions {parameters, errors}*)
+efitsord=Table[efits[[All,i]],{i,1,(rsrt-rend+1)}];(*Reorders so the endicies are in the same order as moment data*)
 data= Association[
 "muss"-> walls,
 "matters"-> modat["matters"],
@@ -666,7 +667,7 @@ data= Association[
 "freqs"->{0,2}, (*This is arbitrary*)
 "Endensity"->
 (*Indicies; s is species, r is radius, dt is theta bin, f is frew bin, dp is phi bin.*)
-Abs[Table[esimp[efits[[s,r,1]],efits[[s,r,2]],efits[[s,r,3]],middles[[dt]]](walls[[dt+1]]-walls[[dt]]),{r,1,Length[efits[[1]]]},{s,1,3},{f,1,1},{dt,1,Length[middles]},{dp,1,1}]],
+Abs[Table[esimp[efits[[r,s,1]],efits[[r,s,2]],efits[[r,s,3]],middles[[dt]]](walls[[dt+1]]-walls[[dt]]),{r,1,Length[efits[[1]]]},{s,1,3},{f,1,1},{dt,1,Length[middles]},{dp,1,1}]],
  "freqmid"-> {1/h},
 "phis"-> {0,2}, (*This is arbitrary*)
 "radius"-> Table[modat["radius"][[i]],{i,rsrt,rend}]
