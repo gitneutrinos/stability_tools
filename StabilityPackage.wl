@@ -92,7 +92,8 @@ MorinagaPlotter::usage=
 "Make morinaga style plots"
 makeThetaGrid::usage=
 "gets a 10 bin theta grid refined (doubled) nref times"
-
+compareDistributions::usage=
+"Makes a plot given [srdodata_,srelipdata_,species_]"
 
 
 (* ::Subsection::Closed:: *)
@@ -729,4 +730,13 @@ pts3=Table[{pts2[[i,1]],(pts2[[i+1,2]]-pts2[[i,2]])/(pts2[[i+1,1]]-pts2[[i,1]])}
 sp1=ListPlot[{pts1,pts2,pts3},PlotRange->{{-30,85},{-1,1.5}},Filling-> {1-> Axis,2-> Axis},AxesLabel-> {Style["k' (\!\(\*SuperscriptBox[\(10\), \(-4\)]\) \!\(\*SuperscriptBox[\(cm\), \(-1\)]\))",FontSize-> 14,Bold],Style["Im[\[CapitalOmega]] (\!\(\*SuperscriptBox[\(10\), \(-4\)]\) \!\(\*SuperscriptBox[\(cm\), \(-1\)]\))",FontSize-> 14,Bold]},
 ImageSize-> Scaled[0.65],Frame-> False,PlotStyle->{Blue,Red,Darker[Green,0.4],Purple},PlotLegends-> {"IM|\[CapitalOmega]|","0.05 Re|\[CapitalOmega]'|","\!\(\*FractionBox[\(d\), \(dk\)]\)Re|\[CapitalOmega]'|"}]; (*The plot*)
 Return[sp1];
+]
+
+
+(*Takes in single radius selected DO data and single radius selected elipse fit data and makes a distribution plot for a species*)
+compareDistributions[srdodata_,srelipdata_,species_]:=Module[{dopts,efpts,plot},
+dopts=Transpose@{dodat["mids"],ndensities[srdodata][[species]]//Diagonal};
+efpts=Transpose@{dodat["mids"],ndensities[srelipdata][[species]]//Diagonal};
+plot=ListPlot[{dopts,efpts},Joined-> {False,True},PlotLegends-> {"DO","Elipse"},AxesLabel-> {Style["cos\[Theta]",FontSize-> 14,Bold],Style["#/\!\(\*SuperscriptBox[\(cm\), \(3\)]\)",FontSize-> 14,Bold]},ImageSize-> Scaled[0.65]];
+Return[plot]
 ]
