@@ -86,6 +86,8 @@ getelipdata::usage=
 "ellipse fits a moment file from rsrt to rend and returns association"
 exportelipdata::usage=
 "exports ellipse fit data in .h5 format"
+exportDOasMoments::usage=
+"exports DO data as moment style data"
 MorinagaPlotter::usage=
 "Make morinaga style plots"
 
@@ -688,12 +690,12 @@ EndPackage[]
 
 
 (*Calculates a plot in morinaga units for a dofile that and an output of kadapt on dofile called kadaptfile at radius ri.*)
-MorinagaPlotter[dofile_,kadaptfile_,ri_]:=Module[{datain,datainsr,cos\[Theta],datapos,evp,reimpairs,kspos,reevpos,imevpos,zeropos,nonzeropos,mu,mubar,\[Phi]0,\[Phi]1,Vmatter,kp,pts1,pts2,pts3,sp1,kdata},
+MorinagaPlotter[dofile_,kadaptfile_,rido_,rielip_]:=Module[{datain,datainsr,cos\[Theta],datapos,evp,reimpairs,kspos,reevpos,imevpos,zeropos,nonzeropos,mu,mubar,\[Phi]0,\[Phi]1,Vmatter,kp,pts1,pts2,pts3,sp1,kdata},
 datain=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"]; (*Import DO datafile*)
-datainsr=SelectSingleRadius[datain,ri];
+datainsr=SelectSingleRadius[datain,rido];
 kdata=ImportCalcGridData[kadaptfile]; (*Import kadapt data file*)
 cos\[Theta]=datain["mids"];
-datapos=Position[kdata["ri"],ri]; (*Finds the datapoints associated with radius ri; i.e. all ks, eigenvalues, eigenvectors etc*)
+datapos=Position[kdata["ri"],rielip]; (*Finds the datapoints associated with radius ri; i.e. all ks, eigenvalues, eigenvectors etc*)
 evp=Table[Transpose@{Extract[kdata["evs_Re"],datapos[[i]]],Extract[kdata["evs_Im"],datapos[[i]]]},{i,1,Length[datapos]}]; (*Extracts the position of the relavent eigenvalues at position datapos*)
 reimpairs=Table[Sort[evp[[i]],#1[[2]]>#2[[2]]&][[1]],{i,1,Length[datapos]}]; (*Creates a list of Re and Im eigenvalue pairs, sorted by the largest imaginary part.*)
 kspos=Table[Extract[kdata["k"],datapos[[i]]],{i,1,Length[datapos]}]; (*Extracts the positions of the relevant k values at datapos*)
@@ -713,7 +715,7 @@ kp = Table[kspos[[i]]-\[Phi]1,{i,1,Length[kspos]}]; (*Table of k's*)
 pts1=Table[{(1/(hbar c 10^-4))kp[[i]],(1/(hbar c 10^-4))imevpos[[i,2]]},{i,1,Length[datapos]}]; (*Ordered pairs of k' and Im eigenvalues in morinaga units*)
 pts2=Table[{(1/(hbar c 10^-4))kp[[i]],(1/(hbar c 10^-4))(0.05)(reevpos[[i,2]]-\[Phi]0-Vmatter)},{i,1,Length[datapos]}]; (*Ordered pairs of k' and Re|\[CapitalOmega]'| in morinaga units*)
 pts3=Table[{pts2[[i,1]],(pts2[[i+1,2]]-pts2[[i,2]])/(pts2[[i+1,1]]-pts2[[i,1]])},{i,1,Length[pts2]-1}]; (*Ordered pairs of k' and dRe|\[CapitalOmega]'|/dk'*)
-sp1=ListPlot[{pts1,pts2,pts3},PlotRange->{{-30,65},{-1,1.5}},Filling-> {1-> Axis,2-> Axis},AxesLabel-> {Style["k' (\!\(\*SuperscriptBox[\(10\), \(-4\)]\) \!\(\*SuperscriptBox[\(cm\), \(-1\)]\))",FontSize-> 14,Bold],Style["Im[\[CapitalOmega]] (\!\(\*SuperscriptBox[\(10\), \(-4\)]\) \!\(\*SuperscriptBox[\(cm\), \(-1\)]\))",FontSize-> 14,Bold]},
+sp1=ListPlot[{pts1,pts2,pts3},PlotRange->{{-30,85},{-1,1.5}},Filling-> {1-> Axis,2-> Axis},AxesLabel-> {Style["k' (\!\(\*SuperscriptBox[\(10\), \(-4\)]\) \!\(\*SuperscriptBox[\(cm\), \(-1\)]\))",FontSize-> 14,Bold],Style["Im[\[CapitalOmega]] (\!\(\*SuperscriptBox[\(10\), \(-4\)]\) \!\(\*SuperscriptBox[\(cm\), \(-1\)]\))",FontSize-> 14,Bold]},
 ImageSize-> Scaled[0.65],Frame-> False,PlotStyle->{Blue,Red,Darker[Green,0.4],Purple},PlotLegends-> {"IM|\[CapitalOmega]|","0.05 Re|\[CapitalOmega]'|","\!\(\*FractionBox[\(d\), \(dk\)]\)Re|\[CapitalOmega]'|"}]; (*The plot*)
 Return[sp1];
 ]
