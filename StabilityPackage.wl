@@ -668,7 +668,7 @@ data= Association[
 "freqs"->{0,2}, (*This is arbitrary*)
 "Endensity"->
 (*Indicies; s is species, r is radius, dt is theta bin, f is frew bin, dp is phi bin.*)
-Abs[Table[esimp[efits[[r,s,1]],efits[[r,s,2]],efits[[r,s,3]],middles[[dt]]](walls[[dt+1]]-walls[[dt]]),{r,1,Length[efits[[1]]]},{s,1,3},{f,1,1},{dt,1,Length[middles]},{dp,1,1}]],
+Abs[Table[esimp[efitsord[[r,s,1]],efitsord[[r,s,2]],efitsord[[r,s,3]],middles[[dt]]](walls[[dt+1]]-walls[[dt]]),{r,1,Length[efits[[1]]]},{s,1,3},{f,1,1},{dt,1,Length[middles]},{dp,1,1}]],
  "freqmid"-> {1/h},
 "phis"-> {0,2}, (*This is arbitrary*)
 "radius"-> Table[modat["radius"][[i]],{i,rsrt,rend}]
@@ -737,6 +737,6 @@ Return[sp1];
 compareDistributions[srdodata_,srelipdata_,species_]:=Module[{dopts,efpts,plot},
 dopts=Transpose@{dodat["mids"],ndensities[srdodata][[species]]//Diagonal};
 efpts=Transpose@{dodat["mids"],ndensities[srelipdata][[species]]//Diagonal};
-plot=ListPlot[{dopts,efpts},Joined-> {False,True},PlotLegends-> {"DO","Elipse"},AxesLabel-> {Style["cos\[Theta]",FontSize-> 14,Bold],Style["#/\!\(\*SuperscriptBox[\(cm\), \(3\)]\)",FontSize-> 14,Bold]},ImageSize-> Scaled[0.65]];
+plot=ListPlot[{dopts,efpts},Joined-> {False,True},PlotRange-> All,PlotLegends-> {"DO","Elipse"},AxesLabel-> {Style["cos\[Theta]",FontSize-> 14,Bold],Style["#/\!\(\*SuperscriptBox[\(cm\), \(3\)]\)",FontSize-> 14,Bold]},ImageSize-> Scaled[0.65]];
 Return[plot]
 ]
