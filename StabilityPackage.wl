@@ -693,17 +693,13 @@ Export[name<>".h5",{
 ]
 
 
-End[]
-EndPackage[]
-
-
 (* ::Subsection::Closed:: *)
 (*Plotting Tools*)
 
 
-(*Calculates a plot in morinaga units for a dofile that and an output of kadapt on dofile called kadaptfile at radius ri.*)
+(*Calculates a plot in morinaga units for a dofile that and an output of kadapt (for an ellipsefit) on dofile called kadaptfile at radius ri.*)
 MorinagaPlotter[dofile_,kadaptfile_,rido_,rielip_]:=Module[{datain,datainsr,cos\[Theta],datapos,evp,reimpairs,kspos,reevpos,imevpos,zeropos,nonzeropos,mu,mubar,\[Phi]0,\[Phi]1,Vmatter,kp,pts1,pts2,pts3,sp1,kdata},
-datain=ImportData["G:\\My Drive\\Physics\\Neutrino Oscillation Research\\Fast Conversions\\lotsadata.tar\\lotsadata\\lotsadata\\112Msun_100ms_DO.h5"]; (*Import DO datafile*)
+datain=ImportData[dofile]; (*Import DO datafile*)
 datainsr=SelectSingleRadius[datain,rido];
 kdata=ImportCalcGridData[kadaptfile]; (*Import kadapt data file*)
 cos\[Theta]=datain["mids"];
@@ -740,3 +736,7 @@ efpts=Transpose@{srdodata["mids"],ndensities[srelipdata][[species]]//Diagonal};
 plot=ListPlot[{dopts,efpts},Joined-> {False,True},PlotRange-> All,PlotLegends-> {"DO","Elipse"},AxesLabel-> {Style["cos\[Theta]",FontSize-> 14,Bold],Style["#/\!\(\*SuperscriptBox[\(cm\), \(3\)]\)",FontSize-> 14,Bold]},ImageSize-> Scaled[0.65]];
 Return[plot]
 ]
+
+
+End[]
+EndPackage[]
