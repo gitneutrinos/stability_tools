@@ -357,7 +357,7 @@ Return[p1]
 
 
 (*Convert a DO file to moments and export it *)
-exportDOasMoments[DOtoMoments["C:\\Users\\Sam\\Desktop\\112Msun_100ms_DO.h5",264,264,0],"testfiledomom"];
+exportDOasMoments[DOtoMoments[inpath<>"112Msun_100ms_DO.h5",264,264,0],"testfiledomom"];
 (*Ellipse fit that data and export it*)
 exportelipdata["testfileelipdata",getelipdata["testfiledomom.h5",1,1,0]];
 (*Search for unstable modes and export it*)
