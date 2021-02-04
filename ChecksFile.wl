@@ -353,6 +353,22 @@ Return[p1]
 
 
 (* ::Subsection::Closed:: *)
+(*Ellipse Fit a DO File*)
+
+
+(*Convert a DO file to moments and export it *)
+exportDOasMoments[DOtoMoments["C:\\Users\\Sam\\Desktop\\112Msun_100ms_DO.h5",264,264,0],"testfiledomom"];
+(*Ellipse fit that data and export it*)
+exportelipdata["testfileelipdata",getelipdata["testfiledomom.h5",1,1,0]];
+(*Search for unstable modes and export it*)
+exportkadapt[kAdapt["morelipfit1.h5",1,1,Infinity,-1.,10,"xflavor"-> False],"testfilekadapt"];
+(*Make a test plot of that dataset*)
+tdata=ImportCalcGridData["testfilekadapt.h5"];
+(*Check that it returned SOMETHING*)
+{tdata["radius"],tdata["k"],tdata["evs_Im"]}
+
+
+(* ::Subsection::Closed:: *)
 (*Test Report*)
 
 
