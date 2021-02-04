@@ -735,8 +735,8 @@ Return[sp1];
 
 (*Takes in single radius selected DO data and single radius selected elipse fit data and makes a distribution plot for a species*)
 compareDistributions[srdodata_,srelipdata_,species_]:=Module[{dopts,efpts,plot},
-dopts=Transpose@{dodat["mids"],ndensities[srdodata][[species]]//Diagonal};
-efpts=Transpose@{dodat["mids"],ndensities[srelipdata][[species]]//Diagonal};
+dopts=Transpose@{srdodata["mids"],ndensities[srdodata][[species]]//Diagonal};
+efpts=Transpose@{srdodata["mids"],ndensities[srelipdata][[species]]//Diagonal};
 plot=ListPlot[{dopts,efpts},Joined-> {False,True},PlotRange-> All,PlotLegends-> {"DO","Elipse"},AxesLabel-> {Style["cos\[Theta]",FontSize-> 14,Bold],Style["#/\!\(\*SuperscriptBox[\(cm\), \(3\)]\)",FontSize-> 14,Bold]},ImageSize-> Scaled[0.65]];
 Return[plot]
 ]
