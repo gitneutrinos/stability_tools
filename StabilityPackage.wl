@@ -94,6 +94,12 @@ makeThetaGrid::usage=
 "gets a 10 bin theta grid refined (doubled) nref times"
 compareDistributions::usage=
 "Makes a plot given [srdodata_,srelipdata_,species_]"
+ellipseEqnMoments::usage=
+"analysi ellipse moment equations"
+eEqnFitToMoments::usage=
+"fit to moments with ellipse analytic equations"
+ellipseEqnparaerrors::usage=
+"ellise erros via equation"
 
 
 (* ::Subsection::Closed:: *)
@@ -519,10 +525,19 @@ Return[{esbox[0],esbox[1],esbox[2]}]
 ];
 
 
-ellipseSimpMoments[af_?NumericQ,bf_?NumericQ,cxf_?NumericQ]:=Module[{ebox,esbox,esimp,essimp},
+ellipseSimpMoments[af_?NumericQ,bf_?NumericQ,cxf_?NumericQ]:=Module[{ebox,esbox,esimp,essimp,em,fm,pm},
 esimp[a_,b_,cx_,m_]:=(b (b m cx+a Sqrt[b^2 m^2-a^2 (-1+m^2)+(-1+m^2) cx^2]))/(a^2+(-a^2+b^2) m^2);
 essimp[mom_]:=  NIntegrate[m^mom esimp[af,bf,cxf,m],{m,-1.,1.},MaxRecursion-> 16,AccuracyGoal->6];
 Return[{essimp[0],essimp[1],essimp[2]}]
+];
+
+
+ellipseEqnMoments[af_,bf_,cxf_]:=Module[{em,fm,pm},
+
+em[a_,b_,cx_]:= (2 b (a Sqrt[a^2-b^2-cx^2] ArcTan[Sqrt[a^2-b^2-cx^2],b]+b cx ArcTanh[cx/a]))/(a^2-b^2);
+fm[a_,b_,cx_]:=-((2 b^2 cx (Sqrt[a^2-b^2]-a ArcCoth[a/Sqrt[a^2-b^2]]))/((a-b) (a+b))^(3/2));
+pm[a_,b_,cx_]:=(a b (-a^2 b+b^3+((a^4-b^2 cx^2-a^2 (b^2+cx^2)) ArcTan[Sqrt[a^2-b^2-cx^2],b])/Sqrt[a^2-b^2-cx^2]+a b cx Log[(a+cx)/(a-cx)]))/(a^2-b^2)^2;
+Return[{em[af,bf,cxf],fm[af,bf,cxf],pm[af,bf,cxf]}];
 ];
 
 
@@ -551,13 +566,31 @@ Return[{af/.br,\[Beta]f/.br,\[Chi]f/.br}]
 
 
 eSimpFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,bf,cf,momeqns},
+(*momeqns=ellipseSimpMoments[af,bf,cf];*)
 momeqns=ellipseSimpMoments[af,bf,cf];
 br=FindRoot[{(momeqns[[1]]-m0)/m0,(momeqns[[2]]-m1)/m0,(momeqns[[3]]-m2)/m0},{{af,g0[[1]]},{bf,g0[[2]]},{cf,g0[[3]]}},Evaluated->False,MaxIterations-> 20,AccuracyGoal-> 6];
 Return[{af/.br//Re,bf/.br//Re,cf/.br//Re}]
 ];
 
 
+eEqnFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,bf,cf,momeqns},
+(*momeqns=ellipseSimpMoments[af,bf,cf];*)
+momeqns=ellipseEqnMoments[af,bf,cf];
+br=FindRoot[{(momeqns[[1]]-m0)/m0,(momeqns[[2]]-m1)/m0,(momeqns[[3]]-m2)/m0},{{af,g0[[1]]},{bf,g0[[2]]},{cf,g0[[3]]}},Evaluated->False,MaxIterations-> 20,AccuracyGoal-> 6];
+Return[{af/.br//Re,bf/.br//Re,cf/.br//Re}]
+];
+
+
 ellipseparaerrors[a_,b_,cx_,m0_,m1_,m2_]:=Module[{er0,er1,er2,fits},
+(*again evaluate only once*)
+er0=(ellipseSimpMoments[a,b,cx][[1]]-m0)/m0;
+er1=(ellipseSimpMoments[a,b,cx][[2]]-m1)/m0;
+er2=(ellipseSimpMoments[a,b,cx][[3]]-m2)/m0;
+Return[{er0,er1,er2}];
+];
+
+
+ellipseEqnparaerrors[a_,b_,cx_,m0_,m1_,m2_]:=Module[{er0,er1,er2,fits},
 (*again evaluate only once*)
 er0=(ellipseSimpMoments[a,b,cx][[1]]-m0)/m0;
 er1=(ellipseSimpMoments[a,b,cx][[2]]-m1)/m0;
