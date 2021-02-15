@@ -487,7 +487,7 @@ Sum[(datasr["Endensity"][[species,E,2]])/(h data["freqmid"][[E]]),{E,1,Length[da
 Sum[(datasr["Endensity"][[species,E,3]])/(h data["freqmid"][[E]]),{E,1,Length[data["freqs"]]-1}]
 };
 If[moments[[2]]< 0., moments[[2]]=10^-8];
-Return[moments];
+Return[moments//N];
 ];
 
 
@@ -500,102 +500,33 @@ cg=Abs[foc1234[Sin[ArcCos[1.]],0.,1.]-ag]; (*horizontal shift from the center *)
 bg=Sqrt[foc1234[Sin[ArcCos[0.]],0.,0.]^2/(1-(cg/ag)^2)]; (*semi-minor axis*)
 If[bg> ag && bg/ag<= 1.001, ag=ag+2(bg-ag)]; (* If bg>ag, and the difference is small, switches them in the transform*)
 *)
-Return[{ag,bg,cg}]
-];
-
-
-getInitialBoxGuess[m0_,m1_,m2_]:=Module[{foc1234,ag,\[Beta]g,\[Chi]g,cg,bg,arg\[Beta],arg\[Chi]},
-ag=0.5 m0; 
-\[Beta]g=0.;
-\[Chi]g=-10;
-(*(*semi-major axis guess*)
-cg=Abs[foc1234[Sin[ArcCos[1.]],0.,1.]-ag]; (*horizontal shift from the center *)
-bg=Sqrt[foc1234[Sin[ArcCos[0.]],0.,0.]^2/(1-(cg/ag)^2)]; (*semi-minor axis*)
-If[bg> ag && bg/ag<= 1.001, ag=ag+2(bg-ag)]; (* If bg>ag, and the difference is small, switches them in the transform*)
-*)
-Return[{ag,\[Beta]g,\[Chi]g}]
-];
-
-
-ellipseBoxMoments[af_,\[Beta]f_,\[Chi]f_]:=Module[{ebox,esbox},
-ebox[a_,\[Beta]_,\[Chi]_,m_]:=(a (1+Tanh[\[Beta]]) (1/4 a^2 m (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])+a Sqrt[-a^2 (-1+m^2)+1/4 a^2 m^2 (1+Tanh[\[Beta]])^2
-+1/4 a^2 (-1+m^2) (1+Tanh[\[Chi]])^2]))/(2 (a^2+m^2 (-a^2+1/4 a^2 (1+Tanh[\[Beta]])^2)));
-esbox[mom_]:=  NIntegrate[m^mom ebox[af,\[Beta]f,\[Chi]f,m],{m,-1.,1.},MaxRecursion-> 16];
-Return[{esbox[0],esbox[1],esbox[2]}]
-];
-
-
-ellipseSimpMoments[af_?NumericQ,bf_?NumericQ,cxf_?NumericQ]:=Module[{ebox,esbox,esimp,essimp,em,fm,pm},
-esimp[a_,b_,cx_,m_]:=(b (b m cx+a Sqrt[b^2 m^2-a^2 (-1+m^2)+(-1+m^2) cx^2]))/(a^2+(-a^2+b^2) m^2);
-essimp[mom_]:=  NIntegrate[m^mom esimp[af,bf,cxf,m],{m,-1.,1.},MaxRecursion-> 16,AccuracyGoal->6];
-Return[{essimp[0],essimp[1],essimp[2]}]
+Return[{ag,bg,cg}//N]
 ];
 
 
 ellipseEqnMoments[af_,bf_,cxf_]:=Module[{em,fm,pm},
 
-em[a_,b_,cx_]:= (2 b (a Sqrt[a^2-b^2-cx^2] ArcTan[Sqrt[a^2-b^2-cx^2],b]+b cx ArcTanh[cx/a]))/(a^2-b^2);
-fm[a_,b_,cx_]:=-((2 b^2 cx (Sqrt[a^2-b^2]-a ArcCoth[a/Sqrt[a^2-b^2]]))/((a-b) (a+b))^(3/2));
-pm[a_,b_,cx_]:=(a b (-a^2 b+b^3+((a^4-b^2 cx^2-a^2 (b^2+cx^2)) ArcTan[Sqrt[a^2-b^2-cx^2],b])/Sqrt[a^2-b^2-cx^2]+a b cx Log[(a+cx)/(a-cx)]))/(a^2-b^2)^2;
+em[a_,b_,cx_]:= (b (-2 Sqrt[b^2] cx ArcTanh[cx/a]-I a Sqrt[a^2-b^2-cx^2] (Log[Sqrt[b^2]-I Sqrt[a^2-b^2-cx^2]]-Log[Sqrt[b^2]+I Sqrt[a^2-b^2-cx^2]])))/(-a^2+b^2);
+fm[a_,b_,cx_]:=-((2 b^2 cx (Sqrt[(a-b) (a+b)]-a ArcCoth[a/Sqrt[a^2-b^2]]))/((a-b) (a+b))^(3/2));
+pm[a_,b_,cx_]:=(a b (2 Sqrt[b^2] (-a^2+b^2)+4 a Sqrt[b^2] cx ArcTanh[cx/a]+(I (a^4-b^2 cx^2-a^2 (b^2+cx^2)) (Log[Sqrt[b^2]-I Sqrt[a^2-b^2-cx^2]]-Log[Sqrt[b^2]+I Sqrt[a^2-b^2-cx^2]]))/Sqrt[a^2-b^2-cx^2]))/(2 (a^2-b^2)^2);
 Return[{em[af,bf,cxf],fm[af,bf,cxf],pm[af,bf,cxf]}];
-];
-
-
-(*Converts the 3 box transform parameters to the simple ellipse parameters*)
-boxToSimp[a_,\[Beta]_,\[Chi]_]:=Module[{b,cx},
-b=a/2 (Tanh[\[Beta]]+1);
-cx=a/2 (Tanh[\[Chi]]+1);
-Return[{a,b,cx}]
-];
-
-
-(*Converts the 3 simple elipse parameters into the box transform parameters*)
-simpToBox[a_,b_,cx_]:=Module[{\[Beta],\[Chi]},
-\[Beta]=ArcTanh[(2 b)/a-1];
-\[Chi]=ArcTanh[(2 cx)/a-1];
-Return[{a,\[Beta],\[Chi]}]
-];
-
-
-(*Given 3 moments, fit parameters a, \[Beta], and \[Chi] so ellipseMoments match*)
-eBoxFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,\[Beta]f,\[Chi]f,momeqns},
-momeqns=ellipseBoxMoments[af,\[Beta]f,\[Chi]f];
-br=FindRoot[{momeqns[[1]]-m0,momeqns[[2]]-m1,momeqns[[3]]-m2},{{af,g0[[1]]},{\[Beta]f,g0[[2]]},{\[Chi]f,g0[[3]]}},Evaluated->False,MaxIterations-> 20,AccuracyGoal-> Infinity];
-Return[{af/.br,\[Beta]f/.br,\[Chi]f/.br}]
-];
-
-
-eSimpFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,bf,cf,momeqns},
-(*momeqns=ellipseSimpMoments[af,bf,cf];*)
-momeqns=ellipseSimpMoments[af,bf,cf];
-br=FindRoot[{(momeqns[[1]]-m0)/m0,(momeqns[[2]]-m1)/m0,(momeqns[[3]]-m2)/m0},{{af,g0[[1]]},{bf,g0[[2]]},{cf,g0[[3]]}},Evaluated->False,MaxIterations-> 20,AccuracyGoal-> 6];
-Return[{af/.br//Re,bf/.br//Re,cf/.br//Re}]
 ];
 
 
 eEqnFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,bf,cf,momeqns},
 (*momeqns=ellipseSimpMoments[af,bf,cf];*)
-momeqns=ellipseEqnMoments[af,bf,cf];
-br=FindRoot[{(momeqns[[1]]-m0)/m0,(momeqns[[2]]-m1)/m0,(momeqns[[3]]-m2)/m0},{{af,g0[[1]]},{bf,g0[[2]]},{cf,g0[[3]]}},Evaluated->False,MaxIterations-> 20,AccuracyGoal-> 6];
+momeqns=ellipseEqnMoments[af,bf,cf]//N;
+br=FindRoot[{(momeqns[[1]]-m0)/m0,(momeqns[[2]]-m1)/m0,(momeqns[[3]]-m2)/m0},{{af,g0[[1]]},{bf,g0[[2]]},{cf,g0[[3]]}},Evaluated->False,MaxIterations->20,AccuracyGoal-> 6];
 Return[{af/.br//Re,bf/.br//Re,cf/.br//Re}]
-];
-
-
-ellipseparaerrors[a_,b_,cx_,m0_,m1_,m2_]:=Module[{er0,er1,er2,fits},
-(*again evaluate only once*)
-er0=(ellipseSimpMoments[a,b,cx][[1]]-m0)/m0;
-er1=(ellipseSimpMoments[a,b,cx][[2]]-m1)/m0;
-er2=(ellipseSimpMoments[a,b,cx][[3]]-m2)/m0;
-Return[{er0,er1,er2}];
 ];
 
 
 ellipseEqnparaerrors[a_,b_,cx_,m0_,m1_,m2_]:=Module[{er0,er1,er2,fits},
 (*again evaluate only once*)
-er0=(ellipseSimpMoments[a,b,cx][[1]]-m0)/m0;
-er1=(ellipseSimpMoments[a,b,cx][[2]]-m1)/m0;
-er2=(ellipseSimpMoments[a,b,cx][[3]]-m2)/m0;
-Return[{er0,er1,er2}];
+er0=(ellipseEqnMoments[a,b,cx][[1]]-m0)/m0;
+er1=(ellipseEqnMoments[a,b,cx][[2]]-m1)/m0;
+er2=(ellipseEqnMoments[a,b,cx][[3]]-m2)/m0;
+Return[{er0,er1,er2}//Re];
 ];
 
 
