@@ -4,7 +4,7 @@ BeginPackage["StabililtyPackage`"]
 ClearAll["StabililtyPackage`", "StabililtyPackage`"]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Package Functions*)
 
 
@@ -100,6 +100,10 @@ eEqnFitToMoments::usage=
 "fit to moments with ellipse analytic equations"
 ellipseEqnparaerrors::usage=
 "ellise erros via equation"
+esubfit::usage=
+"fits just a and b when c has approached a"
+eEqnMinFitToMoments::usage=
+"fits to moments by least sqaures minimization of residuals"
 
 
 (* ::Subsection::Closed:: *)
@@ -474,7 +478,7 @@ Return[out] (*Close reap over r*)
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Ellipse Fitting Approximations*)
 
 
@@ -505,20 +509,37 @@ Return[{ag,bg,cg}//N]
 
 
 ellipseEqnMoments[af_,bf_,cxf_]:=Module[{em,fm,pm},
-
+(*
 em[a_,b_,cx_]:= (b (-2 Sqrt[b^2] cx ArcTanh[cx/a]-I a Sqrt[a^2-b^2-cx^2] (Log[Sqrt[b^2]-I Sqrt[a^2-b^2-cx^2]]-Log[Sqrt[b^2]+I Sqrt[a^2-b^2-cx^2]])))/(-a^2+b^2);
 fm[a_,b_,cx_]:=-((2 b^2 cx (Sqrt[(a-b) (a+b)]-a ArcCoth[a/Sqrt[a^2-b^2]]))/((a-b) (a+b))^(3/2));
 pm[a_,b_,cx_]:=(a b (2 Sqrt[b^2] (-a^2+b^2)+4 a Sqrt[b^2] cx ArcTanh[cx/a]+(I (a^4-b^2 cx^2-a^2 (b^2+cx^2)) (Log[Sqrt[b^2]-I Sqrt[a^2-b^2-cx^2]]-Log[Sqrt[b^2]+I Sqrt[a^2-b^2-cx^2]]))/Sqrt[a^2-b^2-cx^2]))/(2 (a^2-b^2)^2);
+*)
+em[a_,b_,cf_]:= (2 bf (af Sqrt[af^2-bf^2-cf^2] ArcCot[bf/Sqrt[af^2-bf^2-cf^2]]+bf cf ArcTanh[cf/af]))/(af^2-bf^2);
+fm[a_,b_,cf_]:=-((2 bf^2 cf (Sqrt[af^2-bf^2]-af ArcCoth[af/Sqrt[af^2-bf^2]]))/((af-bf) (af+bf))^(3/2));
+pm[a_,b_,cf_]:=(af bf (-af^2 bf+bf^3+((af^4-bf^2 cf^2-af^2 (bf^2+cf^2)) ArcCot[bf/Sqrt[af^2-bf^2-cf^2]])/Sqrt[af^2-bf^2-cf^2]-af bf cf Log[(af-cf)/(af+cf)]))/(af^2-bf^2)^2;
 Return[{em[af,bf,cxf],fm[af,bf,cxf],pm[af,bf,cxf]}];
 ];
 
 
 eEqnFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,bf,cf,momeqns},
-(*momeqns=ellipseSimpMoments[af,bf,cf];*)
 momeqns=ellipseEqnMoments[af,bf,cf]//N;
 br=FindRoot[{(momeqns[[1]]-m0)/m0,(momeqns[[2]]-m1)/m0,(momeqns[[3]]-m2)/m0},{{af,g0[[1]]},{bf,g0[[2]]},{cf,g0[[3]]}},Evaluated->False,MaxIterations->20,AccuracyGoal-> 6];
-Return[{af/.br//Re,bf/.br//Re,cf/.br//Re}]
+Return[{Re[af/.br],Re[bf/.br],Re[cf/.br]}]
 ];
+
+
+eEqnMinFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,bf,cf,momeqns},
+momeqns=ellipseEqnMoments[af,bf,cf]//N;
+br=FindMinimum[{Total[momeqns^2],af>=cf},{{af,g0[[1]]},{bf,g0[[2]]},{cf,g0[[3]]}},AccuracyGoal->10,MaxIterations->1000];
+Return[{Re[af/.br[[2]]],Re[bf/.br[[2]]],Re[cf/.br[[2]]]}]
+];
+
+
+esubfit[m0_,m1_,ag_,bg_,cxg_]:=Module[{af,bf,momeqns,br},
+momeqns=ellipseEqnMoments[af,bf,cxg]//N;
+br=FindRoot[{(momeqns[[1]]-m0)/m0,(momeqns[[2]]-m1)/m0},{{af,ag},{bf,bg}},Evaluated->False,MaxIterations->20,AccuracyGoal-> 6];
+Return[{Re[af/.br],Re[bf/.br],cxg//Re}]
+]
 
 
 ellipseEqnparaerrors[a_,b_,cx_,m0_,m1_,m2_]:=Module[{er0,er1,er2,fits},
