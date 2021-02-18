@@ -521,6 +521,19 @@ Return[{em[af,bf,cxf],fm[af,bf,cxf],pm[af,bf,cxf]}];
 ];
 
 
+(*Converts the 3 box transform parameters to the simple ellipse parameters*)
+boxToSimp[a_,\[Beta]_,\[Chi]_]:=Module[{b,cx},
+b=a/2 (Tanh[\[Beta]]+1);
+cx=a/2 (Tanh[\[Chi]]+1);
+Return[{a,b,cx}]];
+
+
+(*Converts the 3 simple elipse parameters into the box transform parameters*)
+simpToBox[a_,b_,cx_]:=Module[{\[Beta],\[Chi]},\[Beta]=ArcTanh[(2 b)/a-1];
+\[Chi]=ArcTanh[(2 cx)/a-1];
+Return[{a,\[Beta],\[Chi]}]];
+
+
 eEqnFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,bf,cf,momeqns},
 momeqns=ellipseEqnMoments[af,bf,cf]//N;
 br=FindRoot[{(momeqns[[1]]-m0)/m0,(momeqns[[2]]-m1)/m0,(momeqns[[3]]-m2)/m0},{{af,g0[[1]]},{bf,g0[[2]]},{cf,g0[[3]]}},Evaluated->False,MaxIterations->20,AccuracyGoal-> 6];
