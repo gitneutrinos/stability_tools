@@ -609,9 +609,9 @@ Return[out];
 ellipseFitSingleSpeciesDO[moments_,species_,rsrt_,rend_]:=Module[{moms,igs,paras,errs,out,simpparas,boxparas,simperrs,boxerrs},
 out=Reap[
 	Do[
-		igs=Apply[getInitialGuess,moments];
-		simpparas=Apply[eEqnFitToMoments,Join[moments,{igs}]]//Re,
-		simperrs=Apply[ellipseEqnparaerrors,Join[simpparas,moments]];
+		igs=Apply[getInitialGuess,moments[[ri]]];
+		simpparas=Apply[eEqnFitToMoments,Join[moments[[ri]],{igs}]]//Re,
+		simperrs=Apply[ellipseEqnparaerrors,Join[simpparas,moments[[ri]]]];
 		Sow[{simpparas,simperrs}];
 	,{ri,rsrt,rend}](*Clsoe Do *)
 ][[2,1]];(*Close Reap*)
