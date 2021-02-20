@@ -610,7 +610,7 @@ ellipseFitSingleSpeciesDO[moments_,species_,rsrt_,rend_]:=Module[{moms,igs,paras
 out=Reap[
 	Do[
 		igs=Apply[getInitialGuess,moments[[ri,All,species]]];
-		simpparas=Apply[eEqnFitToMoments,Join[moments[[ri,All,species]],{igs}]]//Re,
+		simpparas=Apply[eEqnFitToMoments,Join[moments[[ri,All,species]],{igs}]]//Re;
 		simperrs=Apply[ellipseEqnparaerrors,Join[simpparas,moments[[ri,All,species]]]];
 		Sow[{simpparas,simperrs}];
 	,{ri,rsrt,rend}](*Clsoe Do *)
