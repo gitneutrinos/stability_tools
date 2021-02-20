@@ -108,6 +108,8 @@ ellipseBoxEqnMoments::usage=
 "returns the moment equations in box transform coordinates"
 eBoxEqnFitToMoments::usage=
 "fits in the box transformed coordinates"
+ellipseFitSingleSpeciesDO::usage=
+"fits singel species given moments as an input"
 
 
 (* ::Subsection::Closed:: *)
