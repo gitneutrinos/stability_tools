@@ -4,7 +4,7 @@ BeginPackage["StabililtyPackage`"]
 ClearAll["StabililtyPackage`", "StabililtyPackage`"]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Package Functions*)
 
 
@@ -104,6 +104,10 @@ esubfit::usage=
 "fits just a and b when c has approached a"
 eEqnMinFitToMoments::usage=
 "fits to moments by least sqaures minimization of residuals"
+ellipseBoxEqnMoments::usage=
+"returns the moment equations in box transform coordinates"
+eBoxEqnFitToMoments::usage=
+"fits in the box transformed coordinates"
 
 
 (* ::Subsection::Closed:: *)
@@ -478,7 +482,7 @@ Return[out] (*Close reap over r*)
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Ellipse Fitting Approximations*)
 
 
@@ -521,16 +525,28 @@ Return[{em[af,bf,cxf],fm[af,bf,cxf],pm[af,bf,cxf]}];
 ];
 
 
+ellipseBoxEqnMoments[a_,\[Beta]f_,\[Chi]f_]:=Module[{em,fm,pm},
+em[af_,\[Beta]_,\[Chi]_]:=(af (1+Tanh[\[Beta]]) (1/4 af^2 ArcTanh[1/2 (1+Tanh[\[Chi]])] (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])+af ArcCot[(af (1+Tanh[\[Beta]]))/(2 Sqrt[af^2-1/4 af^2 (1+Tanh[\[Beta]])^2-1/4 af^2 (1+Tanh[\[Chi]])^2])] Sqrt[af^2-1/4 af^2 (1+Tanh[\[Beta]])^2-1/4 af^2 (1+Tanh[\[Chi]])^2]))/(af^2-1/4 af^2 (1+Tanh[\[Beta]])^2);
+fm[af_,\[Beta]_,\[Chi]_]:=-((af^3 (1+Tanh[\[Beta]])^2 (-af ArcCoth[af/Sqrt[af^2-1/4 af^2 (1+Tanh[\[Beta]])^2]]+Sqrt[af^2-1/4 af^2 (1+Tanh[\[Beta]])^2]) (1+Tanh[\[Chi]]))/(4 ((af-1/2 af (1+Tanh[\[Beta]])) (af+1/2 af (1+Tanh[\[Beta]])))^(3/2)));
+pm[af_,\[Beta]_,\[Chi]_]:=(af (1+Tanh[\[Beta]]) (-4 (1+Tanh[\[Beta]])+(1+Tanh[\[Beta]])^3-2 Log[-1+4/(3+Tanh[\[Chi]])] (1+Tanh[\[Beta]]) (1+Tanh[\[Chi]])+(af (4+2 E^(-2 \[Beta])+2 E^(-2 \[Chi])+E^(-2 (\[Beta]+\[Chi]))-2 E^(2 (\[Beta]+\[Chi]))) ArcCot[(af (1+Tanh[\[Beta]]))/Sqrt[-af^2 (-2+Tanh[\[Beta]] (2+Tanh[\[Beta]])+Tanh[\[Chi]] (2+Tanh[\[Chi]]))]] Sech[\[Beta]]^2 Sech[\[Chi]]^2)/Sqrt[-af^2 (-2+Tanh[\[Beta]] (2+Tanh[\[Beta]])+Tanh[\[Chi]] (2+Tanh[\[Chi]]))]))/((-1+Tanh[\[Beta]])^2 (3+Tanh[\[Beta]])^2);
+Return[{em[a,\[Beta]f,\[Chi]f],fm[a,\[Beta]f,\[Chi]f],pm[a,\[Beta]f,\[Chi]f]}];
+];
+
+
 (*Converts the 3 box transform parameters to the simple ellipse parameters*)
 boxToSimp[a_,\[Beta]_,\[Chi]_]:=Module[{b,cx},
 b=a/2 (Tanh[\[Beta]]+1);
+If[b==0.,
+b=10^-10;
+]; 
 cx=a/2 (Tanh[\[Chi]]+1);
 Return[{a,b,cx}]];
 
 
 (*Converts the 3 simple elipse parameters into the box transform parameters*)
-simpToBox[a_,b_,cx_]:=Module[{\[Beta],\[Chi]},\[Beta]=ArcTanh[(2 b)/a-1];
-\[Chi]=ArcTanh[(2 cx)/a-1];
+simpToBox[a_,b_,cx_]:=Module[{\[Beta],\[Chi]},
+\[Beta]=ArcTanh[(2 b)/a-1]//Re;
+\[Chi]=ArcTanh[(2 cx)/a-1]//Re;
 Return[{a,\[Beta],\[Chi]}]];
 
 
@@ -543,8 +559,17 @@ Return[{Re[af/.br],Re[bf/.br],Re[cf/.br]}]
 
 eEqnMinFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,af,bf,cf,momeqns},
 momeqns=ellipseEqnMoments[af,bf,cf]//N;
-br=FindMinimum[{Total[momeqns^2],af>=cf},{{af,g0[[1]]},{bf,g0[[2]]},{cf,g0[[3]]}},AccuracyGoal->10,MaxIterations->1000];
+br=FindMinimum[{1/m0 Total[momeqns^2],af>=cf},{{af,g0[[1]]},{bf,g0[[2]]},{cf,g0[[3]]}},AccuracyGoal->10,MaxIterations->1000];
 Return[{Re[af/.br[[2]]],Re[bf/.br[[2]]],Re[cf/.br[[2]]]}]
+];
+
+
+eBoxEqnFitToMoments[m0_,m1_,m2_,guesses_]:=Module[{emoments,br,g0=guesses,g1,af,bf,cf,\[Beta]f,\[Chi]f,momeqns,ans},
+momeqns=ellipseBoxEqnMoments[af,\[Beta]f,\[Chi]f]//N;
+g1=Apply[simpToBox,guesses];
+br=FindRoot[{(momeqns[[1]]-m0)/m0,(momeqns[[2]]-m1)/m0,(momeqns[[3]]-m2)/m0},{{af,g1[[1]]},{\[Beta]f,g1[[2]],-Infinity,Infinity},{\[Chi]f,g1[[3]],-Infinity,Infinity}},Evaluated->False,MaxIterations->20,AccuracyGoal-> 6];
+ans=Apply[boxToSimp,{Re[af/.br],Re[\[Beta]f/.br],Re[\[Chi]f/.br]}];
+Return[ans]
 ];
 
 
@@ -569,8 +594,12 @@ out=Reap[
 	Do[
 		moms=getMoments[file,ri,species];
 		igs=Apply[getInitialGuess,moms];
-		simpparas=Apply[eSimpFitToMoments,Join[moms,{igs}]]//Re;
-		simperrs=Apply[ellipseparaerrors,Join[simpparas,moms]];
+		Which[ri<= 124,
+		simpparas=Apply[eEqnFitToMoments,Join[moms,{igs}]]//Re,
+		ri>= 125,
+		simpparas=Apply[eBoxEqnFitToMoments,Join[moms,{igs}]]//Re;
+		];
+		simperrs=Apply[ellipseEqnparaerrors,Join[simpparas,moms]];
 		Sow[{simpparas,simperrs}];
 	,{ri,rsrt,rend}](*Clsoe Do *)
 ][[2,1]];(*Close Reap*)
@@ -611,7 +640,7 @@ Return[{walls[[nref+1]],middles[[nref+1]]}]
 ]
 
 
-(*Take a discrete ordinates file, pull out it's moments, and export a h5 moment file.  
+(*Take a discrete ordinates file, pull out it's moments, and returns data ready to be exported.  
 nref is a integer \[GreaterEqual] 0 indicating the number of times the angular bins should be doubled. nref=0 means no grid refinement.
 !!!This ASSUMES a nref=0 is a 10 angular bin grid.!!
 *)
