@@ -594,11 +594,7 @@ out=Reap[
 	Do[
 		moms=getMoments[file,ri,species];
 		igs=Apply[getInitialGuess,moms];
-		Which[ri<= 124,
 		simpparas=Apply[eEqnFitToMoments,Join[moms,{igs}]]//Re,
-		ri>= 125,
-		simpparas=Apply[eBoxEqnFitToMoments,Join[moms,{igs}]]//Re;
-		];
 		simperrs=Apply[ellipseEqnparaerrors,Join[simpparas,moms]];
 		Sow[{simpparas,simperrs}];
 	,{ri,rsrt,rend}](*Clsoe Do *)
