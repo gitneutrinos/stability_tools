@@ -603,6 +603,20 @@ Return[out];
 ];
 
 
+(*Special ellipse fit function to take DO moments as an input instead of a file*)
+ellipseFitSingleSpeciesDO[moments_,species_,rsrt_,rend_]:=Module[{moms,igs,paras,errs,out,simpparas,boxparas,simperrs,boxerrs},
+out=Reap[
+	Do[
+		igs=Apply[getInitialGuess,moments];
+		simpparas=Apply[eEqnFitToMoments,Join[moments,{igs}]]//Re,
+		simperrs=Apply[ellipseEqnparaerrors,Join[simpparas,moments]];
+		Sow[{simpparas,simperrs}];
+	,{ri,rsrt,rend}](*Clsoe Do *)
+][[2,1]];(*Close Reap*)
+Return[out];
+];
+
+
 (* Caclulates the 3 angular moments from a DO file and returns a list of the 3 moments from radial index rsrt to radial index rend. *)
 getDOmoments[dofile_,rsrt_,rend_]:=Module[{dat,srdat,out,emom,fmom,pmom},
 dat=ImportData[dofile];
