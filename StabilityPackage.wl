@@ -596,7 +596,7 @@ out=Reap[
 	Do[
 		moms=getMoments[file,ri,species];
 		igs=Apply[getInitialGuess,moms];
-		simpparas=Apply[eEqnFitToMoments,Join[moms,{igs}]]//Re,
+		simpparas=Apply[eEqnFitToMoments,Join[moms,{igs}]]//Re;
 		simperrs=Apply[ellipseEqnparaerrors,Join[simpparas,moms]];
 		Sow[{simpparas,simperrs}];
 	,{ri,rsrt,rend}](*Clsoe Do *)
@@ -698,7 +698,7 @@ esimp[a_,b_,cx_,m_]:=(b (b m cx+a Sqrt[b^2 m^2-a^2 (-1+m^2)+(-1+m^2) cx^2]))/(a^
 modat=ImportData[momentfile];
 efits={ellipseFitSingleSpecies[momentfile,1,rsrt,rend][[All,1]],ellipseFitSingleSpecies[momentfile,2,rsrt,rend][[All,1]],ellipseFitSingleSpecies[momentfile,3,rsrt,rend][[All,1]]};(*List of ellipse fits for the 3 species. 
 part[[All,1]] takes the parameters for all radii as ellipseFitSingleSpecies has dimmensions {parameters, errors}*)
-efitsord=Table[efits[[All,i]],{i,1,(rsrt-rend+1)}];(*Reorders so the endicies are in the same order as moment data*)
+efitsord=Table[efits[[All,i]],{i,1,(rend-rsrt+1)}];(*Reorders so the endicies are in the same order as moment data*)
 data= Association[
 "muss"-> walls,
 "matters"-> modat["matters"],
