@@ -520,9 +520,9 @@ em[a_,b_,cx_]:= (b (-2 Sqrt[b^2] cx ArcTanh[cx/a]-I a Sqrt[a^2-b^2-cx^2] (Log[Sq
 fm[a_,b_,cx_]:=-((2 b^2 cx (Sqrt[(a-b) (a+b)]-a ArcCoth[a/Sqrt[a^2-b^2]]))/((a-b) (a+b))^(3/2));
 pm[a_,b_,cx_]:=(a b (2 Sqrt[b^2] (-a^2+b^2)+4 a Sqrt[b^2] cx ArcTanh[cx/a]+(I (a^4-b^2 cx^2-a^2 (b^2+cx^2)) (Log[Sqrt[b^2]-I Sqrt[a^2-b^2-cx^2]]-Log[Sqrt[b^2]+I Sqrt[a^2-b^2-cx^2]]))/Sqrt[a^2-b^2-cx^2]))/(2 (a^2-b^2)^2);
 *)
-em[a_,b_,cf_]:= (2 bf (af Sqrt[af^2-bf^2-cf^2] ArcCot[bf/Sqrt[af^2-bf^2-cf^2]]+bf cf ArcTanh[cf/af]))/(af^2-bf^2);
-fm[a_,b_,cf_]:=-((2 bf^2 cf (Sqrt[af^2-bf^2]-af ArcCoth[af/Sqrt[af^2-bf^2]]))/((af-bf) (af+bf))^(3/2));
-pm[a_,b_,cf_]:=(af bf (-af^2 bf+bf^3+((af^4-bf^2 cf^2-af^2 (bf^2+cf^2)) ArcCot[bf/Sqrt[af^2-bf^2-cf^2]])/Sqrt[af^2-bf^2-cf^2]-af bf cf Log[(af-cf)/(af+cf)]))/(af^2-bf^2)^2;
+em[a_,b_,cf_]:= (2 b (a Sqrt[a^2-b^2-cf^2] ArcCot[b/Sqrt[a^2-b^2-cf^2]]+b cf ArcTanh[cf/a]))/(a^2-b^2);
+fm[a_,b_,cf_]:=-((2 b^2 cf (Sqrt[a^2-b^2]-a ArcCoth[a/Sqrt[a^2-b^2]]))/((a-b) (a+b))^(3/2));
+pm[a_,b_,cf_]:=(a b (-a^2 b+b^3+((a^4-b^2 cf^2-a^2 (b^2+cf^2)) ArcCot[b/Sqrt[a^2-b^2-cf^2]])/Sqrt[a^2-b^2-cf^2]-a b cf Log[(a-cf)/(a+cf)]))/(a^2-b^2)^2;
 Return[{em[af,bf,cxf],fm[af,bf,cxf],pm[af,bf,cxf]}];
 ];
 
