@@ -203,8 +203,8 @@ Return[{nd,ndb,ndx}]
 
 
 Options[siPotential]={"xflavor"-> True};
-siPotential[data_,OptionsPattern[]]:=Module[{tot,m},
-m=munits ndensities[data,"xflavor"-> OptionValue["xflavor"]];
+siPotential[ndens_,OptionsPattern[]]:=Module[{tot,m},
+m=munits ndens;
 tot=(Tr[m[[1]]]+Tr[m[[2]]]+2 Tr[m[[3]]]);
 Return[tot]
 ]
@@ -365,9 +365,9 @@ Return[as]
 
 (*Constructs a nstep sized log spaced k grid based on the target k associated with the infile at radial bin r.  Currently the limits are 2 orders of magnitude above and below the target value, ignoring negatives for the moment *)
 Options[buildkGrid]={"ktarget"-> 0.,"krange"-> {10.^(-3),10.},"xflavor"-> True};
-buildkGrid[data_,nstep_,OptionsPattern[]]:=Module[{kgrid,fSpace,ktarget,kblow,kbhigh},
+buildkGrid[ndens_,nstep_,OptionsPattern[]]:=Module[{kgrid,fSpace,ktarget,kblow,kbhigh},
 If[OptionValue["ktarget"]== 0.,
-ktarget=siPotential[data,"xflavor"-> OptionValue["xflavor"]]
+ktarget=siPotential[ndens,"xflavor"-> OptionValue["xflavor"]]
 ,
 ktarget=OptionValue["ktarget"]
 ];
@@ -392,8 +392,8 @@ Reap[
 
 		Print["  stabilityMatrix ",Timing[S=stabilityMatrix[singleRadiusData,ea,"xflavor"-> OptionValue["xflavor"]]][[1]]];
 
-		Print["  buildkGrid ",Timing[kl=buildkGrid[singleRadiusData,nstep,"ktarget"-> OptionValue["ktarget"],"krange"-> OptionValue["krange"],"xflavor"-> OptionValue["xflavor"]]][[1]]];
-		Print["  siPotential ",Timing[pot=siPotential[singleRadiusData,"xflavor"-> OptionValue["xflavor"]]][[1]]];
+		Print["  buildkGrid ",Timing[kl=buildkGrid[ndens,nstep,"ktarget"-> OptionValue["ktarget"],"krange"-> OptionValue["krange"],"xflavor"-> OptionValue["xflavor"]]][[1]]];
+		Print["  siPotential ",Timing[pot=siPotential[ndens]][[1]]];
 		Print["  evscale ",Timing[Do[
 		
 			eout=evscale[kl[[kx]],S,kvar,"output"->OptionValue["koutput"]];
