@@ -358,7 +358,7 @@ Return[as]
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*k Grid and Adaptive k Solver*)
 
 
@@ -391,11 +391,11 @@ Reap[
 		S=stabilityMatrix[singleRadiusData,ea,"xflavor"-> OptionValue["xflavor"]];
 
 		kl=buildkGrid[singleRadiusData,nstep,"ktarget"-> OptionValue["ktarget"],"krange"-> OptionValue["krange"],"xflavor"-> OptionValue["xflavor"]];
+		pot=siPotential[singleRadiusData,"xflavor"-> OptionValue["xflavor"]];
 		Do[
 		
 			eout=evscale[kl[[kx]],S,kvar,"output"->OptionValue["koutput"]];
 			
-			pot=siPotential[singleRadiusData,"xflavor"-> OptionValue["xflavor"]];
 			Sow[{rx,data["radius"][[rx]],kl[[kx]],eout,pot}]; 
 		,{kx,1,Length[kl]}] (*close do over ktargets*)
 	,{rx,rstr,rend}] (*close do over r*)
