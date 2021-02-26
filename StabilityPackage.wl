@@ -211,7 +211,7 @@ Return[tot]
 (*This is likely not needed and will need to be removed.*)
 Options[Bfactor]={"xflavor"-> True};
 Bfactor[data_,OptionsPattern[]]:=Module[{B,Bb,m},
-m=munits ndensities[data,"xflavor"-> OptionValue["xflavor"]];
+(*m=munits ndensities[data,"xflavor"-> OptionValue["xflavor"]];*)
 B=0.(*Tr[m[[3]]]/Tr[m[[1]]]*);
 Bb=0.(*Tr[m[[3]]]/Tr[m[[2]]]*);
 Return[{B,Bb}]
