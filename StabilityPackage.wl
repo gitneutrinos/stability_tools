@@ -230,7 +230,7 @@ Returns 9 arguments with index,
 9=HsiRadial
 *)
 Options[buildHamiltonians]={"xflavor"-> True};
-buildHamiltonians[data_,testE_,hi_,OptionsPattern[]]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,\[Mu]x,m,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,Ve,\[Omega]},(
+buildHamiltonians[data_,testE_,hi_,ndens_,OptionsPattern[]]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,\[Mu]x,m,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,Ve,\[Omega]},(
 Ve=munits/mp *data["Yes"]  *data["matters"];
 \[Omega]=\[Omega]EMev[testE];
 name11="ee";
@@ -247,7 +247,7 @@ Ab[i]={{0,ToExpression[StringJoin["Ab",name12,ToString[i]]]},{ToExpression[Strin
 ,{i,1,n}];
 Hm={{Ve,0.},{0.,0.}};
 Hvac=hi{{-\[Omega]/2,0.},{0.,\[Omega]/2}};
-m=munits ndensities[data,"xflavor"-> OptionValue["xflavor"]];
+m=munits ndens;
 \[Mu]=m[[1]]-m[[3]]; (*With x flavor, \[Mu]\[Rule] (Subscript[\[Mu], e]-Subscript[\[Mu], x])*)
 \[Mu]b=m[[2]]-m[[3]]; (*Same for anti-neutrinos*)
 
@@ -275,8 +275,9 @@ Com[A_,B_]:=Module[{a=A,b=B},Return[A . B-B . A]];
  5=HsiRadial
  *)
 Options[getEquations]={"xflavor"-> True,"inverse"-> False};
-getEquations[data_,testE_,hi_,k_,OptionsPattern[]]:=Module[{n,\[Theta],eqn,eqnb,hs},
-hs=buildHamiltonians[data,testE,hi,"xflavor"-> OptionValue["xflavor"]];
+getEquations[data_,testE_,hi_,k_,OptionsPattern[]]:=Module[{n,\[Theta],eqn,eqnb,hs,ndens},
+ndens=ndensities[data,"xflavor"-> OptionValue["xflavor"]];
+hs=buildHamiltonians[data,testE,hi,ndens,"xflavor"-> OptionValue["xflavor"]];
 n=Length[data["mids"]];
 \[Theta]=ArcCos[data["mids"]];
 (*This could be replaced with a mapthread or with associations, but one step at time*)
