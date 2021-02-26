@@ -4,7 +4,7 @@ BeginPackage["StabililtyPackage`"]
 ClearAll["StabililtyPackage`", "StabililtyPackage`"]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Package Functions*)
 
 
@@ -180,13 +180,12 @@ ImportCalcInputs[infile_]:=Association[
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Neutrino Densities and Potentials*)
 
 
 Options[ndensities]={"xflavor"-> True};
 ndensities[data_,OptionsPattern[]]:=Module[{n,nudensity,nubardensity,nuxdensity,nd,ndb,ndx},
-Print["CALLING NDENSITIES"];
 n=Length[data["mids"]];
 nudensity[dt_]:= Sum[Sum[data["Endensity"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]])) ,{f,1,Length[data["freqs"]]-1}],{dp,1,Length[data["phis"]]-1}];
 nubardensity[dt_]:= Sum[Sum[data["Endensity"][[2,f,dt,dp]]/ (h (data["freqmid"][[f]])),{f,1,Length[data["freqs"]]-1}],{dp,1,Length[data["phis"]]-1}];
@@ -219,7 +218,7 @@ Return[{B,Bb}]
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Stability Matrix Functions*)
 
 
@@ -359,7 +358,7 @@ Return[as]
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*k Grid and Adaptive k Solver*)
 
 
@@ -386,20 +385,20 @@ data=ImportData[infile];
 evout=
 Reap[
 	Do[
-		Print["  singleRadiusData ",Timing[singleRadiusData = SelectSingleRadius[data,rx]][[1]]];
-		Print["  ndensities ",Timing[ndens = ndensities[singleRadiusData,"xflavor"-> OptionValue["xflavor"]]][[1]]];
-		Print["  getEquations ",Timing[ea=getEquations[singleRadiusData,testE,hi,kvar,ndens,"xflavor"-> OptionValue["xflavor"],"inverse"-> OptionValue["inverse"]]][[1]]];
+		singleRadiusData = SelectSingleRadius[data,rx];
+		ndens = ndensities[singleRadiusData,"xflavor"-> OptionValue["xflavor"]];
+		ea=getEquations[singleRadiusData,testE,hi,kvar,ndens,"xflavor"-> OptionValue["xflavor"],"inverse"-> OptionValue["inverse"]];
 
-		Print["  stabilityMatrix ",Timing[S=stabilityMatrix[singleRadiusData,ea,"xflavor"-> OptionValue["xflavor"]]][[1]]];
+		S=stabilityMatrix[singleRadiusData,ea,"xflavor"-> OptionValue["xflavor"]];
 
-		Print["  buildkGrid ",Timing[kl=buildkGrid[ndens,nstep,"ktarget"-> OptionValue["ktarget"],"krange"-> OptionValue["krange"],"xflavor"-> OptionValue["xflavor"]]][[1]]];
-		Print["  siPotential ",Timing[pot=siPotential[ndens]][[1]]];
-		Print["  evscale ",Timing[Do[
+		kl=buildkGrid[ndens,nstep,"ktarget"-> OptionValue["ktarget"],"krange"-> OptionValue["krange"],"xflavor"-> OptionValue["xflavor"]];
+		pot=siPotential[ndens];
+		Do[
 		
 			eout=evscale[kl[[kx]],S,kvar,"output"->OptionValue["koutput"]];
 			
 			Sow[{rx,data["radius"][[rx]],kl[[kx]],eout,pot}]; 
-		,{kx,1,Length[kl]}]][[1]]] (*close do over ktargets*)
+		,{kx,1,Length[kl]}] (*close do over ktargets*)
 	,{rx,rstr,rend}] (*close do over r*)
 ][[2,1]];
 
@@ -447,7 +446,7 @@ Finally, to export outputs we jsut take the second list, and for the inputs the 
 (*This currently outputs several datasets, each containing the unique elements from a run of kadapt, belonging to the group unique_elements.  Will add in groups that are, for instance, sorted by r. i.e. all k and omega combinations for a given radial index.*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Gershgorin Disks*)
 
 
@@ -734,7 +733,7 @@ Export[name<>".h5",{
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Plotting Tools*)
 
 
