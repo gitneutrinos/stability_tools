@@ -4,7 +4,7 @@ BeginPackage["StabililtyPackage`"]
 ClearAll["StabililtyPackage`", "StabililtyPackage`"]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Package Functions*)
 
 
@@ -180,12 +180,13 @@ ImportCalcInputs[infile_]:=Association[
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Neutrino Densities and Potentials*)
 
 
 Options[ndensities]={"xflavor"-> True};
 ndensities[data_,OptionsPattern[]]:=Module[{n,nudensity,nubardensity,nuxdensity,nd,ndb,ndx},
+Print["CALLING NDENSITIES"];
 n=Length[data["mids"]];
 nudensity[dt_]:= Sum[Sum[data["Endensity"][[1,f,dt,dp]]/ (h (data["freqmid"][[f]])) ,{f,1,Length[data["freqs"]]-1}],{dp,1,Length[data["phis"]]-1}];
 nubardensity[dt_]:= Sum[Sum[data["Endensity"][[2,f,dt,dp]]/ (h (data["freqmid"][[f]])),{f,1,Length[data["freqs"]]-1}],{dp,1,Length[data["phis"]]-1}];
@@ -385,19 +386,19 @@ data=ImportData[infile];
 evout=
 Reap[
 	Do[
-		singleRadiusData = SelectSingleRadius[data,rx];
-		ea=getEquations[singleRadiusData,testE,hi,kvar,"xflavor"-> OptionValue["xflavor"],"inverse"-> OptionValue["inverse"]];
+		Print["  singleRadiusData ",Timing[singleRadiusData = SelectSingleRadius[data,rx]][[1]]];
+		Print["  getEquations ",Timing[ea=getEquations[singleRadiusData,testE,hi,kvar,"xflavor"-> OptionValue["xflavor"],"inverse"-> OptionValue["inverse"]]][[1]]];
 
-		S=stabilityMatrix[singleRadiusData,ea,"xflavor"-> OptionValue["xflavor"]];
+		Print["  stabilityMatrix ",Timing[S=stabilityMatrix[singleRadiusData,ea,"xflavor"-> OptionValue["xflavor"]]][[1]]];
 
-		kl=buildkGrid[singleRadiusData,nstep,"ktarget"-> OptionValue["ktarget"],"krange"-> OptionValue["krange"],"xflavor"-> OptionValue["xflavor"]];
-		pot=siPotential[singleRadiusData,"xflavor"-> OptionValue["xflavor"]];
-		Do[
+		Print["  buildkGrid ",Timing[kl=buildkGrid[singleRadiusData,nstep,"ktarget"-> OptionValue["ktarget"],"krange"-> OptionValue["krange"],"xflavor"-> OptionValue["xflavor"]]][[1]]];
+		Print["  siPotential ",Timing[pot=siPotential[singleRadiusData,"xflavor"-> OptionValue["xflavor"]]][[1]]];
+		Print["  evscale ",Timing[Do[
 		
 			eout=evscale[kl[[kx]],S,kvar,"output"->OptionValue["koutput"]];
 			
 			Sow[{rx,data["radius"][[rx]],kl[[kx]],eout,pot}]; 
-		,{kx,1,Length[kl]}] (*close do over ktargets*)
+		,{kx,1,Length[kl]}]][[1]]] (*close do over ktargets*)
 	,{rx,rstr,rend}] (*close do over r*)
 ][[2,1]];
 
@@ -732,7 +733,7 @@ Export[name<>".h5",{
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Plotting Tools*)
 
 
