@@ -11,9 +11,9 @@ ClearAll["StabililtyPackage`", "StabililtyPackage`"]
 ImportData::usage =
 	"ImportData[file] reads in the data from file."
 buildHamiltonians::usage=
-	"[data,test Energy, Hierarchy=1/-1]. Return elements of the hamiltonians"
+	"[data,test Energy, Hierarchy=1/-1,ndens]. Return elements of the hamiltonians"
 getEquations::usage=
-	"[data,test energy, hierarchy=-1/1, k]. Return the equations of motions"
+	"[data,test energy, hierarchy=-1/1, k, ndens]. Return the equations of motions"
 stabilityMatrix::usage=
 	"[data,Equations of motion (getEquations output)]. Returns the stability matrix"
 buildkGrid::usage=
@@ -275,8 +275,7 @@ Com[A_,B_]:=Module[{a=A,b=B},Return[A . B-B . A]];
  5=HsiRadial
  *)
 Options[getEquations]={"xflavor"-> True,"inverse"-> False};
-getEquations[data_,testE_,hi_,k_,OptionsPattern[]]:=Module[{n,\[Theta],eqn,eqnb,hs,ndens},
-ndens=ndensities[data,"xflavor"-> OptionValue["xflavor"]];
+getEquations[data_,testE_,hi_,k_,ndens_,OptionsPattern[]]:=Module[{n,\[Theta],eqn,eqnb,hs},
 hs=buildHamiltonians[data,testE,hi,ndens,"xflavor"-> OptionValue["xflavor"]];
 n=Length[data["mids"]];
 \[Theta]=ArcCos[data["mids"]];
@@ -389,7 +388,7 @@ Reap[
 	Do[
 		Print["  singleRadiusData ",Timing[singleRadiusData = SelectSingleRadius[data,rx]][[1]]];
 		Print["  ndensities ",Timing[ndens = ndensities[singleRadiusData,"xflavor"-> OptionValue["xflavor"]]][[1]]];
-		Print["  getEquations ",Timing[ea=getEquations[singleRadiusData,testE,hi,kvar,"xflavor"-> OptionValue["xflavor"],"inverse"-> OptionValue["inverse"]]][[1]]];
+		Print["  getEquations ",Timing[ea=getEquations[singleRadiusData,testE,hi,kvar,ndens,"xflavor"-> OptionValue["xflavor"],"inverse"-> OptionValue["inverse"]]][[1]]];
 
 		Print["  stabilityMatrix ",Timing[S=stabilityMatrix[singleRadiusData,ea,"xflavor"-> OptionValue["xflavor"]]][[1]]];
 
@@ -448,7 +447,7 @@ Finally, to export outputs we jsut take the second list, and for the inputs the 
 (*This currently outputs several datasets, each containing the unique elements from a run of kadapt, belonging to the group unique_elements.  Will add in groups that are, for instance, sorted by r. i.e. all k and omega combinations for a given radial index.*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Gershgorin Disks*)
 
 
