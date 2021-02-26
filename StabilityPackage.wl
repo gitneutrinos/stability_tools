@@ -219,7 +219,7 @@ Return[{B,Bb}]
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Stability Matrix Functions*)
 
 
@@ -381,12 +381,13 @@ Return[kgrid];
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
 Options[kAdapt]={"xflavor"-> True,"ktarget"-> 0.,"krange"-> {10.^(-3),10.},"koutput"-> "Eigensystem","inverse"-> False};
-kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,OptionsPattern[]]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,eout,pot,S},
+kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,OptionsPattern[]]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,eout,pot,S,ndens},
 data=ImportData[infile];
 evout=
 Reap[
 	Do[
 		Print["  singleRadiusData ",Timing[singleRadiusData = SelectSingleRadius[data,rx]][[1]]];
+		Print["  ndensities ",Timing[ndens = ndensities[singleRadiusData,"xflavor"-> OptionValue["xflavor"]]][[1]]];
 		Print["  getEquations ",Timing[ea=getEquations[singleRadiusData,testE,hi,kvar,"xflavor"-> OptionValue["xflavor"],"inverse"-> OptionValue["inverse"]]][[1]]];
 
 		Print["  stabilityMatrix ",Timing[S=stabilityMatrix[singleRadiusData,ea,"xflavor"-> OptionValue["xflavor"]]][[1]]];
