@@ -11,9 +11,9 @@ ClearAll["StabililtyPackage`", "StabililtyPackage`"]
 ImportData::usage =
 	"ImportData[file] reads in the data from file."
 buildHamiltonians::usage=
-	"[data,test Energy, Hierarchy=1/-1]. Return elements of the hamiltonians"
+	"[data,test Energy, Hierarchy=1/-1,ndens]. Return elements of the hamiltonians"
 getEquations::usage=
-	"[data,test energy, hierarchy=-1/1, k]. Return the equations of motions"
+	"[data,test energy, hierarchy=-1/1, k, ndens]. Return the equations of motions"
 stabilityMatrix::usage=
 	"[data,Equations of motion (getEquations output)]. Returns the stability matrix"
 buildkGrid::usage=
@@ -202,8 +202,8 @@ Return[{nd,ndb,ndx}]
 
 
 Options[siPotential]={"xflavor"-> True};
-siPotential[data_,OptionsPattern[]]:=Module[{tot,m},
-m=munits ndensities[data,"xflavor"-> OptionValue["xflavor"]];
+siPotential[ndens_,OptionsPattern[]]:=Module[{tot,m},
+m=munits ndens;
 tot=(Tr[m[[1]]]+Tr[m[[2]]]+2 Tr[m[[3]]]);
 Return[tot]
 ]
@@ -211,7 +211,7 @@ Return[tot]
 (*This is likely not needed and will need to be removed.*)
 Options[Bfactor]={"xflavor"-> True};
 Bfactor[data_,OptionsPattern[]]:=Module[{B,Bb,m},
-m=munits ndensities[data,"xflavor"-> OptionValue["xflavor"]];
+(*m=munits ndensities[data,"xflavor"-> OptionValue["xflavor"]];*)
 B=0.(*Tr[m[[3]]]/Tr[m[[1]]]*);
 Bb=0.(*Tr[m[[3]]]/Tr[m[[2]]]*);
 Return[{B,Bb}]
@@ -229,7 +229,7 @@ Returns 9 arguments with index,
 9=HsiRadial
 *)
 Options[buildHamiltonians]={"xflavor"-> True};
-buildHamiltonians[data_,testE_,hi_,OptionsPattern[]]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,\[Mu]x,m,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,Ve,\[Omega]},(
+buildHamiltonians[data_,testE_,hi_,ndens_,OptionsPattern[]]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,\[Mu]x,m,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,Ve,\[Omega]},(
 Ve=munits/mp *data["Yes"]  *data["matters"];
 \[Omega]=\[Omega]EMev[testE];
 name11="ee";
@@ -246,7 +246,7 @@ Ab[i]={{0,ToExpression[StringJoin["Ab",name12,ToString[i]]]},{ToExpression[Strin
 ,{i,1,n}];
 Hm={{Ve,0.},{0.,0.}};
 Hvac=hi{{-\[Omega]/2,0.},{0.,\[Omega]/2}};
-m=munits ndensities[data,"xflavor"-> OptionValue["xflavor"]];
+m=munits ndens;
 \[Mu]=m[[1]]-m[[3]]; (*With x flavor, \[Mu]\[Rule] (Subscript[\[Mu], e]-Subscript[\[Mu], x])*)
 \[Mu]b=m[[2]]-m[[3]]; (*Same for anti-neutrinos*)
 
@@ -274,8 +274,8 @@ Com[A_,B_]:=Module[{a=A,b=B},Return[A . B-B . A]];
  5=HsiRadial
  *)
 Options[getEquations]={"xflavor"-> True,"inverse"-> False};
-getEquations[data_,testE_,hi_,k_,OptionsPattern[]]:=Module[{n,\[Theta],eqn,eqnb,hs},
-hs=buildHamiltonians[data,testE,hi,"xflavor"-> OptionValue["xflavor"]];
+getEquations[data_,testE_,hi_,k_,ndens_,OptionsPattern[]]:=Module[{n,\[Theta],eqn,eqnb,hs},
+hs=buildHamiltonians[data,testE,hi,ndens,"xflavor"-> OptionValue["xflavor"]];
 n=Length[data["mids"]];
 \[Theta]=ArcCos[data["mids"]];
 (*This could be replaced with a mapthread or with associations, but one step at time*)
@@ -358,15 +358,15 @@ Return[as]
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*k Grid and Adaptive k Solver*)
 
 
 (*Constructs a nstep sized log spaced k grid based on the target k associated with the infile at radial bin r.  Currently the limits are 2 orders of magnitude above and below the target value, ignoring negatives for the moment *)
 Options[buildkGrid]={"ktarget"-> 0.,"krange"-> {10.^(-3),10.},"xflavor"-> True};
-buildkGrid[data_,nstep_,OptionsPattern[]]:=Module[{kgrid,fSpace,ktarget,kblow,kbhigh},
+buildkGrid[ndens_,nstep_,OptionsPattern[]]:=Module[{kgrid,fSpace,ktarget,kblow,kbhigh},
 If[OptionValue["ktarget"]== 0.,
-ktarget=siPotential[data,"xflavor"-> OptionValue["xflavor"]]
+ktarget=siPotential[ndens,"xflavor"-> OptionValue["xflavor"]]
 ,
 ktarget=OptionValue["ktarget"]
 ];
@@ -380,18 +380,19 @@ Return[kgrid];
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
 Options[kAdapt]={"xflavor"-> True,"ktarget"-> 0.,"krange"-> {10.^(-3),10.},"koutput"-> "Eigensystem","inverse"-> False};
-kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,OptionsPattern[]]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,eout,pot,S},
+kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,OptionsPattern[]]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,eout,pot,S,ndens},
 data=ImportData[infile];
 evout=
 Reap[
 	Do[
 		singleRadiusData = SelectSingleRadius[data,rx];
-		ea=getEquations[singleRadiusData,testE,hi,kvar,"xflavor"-> OptionValue["xflavor"],"inverse"-> OptionValue["inverse"]];
+		ndens = ndensities[singleRadiusData,"xflavor"-> OptionValue["xflavor"]];
+		ea=getEquations[singleRadiusData,testE,hi,kvar,ndens,"xflavor"-> OptionValue["xflavor"],"inverse"-> OptionValue["inverse"]];
 
 		S=stabilityMatrix[singleRadiusData,ea,"xflavor"-> OptionValue["xflavor"]];
 
-		kl=buildkGrid[singleRadiusData,nstep,"ktarget"-> OptionValue["ktarget"],"krange"-> OptionValue["krange"],"xflavor"-> OptionValue["xflavor"]];
-		pot=siPotential[singleRadiusData,"xflavor"-> OptionValue["xflavor"]];
+		kl=buildkGrid[ndens,nstep,"ktarget"-> OptionValue["ktarget"],"krange"-> OptionValue["krange"],"xflavor"-> OptionValue["xflavor"]];
+		pot=siPotential[ndens];
 		Do[
 		
 			eout=evscale[kl[[kx]],S,kvar,"output"->OptionValue["koutput"]];
