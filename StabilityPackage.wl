@@ -110,6 +110,8 @@ eBoxEqnFitToMoments::usage=
 "fits in the box transformed coordinates"
 ellipseFitSingleSpeciesDO::usage=
 "fits singel species given moments as an input"
+kAdaptSlim::usage=
+"for running datasets and exporting them in a particular txt file form"
 
 
 (* ::Subsection::Closed:: *)
@@ -404,6 +406,17 @@ Reap[
 
 Return[{evout,{OptionValue["xflavor"],OptionValue["inverse"],OptionValue["krange"]},{infile,rstr,rend,testE,hi,nstep}}] (*Close reap over r*)
 ]; (*close module*)
+
+
+Options[kAdaptSlim]={"rrange"-> {1,384},"xflavor"-> True,"ktarget"-> 0.,"krange"-> {10.^(-3),10.},"inverse"-> False};
+kSdaptSlim[file_,nk_,OptionsPattern[]]:=Module[{max,kdat,etab,etab2,pts,evpts,rpts,tab,tab2},
+kdat=kAdapt[file,OptionValue["rrange"][[1]],OptionValue["rrange"][[2]],Infinity,-1.,nk,"koutput"-> "RankedEigenvalues","krange"-> OptionValue["krange"],"ktarget"->OptionValue["ktarget"],"xflavor"-> OptionValue["xflavor"] ];
+rpts=kdat[[1,All,2]]//DeleteDuplicates; (* Looks at all radial points, returns a list of all radii used*)
+evpts=Map[Max,Partition[kdat[[1,All,4]],2 nk]]; (* For each r, picks out the eigenvalue for all k at that r*)
+tab=Table[{rpts[[i]],evpts[[i]]},{i,1,Length[rpts]}];
+tab2=PrependTo[tab,{{kdat[[2,All]]},{"radius (cm)","Im[\[CapitalOmega]]"}}];
+Export[StringJoin[StringDrop[file,-3],"_kadapted_nk", ToString[nk],".txt"],tab2,"Table"];
+]
 
 
 exportkadapt[outevs_,name_]:=
