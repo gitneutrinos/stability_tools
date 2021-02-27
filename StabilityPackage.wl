@@ -409,7 +409,7 @@ Return[{evout,{OptionValue["xflavor"],OptionValue["inverse"],OptionValue["krange
 
 
 Options[kAdaptSlim]={"rrange"-> {1,384},"xflavor"-> True,"ktarget"-> 0.,"krange"-> {10.^(-3),10.},"inverse"-> False};
-kSdaptSlim[file_,nk_,OptionsPattern[]]:=Module[{max,kdat,etab,etab2,pts,evpts,rpts,tab,tab2},
+kAdaptSlim[file_,nk_,OptionsPattern[]]:=Module[{max,kdat,etab,etab2,pts,evpts,rpts,tab,tab2},
 kdat=kAdapt[file,OptionValue["rrange"][[1]],OptionValue["rrange"][[2]],Infinity,-1.,nk,"koutput"-> "RankedEigenvalues","krange"-> OptionValue["krange"],"ktarget"->OptionValue["ktarget"],"xflavor"-> OptionValue["xflavor"] ];
 rpts=kdat[[1,All,2]]//DeleteDuplicates; (* Looks at all radial points, returns a list of all radii used*)
 evpts=Map[Max,Partition[kdat[[1,All,4]],2 nk]]; (* For each r, picks out the eigenvalue for all k at that r*)
