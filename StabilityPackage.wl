@@ -227,7 +227,7 @@ Return[{B,Bb}]
 averageEnergy[dofile_,ri_]:=Module[{srdata,nuendensity,nubarendensity,Eav},
 srdata=SelectSingleRadius[ImportData[dofile],ri];
 nuendensity= Sum[Sum[Sum[srdata["Endensity"][[1,f,dt,dp]] ,{f,1,Length[srdata["freqs"]]-1}],{dp,1,Length[srdata["phis"]]-1}],{dt,1,Length[srdata["mids"]]}];
-nubarendensity= Sum[Sum[Sum[srdata["Endensity"][[2,f,dt,dp]],{f,1,Length[srdata["freqs"]]-1}],{dp,1,Length[srdata["phis"]]-1}],{dt,1,Length[srdata["muss"]]}];
+nubarendensity= Sum[Sum[Sum[srdata["Endensity"][[2,f,dt,dp]],{f,1,Length[srdata["freqs"]]-1}],{dp,1,Length[srdata["phis"]]-1}],{dt,1,Length[srdata["mids"]]}];
 Eav=(nuendensity+nubarendensity)/((ndensities[srdata][[1]]//Tr)+(ndensities[srdata][[2]]//Tr));
 Return[Eav]
 ]
