@@ -112,6 +112,9 @@ ellipseFitSingleSpeciesDO::usage=
 "fits singel species given moments as an input"
 kAdaptSlim::usage=
 "for running datasets and exporting them in a particular txt file form"
+averageEnergy::usage=
+"compute the average energy for a file at a single radius"
+
 
 
 (* ::Subsection::Closed:: *)
@@ -219,6 +222,15 @@ B=0.(*Tr[m[[3]]]/Tr[m[[1]]]*);
 Bb=0.(*Tr[m[[3]]]/Tr[m[[2]]]*);
 Return[{B,Bb}]
 ];
+
+
+averageEnergy[dofile_,ri_]:=Module[{srdata,nuendensity,nubarendensity,Eav},
+srdata=SelectSingleRadius[ImportData[dofile],ri];
+nuendensity= Sum[Sum[Sum[data["Endensity"][[1,f,dt,dp]] ,{f,1,Length[data["freqs"]]-1}],{dp,1,Length[data["phis"]]-1}],{dt,1,Length[srdata["mids"]]}];
+nubarendensity= Sum[Sum[Sum[data["Endensity"][[2,f,dt,dp]],{f,1,Length[data["freqs"]]-1}],{dp,1,Length[data["phis"]]-1}],{dt,1,Length[srdata["muss"]]}];
+Eav=(nuendensity+nubarendensity)/((ndensities[srdata][[1]]//Tr)+(ndensities[srdata][[2]]//Tr));
+Return[Eav]
+]
 
 
 (* ::Subsection::Closed:: *)
