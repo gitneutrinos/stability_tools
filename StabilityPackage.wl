@@ -130,7 +130,8 @@ ergmev=ergev/10^6; (*convert erg to MeV*)
 mp=1.6726219 10^-24; (*Proton mass in g*) 
 munits=Sqrt[2] (Gf/Geverg^2 )(hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
 \[CapitalDelta]m12sq=(7.59 10^-5) everg^2;
-\[Omega]EMev[En_]:=(\[CapitalDelta]m12sq)/(2 (En Meverg));
+\[CapitalDelta]m13sq=2.4 10^-3 everg^2;
+\[Omega]EMev[En_]:=(\[CapitalDelta]m13sq)/(2 (En Meverg));
 Begin["`Private`"]
 
 
@@ -412,7 +413,7 @@ Options[kAdaptSlim]={"rrange"-> {1,384},"xflavor"-> True,"ktarget"-> 0.,"krange"
 kAdaptSlim[file_,nk_,OptionsPattern[]]:=Module[{max,kdat,etab,etab2,pts,evpts,rpts,tab,tab2},
 kdat=kAdapt[file,OptionValue["rrange"][[1]],OptionValue["rrange"][[2]],Infinity,-1.,nk,"koutput"-> "RankedEigenvalues","krange"-> OptionValue["krange"],"ktarget"->OptionValue["ktarget"],"xflavor"-> OptionValue["xflavor"] ];
 rpts=kdat[[1,All,2]]//DeleteDuplicates; (* Looks at all radial points, returns a list of all radii used*)
-evpts=Map[Max,Partition[kdat[[1,All,4]],2 nk]]; (* For each r, picks out the eigenvalue for all k at that r*)
+evpts=Map[Max,Partition[kdat[[1,All,4]],2*nk]]; (* For each r, picks out the eigenvalue for all k at that r*)
 tab=Table[{rpts[[i]],evpts[[i]]},{i,1,Length[rpts]}];
 tab2=PrependTo[tab,{{kdat[[2,All]]},{"radius (cm)","Im[\[CapitalOmega]]"}}];
 Export[StringJoin[StringDrop[file,-3],"_kadapted_nk", ToString[nk],".txt"],tab2,"Table"];
