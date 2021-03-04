@@ -243,14 +243,14 @@ realdatadispersioncheck[infile_,hdffile_,ri_]:=Module[{dispouts,checks,ans,dispc
 dispouts=realdatadispcalc[infile,hdffile,ri];
 (*Check each pair, returns true if the disp passes OR the percent difference is very small.*)
 (*This collects whether or not the check should pass, conditionally or naturally*)
-checks=Table[dispouts[[j,1]]<10^(-3) \[Or] dispouts[[j,2]]< 10^(-10), {j,1,Length[dispouts]}];
+checks=Table[dispouts[[j,1]]<10^(-3) \[Or] Abs[dispouts[[j,2]]]< 10^(-10), {j,1,Length[dispouts]}];
 ans=Apply[And,checks];	(*Checks whether all elements of checks are true*)
 (*Discond is using for determining the condition by which the check passes.*)
 dispcond=Reap[
 	Do[
 		Sow[{dispouts[[j,3]],
 				Which[dispouts[[j,1]]<10^-3, Style["Natural Pass",Darker[Green,0.4]],
-				dispouts[[j,2]]< 10^-10 \[And] dispouts[[j,1]]>10^-3, Style["Conditional Pass",Darker[Yellow,0.4]],
+				Abs[dispouts[[j,2]]]< 10^-10 \[And] dispouts[[j,1]]>10^-3, Style["Conditional Pass",Darker[Yellow,0.4]],
 				True,Style["Fail",Darker[Red,0.4]](*Close Which*)
 			} (*Close ordered pair in sow*)
 		] (*Close sow*)
