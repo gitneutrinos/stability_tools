@@ -76,26 +76,6 @@ rowplot=GraphicsRow[{plot1,plot2,diffplot},Frame-> True]
 
 
 
-(* ::InheritFromParent:: *)
-(*Graphics[{{}, {Inset[Graphics[{{}, {}, {{}, {}}}, AspectRatio -> GoldenRatio^(-1), Axes -> {True, True}, AxesLabel -> {None, None}, AxesOrigin -> {0., -1.1565113500597373`}, DisplayFunction -> Identity, Frame -> {{False, False}, {False, False}}, FrameLabel -> {{None, None}, {None, None}}, FrameTicks -> {{Charting`ScaledTicks[{Log, Exp}], Charting`ScaledFrameTicks[{Identity, Identity}]}, {Automatic, Automatic}}, GridLines -> {None, None}, GridLinesStyle -> Directive[GrayLevel[0.5, 0.4]], ImagePadding -> {{5.671874999999986, 3.671875}, {15.931461996864073`, 0.5}}, ImageSize -> Scaled[0.25], Method -> {"OptimizePlotMarkers" -> True, "OptimizePlotMarkers" -> True, "CoordinatesToolOptions" -> {"DisplayFunction" -> ({Identity[Part[#, 1]], Exp[Part[#, 2]]}& ), "CopiedValueFunction" -> ({Identity[Part[#, 1]], Exp[Part[#, 2]]}& )}}, PlotRange -> {{-1, 1}, {-1.1565113500597373`, 1}}, PlotRangeClipping -> True, PlotRangePadding -> {{Scaled[0.02], Scaled[0.02]}, {Scaled[0.02], Scaled[0.05]}}, Ticks -> {Automatic, Charting`ScaledTicks[{Log, Exp}]}], {134.9125, -89.25}, ImageScaled[{0.5, 0.5}], {251, 170}], Inset[Graphics[{{}, {{RGBColor[0.368417, 0.506779, 0.709798], PointSize[0.012833333333333334`], AbsoluteThickness[1.6], Point[CompressedData["*)
-(*1:eJxTTMoPSmViYGBQBWIQPb8ySer9+n/WXtsV527t9jxQrpu6P8xKxCaXW7vJ*)
-(*5oDrgVOXv6y2zlGwkb4exveq1vXA9XsCKXtWadm4eUpLzotwPbCtY7t6zzJT*)
-(*m0cxJef7nVwPzDe4yflusqNNFPuK7Vn2rgfWsIQtftjlY/M/QeG2SqrrgR4p*)
-(*Adt4nXAbi54FG+ZFehyQ/N7ZmHMhyebRA5sTbwM9Dky94cR5pifP5sx9q+NB*)
-(*vh4HTIP0LOaerbBJtTN+3+7lceCi9usOXeUWm6Btu1df9vA44K8sfCE3coJN*)
-(*bd7swhPuHgdS99oeMu6ZZfNhd0aGCpC/NVnlzcHepTZMIn+n7nfzONBzSW72*)
-(*2fqNNgYaOpMagfze3Jc2xll7bOaesc+IBvI5gg6Hsbk/391jUc9x2MrzQN12*)
-(*YSmBZ5923/nxIOWzn8cBaHjtnvj9tdynbrcD0uWrTVVecey5rGy9OEnLDRZ+*)
-(*exZ+3lIYL+sGC789F7NKX8arusHCb8+iPde+8x9xg4XfnhaTjVPSxDxg4bfH*)
-(*ujtq1yRJD1j47XFjvCnqpekBC7892d+/Hv9rDA+/PQUzztletIKH357sP5ZX*)
-(*pezh4bdn5fYDGscd4eG3566s6rN8Z3j47cmc/OVQmQs8/PboWM9QkXSFh98e*)
-(*M/7MsFpXePjtce1vkN3tCg+/PUZyn/QfAvkAe6IgFA==*)
-(*"]]}, {{RGBColor[0.368417, 0.506779, 0.709798], PointSize[0.012833333333333334`], AbsoluteThickness[1.6]}, {}}, {{RGBColor[0.368417, 0.506779, 0.709798], PointSize[0.012833333333333334`], AbsoluteThickness[1.6]}, {}}}, {{}, {}}}, AspectRatio -> GoldenRatio^(-1), Axes -> {True, True}, AxesLabel -> {None, None}, AxesOrigin -> {0, -51.76416848606965}, DisplayFunction -> Identity, Frame -> {{False, False}, {False, False}}, FrameLabel -> {{None, None}, {None, None}}, FrameTicks -> {{Charting`ScaledTicks[{Log, Exp}], Charting`ScaledFrameTicks[{Identity, Identity}]}, {Automatic, Automatic}}, GridLines -> {None, None}, GridLinesStyle -> Directive[GrayLevel[0.5, 0.4]], ImagePadding -> {{0.5, 2.000060757754767}, {15.931461996864073`, 0.5}}, ImageSize -> Scaled[0.25], Method -> {"OptimizePlotMarkers" -> True, "OptimizePlotMarkers" -> True, "CoordinatesToolOptions" -> {"DisplayFunction" -> ({Identity[Part[#, 1]], Exp[Part[#, 2]]}& ), "CopiedValueFunction" -> ({Identity[Part[#, 1]], Exp[Part[#, 2]]}& )}}, PlotRange -> {{-8.605331804262226*^-17, 8.605331804262226*^-17}, {-51.76416848606965, -42.49544425682571}}, PlotRangeClipping -> True, PlotRangePadding -> {{Scaled[0.02], Scaled[0.02]}, {Scaled[0.02], Scaled[0.05]}}, Ticks -> {Automatic, Charting`ScaledTicks[{Log, Exp}]}], {404.73749999999995`, -89.25}, ImageScaled[{0.5, 0.5}], {251, 170}], Inset[Graphics[{{}, {}, {{}, {}}}, AspectRatio -> GoldenRatio^(-1), Axes -> {True, True}, AxesLabel -> {None, None}, AxesOrigin -> {0., 0}, DisplayFunction -> Identity, Frame -> {{False, False}, {False, False}}, FrameLabel -> {{None, None}, {None, None}}, FrameTicks -> {{Automatic, Automatic}, {Automatic, Automatic}}, GridLines -> {None, None}, GridLinesStyle -> Directive[GrayLevel[0.5, 0.4]], ImagePadding -> {{5.671875, 3.6718750000000284`}, {15.931461996864073`, 0.5}}, ImageSize -> Scaled[0.25], Method -> {"OptimizePlotMarkers" -> True, "OptimizePlotMarkers" -> True, "CoordinatesToolOptions" -> {"DisplayFunction" -> ({Identity[Part[#, 1]], Identity[Part[#, 2]]}& ), "CopiedValueFunction" -> ({Identity[Part[#, 1]], Identity[Part[#, 2]]}& )}}, PlotRange -> {{-1, 1}, {-1, 1}}, PlotRangeClipping -> True, PlotRangePadding -> {{Scaled[0.02], Scaled[0.02]}, {Scaled[0.05], Scaled[0.05]}}, Ticks -> {Automatic, Automatic}], {674.5625, -89.25}, ImageScaled[{0.5, 0.5}], {251, 170}]}, Style[{{}, {Line[{{0, 0}, {0, -178.5}}], Line[{{809.4749999999999, 0}, {809.4749999999999, -178.5}}], Line[{{0, 0}, {269.825, 0}}], Line[{{269.825, 0}, {539.65, 0}}], Line[{{539.65, 0}, {809.4749999999999, 0}}], Line[{{0, -178.5}, {269.825, -178.5}}], Line[{{269.825, -178.5}, {539.65, -178.5}}], Line[{{539.65, -178.5}, {809.4749999999999, -178.5}}]}}, Antialiasing -> False]}, ImageSize -> {UpTo[600], UpTo[155]}, PlotRange -> {{0, 809.4749999999999}, {-178.5, 0}}, PlotRangePadding -> {6, 5}]*)
-
-
-?kAdapt
-
-
 (* ::Subsection::Closed:: *)
 (*Two-beam test. Initialize data with neutrinos moving right and antineutrinos moving left. The real and imaginary parts of the eigenvalues should match the theoretical results from Chakraborty+2016 (Self-induced neutrino flavor conversion without flavor mixing)*)
 
@@ -129,7 +109,7 @@ data2b=
 ];
 (*builds a 4x4 matrix with the two beam data, then reduces the size of the matrix *)
 build2bMatrix[En_,k_]:=Module[{fakeEn,S2ba,S2b},
-S2ba=stabilityMatrix[get2bdata[],getEquations[get2bdata[],En,-1.,k,"xflavor"-> False],"xflavor"-> False];
+S2ba=stabilityMatrix[get2bdata[],getEquations[get2bdata[],En,-1.,k,ndensities[get2bdata[],"xflavor"-> False],"xflavor"-> False],"xflavor"-> False];
 S2b={{S2ba[[2,2]],S2ba[[2,3]]},{S2ba[[3,2]],S2ba[[3,3]]}};
 Return[S2b]
 ];
@@ -211,7 +191,7 @@ Return[dispersionCheck[data,cos\[Theta],\[CapitalOmega],k,En,xflavor]]
 test4bdispersionCheck[k_,En_,atest_,xflavor_]:=Module[{cos\[Theta],I0,I1,I2,\[CapitalOmega],data,equations},
 data = get2bdata[]/.a-> atest;
 cos\[Theta]=data["mids"];
-equations = getEquations[data,En,-1.,k,"xflavor"->xflavor];
+equations = getEquations[data,En,-1.,k,ndensities[data,"xflavor"-> xflavor],"xflavor"->xflavor];
 \[CapitalOmega]=evscale[k,stabilityMatrix[data,equations,"xflavor"->xflavor],kx,"output"-> "Eigenvalues"][[1]];
 Return[dispersionCheck[data,cos\[Theta],\[CapitalOmega],k,En,xflavor]]
 ];
@@ -313,7 +293,7 @@ Return[errs]
 
 ncheck[file_,ri_]:=Module[{ncheckdata},
 ncheckdata=SelectSingleRadius[ImportData[file],ri];
-Return[siPotential[ncheckdata,"xflavor"->True]>siPotential[ncheckdata,"xflavor"->False]];
+Return[siPotential[ndensities[ncheckdata,"xflavor"->True]]>siPotential[ndensities[ncheckdata,"xflavor"-> False],"xflavor"->False]];
 ];
 
 netleptoncheck[file_,ri_]:=Module[{ncheckdata},
@@ -365,7 +345,7 @@ exportkadapt[kAdapt["morelipfit1.h5",1,1,Infinity,-1.,10,"xflavor"-> False],"tes
 (*Make a test plot of that dataset*)
 tdata=ImportCalcGridData["testfilekadapt.h5"];
 (*Check that it returned SOMETHING*)
-{tdata["radius"],tdata["k"],tdata["evs_Im"]}
+{tdata["radius"],tdata["k"],tdata["evs_Im"]};
 
 
 (* ::Subsection::Closed:: *)
@@ -382,7 +362,10 @@ exportkadapt[outevs,"112Msun_100ms_r200_r300_nox_test"]
 
 
 Timing[tr=TestReport["testfiles.wlt"];]
-Table[tr["TestResults"][i],{i,1,13}]//MatrixForm
+Table[tr["TestResults"][i],{i,1,10}]//MatrixForm
+
+
+
 
 
 
