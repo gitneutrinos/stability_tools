@@ -228,7 +228,7 @@ ndens = ndensities[datasr,"xflavor"->ops["xflavor"]];
 bottoms=Table[IdisBottom[\[CapitalOmega]p[[i]],kp[[i]],cos\[Theta]],{i,1,Length[test\[CapitalOmega]s]}]; (*Values of \[CapitalOmega]p-kpcos\[Theta] for each eigenvalue, and each angle.*)
 sumbottoms=Table[2 test\[CapitalOmega]s[[i]]- bottoms[[i]],{i,1,Length[test\[CapitalOmega]s]}]; (*value of \[CapitalOmega]p+kpcos[\[Theta]] done via 2\[CapitalOmega]p-(\[CapitalOmega]ps-kpcos\[Theta])*)
 percentdiff=Table[bottoms[[i]]/sumbottoms[[i]],{i,1,Length[test\[CapitalOmega]s]}]; (*percent difference; (\[CapitalOmega]p-kpcos\[Theta])/(\[CapitalOmega]p+kpcos\[Theta]) for each \[CapitalOmega]p and angle*)
-mindiff=Table[Min[percentdiff[[i]]],{i,1,Length[percentdiff[[1]]]}]; (*For each eigenvalue, takes the minimum percent difference across the 10 angular bins*)
+mindiff=Table[Min[percentdiff[[i]]//Re],{i,1,Length[percentdiff[[1]]]}]; (*For each eigenvalue, takes the minimum percent difference across the 10 angular bins*)
 (*Performs a dispersion checks for each of the 20 eigenvalues, which should be 0. Collects all of the dispchecks*)
 dischecks=Table[
 	Abs[dispersionCheck[datasr,cos\[Theta],test\[CapitalOmega]s[[i]],testk,ins["testE"],ops["xflavor"]]],
@@ -249,9 +249,9 @@ ans=Apply[And,checks];	(*Checks whether all elements of checks are true*)
 dispcond=Reap[
 	Do[
 		Sow[{dispouts[[j,3]],
-			Which[dispouts[[j,1]]<10^-3, "Natural Pass",
-				dispouts[[j,2]]< 10^-10 \[And] dispouts[[j,1]]>10^-3,"Conditional Pass"
-				](*Close Which*)
+				Which[dispouts[[j,1]]<10^-3, Style["Natural Pass",Darker[Green,0.4]],
+				dispouts[[j,2]]< 10^-10 \[And] dispouts[[j,1]]>10^-3, Style["Conditional Pass",Darker[Yellow,0.4]],
+				True,Style["Fail",Darker[Red,0.4]](*Close Which*)
 			} (*Close ordered pair in sow*)
 		] (*Close sow*)
 	,{j,1,Length[dispouts]}
