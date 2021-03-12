@@ -434,7 +434,7 @@ tdata=ImportCalcGridData["testfilekadapt.h5"];
 {tdata["radius"],tdata["k"],tdata["evs_Im"]};
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Test Report*)
 
 
@@ -463,7 +463,7 @@ Table[tr["TestResults"][i],{i,1,10}]//MatrixForm
 
 
 (* ::Item::Closed:: *)
-(*Is the hierarchy consist?*)
+(*Is the hierarchy consistent?*)
 
 
 (* ::Subitem:: *)
@@ -500,7 +500,7 @@ exportkadapt[outevs,"15Msun_400ms_r255_DO_w/w_test" ]
 *)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*11.2 Msun_100ms*)
 
 
@@ -510,7 +510,7 @@ hdf11ww="C:\\Users\\Sam\\Documents\\GitHub\\stability_tools\\112Msun_100ms_r200_
 r11=250;
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*\[Omega] = 0*)
 
 
@@ -532,7 +532,7 @@ realdatadispersioncheck[file11,hdf11now,r11]
 realdatadispcheck2[file11,hdf11now,r11,1,"check"-> 6]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Subtractive cancellations check*)
 
 
@@ -543,7 +543,7 @@ realdatadispcheck2[file11,hdf11now,r11,1,"check"-> 6]
 Do[realdatadispcheck2[file11,hdf11now,r11,mi,"check"-> 3],{mi,1,20}]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*\[Omega] != 0*)
 
 
@@ -565,7 +565,7 @@ realdatadispersioncheck[file11,hdf11ww,r11]
 realdatadispcheck2[file11,hdf11ww,r11,1,"check"-> 6]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Subtractive cancellations check*)
 
 
@@ -576,7 +576,7 @@ realdatadispcheck2[file11,hdf11ww,r11,1,"check"-> 6]
 Do[realdatadispcheck2[file11,hdf11ww,r11,mi,"check"-> 3],{mi,1,20}]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*15 Msun_400ms (Minerbo)*)
 
 
@@ -586,7 +586,7 @@ hdf15mww="C:\\Users\\Sam\\Documents\\GitHub\\stability_tools\\15Msun_400ms_r255_
 r15=255;
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*\[Omega] = 0*)
 
 
@@ -608,7 +608,7 @@ realdatadispersioncheck[file15,hdf15mnow,r15]
 realdatadispcheck2[file15,hdf15mnow,r15,1,"check"-> 6]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Subtractive cancellations check*)
 
 
@@ -724,6 +724,50 @@ realdatadispcheck2[file15,hdf15doww,r15,1,"check"-> 6]
 
 
 Do[realdatadispcheck2[file15,hdf15doww,r15,mi,"check"-> 3],{mi,1,20}]
+
+
+(* ::Section::Closed:: *)
+(*Stability Matrix Checks*)
+
+
+(*This function builds the stability matrix by computing each component exactly, and then building the total table.*)
+Options[buildS]={"xflavor"-> True};
+buildS[file_,r_,k_,En_,hier_,OptionsPattern[]]:=Module[{datasr,n,nb,ndens,Ve,\[Omega],\[Phi]0,\[Phi]1,\[Phi],cos\[Theta],nwhich,\[Omega]which,S,Smat,\[Mu]which},
+datasr=SelectSingleRadius[ImportData[file],r];
+cos\[Theta]=datasr["mids"];
+\[Omega]=hier \[Omega]EMev[En];
+Ve=0. ;(*munits/mp *datasr["Yes"]*datasr["matters"];*)
+ndens=ndensities[datasr,"xflavor"-> OptionValue["xflavor"]];
+n=munits Diagonal[ndens[[1]]-ndens[[3]]];
+nb=munits Diagonal[ndens[[2]]-ndens[[3]]];
+\[Phi][rank_,mu_,mubar_,cos\[Theta]_]:=Sum[(mu[[i]]-mubar[[i]])cos\[Theta][[i]]^rank,{i,1,Length[cos\[Theta]]}];
+\[Omega]which[i_]:=Which[i<= Length[cos\[Theta]], -1.,i>Length[cos\[Theta]],1.];
+nwhich[j_]:=Which[j<= Length[cos\[Theta]], n[[j]],j>Length[cos\[Theta]], -nb[[(j-Length[cos\[Theta]])]] ];
+\[Mu]which[i_]:= Which[i<= Length[cos\[Theta]],0.,i>Length[cos\[Theta]],Length[cos\[Theta]]];
+S[i_,j_]:= (\[Omega]which[i] \[Omega] KroneckerDelta[i,j])+(Ve+\[Phi][0,n,nb,cos\[Theta]]+cos\[Theta][[i-\[Mu]which[i]]] (k-\[Phi][1,n,nb,cos\[Theta]])) KroneckerDelta[i,j]
+-(1-(cos\[Theta][[i-\[Mu]which[i]]]cos\[Theta][[j-\[Mu]which[j]]]))nwhich[j];
+Smat=Table[S[i,j],{i,1,2*Length[cos\[Theta]]},{j,1,2*Length[cos\[Theta]]}];
+Return[Smat];
+
+];
+
+
+(* ::Subsection::Closed:: *)
+(*Confirmation S from paper is S from package*)
+
+
+Stest=buildS[file11,250,1. 10^-19,20.,-1.];
+
+
+tdat=SelectSingleRadius[ImportData[file11],250];
+ndens=ndensities[tdat];
+ea=getEquations[tdat,20.,-1.,1 10^-19,ndens];
+St=stabilityMatrix[tdat,ea];
+
+
+(Stest-St)/(Abs[Stest]+Abs[St])//Max
+Abs[(Stest-St)]/(Abs[Stest]+Abs[St])//Max
+
 
 
 
