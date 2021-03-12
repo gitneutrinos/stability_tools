@@ -199,7 +199,7 @@ Return[dispersionCheck[data,cos\[Theta],\[CapitalOmega],k,En,xflavor]]
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Real data dispersion check*)
 
 
@@ -500,7 +500,7 @@ exportkadapt[outevs,"15Msun_400ms_r255_DO_w/w_test" ]
 *)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*11.2 Msun_100ms*)
 
 
@@ -514,14 +514,14 @@ r11=250;
 (*\[Omega] = 0*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*'Dispersion Relation' Check: (Subscript[I, 0]+1)(Subscript[I, 2]-1)-Subscript[I, 1]^2=0*)
 
 
 realdatadispersioncheck[file11,hdf11now,r11]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Check via Dot Products: Subscript[\[CapitalOmega]A, m]=(-\[Omega] + Ve +Subscript[\[Phi], 0]+Subscript[\[Mu], m](k-Subscript[\[Phi], 1]))Subscript[A, m]-Subscript[\[CapitalSigma], j](1-Subscript[\[Mu], m] Subscript[\[Mu], j])(Subscript[n, j] Subscript[A, j]-Subscript[nb, j] Subscript[Ab, j])*)
 
 
@@ -543,18 +543,18 @@ realdatadispcheck2[file11,hdf11now,r11,1,"check"-> 6]
 Do[realdatadispcheck2[file11,hdf11now,r11,mi,"check"-> 3],{mi,1,20}]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*\[Omega] != 0*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*'Dispersion Relation' Check: (Subscript[I, 0]+1)(Subscript[I, 2]-1)-Subscript[I, 1]^2=0*)
 
 
 realdatadispersioncheck[file11,hdf11ww,r11]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Check via Dot Products: Subscript[\[CapitalOmega]A, m]=(-\[Omega] + Ve +Subscript[\[Phi], 0]+Subscript[\[Mu], m](k-Subscript[\[Phi], 1]))Subscript[A, m]-Subscript[\[CapitalSigma], j](1-Subscript[\[Mu], m] Subscript[\[Mu], j])(Subscript[n, j] Subscript[A, j]-Subscript[nb, j] Subscript[Ab, j])*)
 
 
@@ -660,7 +660,7 @@ hdf15donow="C:\\Users\\Sam\\Documents\\GitHub\\stability_tools\\15Msun_400ms_r25
 hdf15doww="C:\\Users\\Sam\\Documents\\GitHub\\stability_tools\\15Msun_400ms_r255_DO_w/w_test.h5";
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*\[Omega] = 0*)
 
 
@@ -752,7 +752,7 @@ Return[Smat];
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Confirmation S from paper is S from package*)
 
 
@@ -768,6 +768,37 @@ St=stabilityMatrix[tdat,ea];
 (Stest-St)/(Abs[Stest]+Abs[St])//Max
 Abs[(Stest-St)]/(Abs[Stest]+Abs[St])//Max
 
+
+
+(* ::Section::Closed:: *)
+(*Energy Dependence*)
+
+
+(* ::Subsection::Closed:: *)
+(*Generation of files*)
+
+
+energyd[n_]:=N[20 10^-n];
+Do[
+exportkadapt[kAdapt[inpath <> "112Msun_100ms_DO.h5", 250,250, energyd[n], -1., 2, "xflavor" -> True],StringJoin["112Msun_100ms_r200_r300_E20n",ToString[n],"_nox_test"]]
+,{n,0,6}]
+
+
+
+(* ::Subsection::Closed:: *)
+(*'Dispersion Relation' Check: (Subscript[I, 0]+1)(Subscript[I, 2]-1)-Subscript[I, 1]^2=0*)
+
+
+Do[realdatadispersioncheck[file11,StringJoin["C:\\Users\\Sam\\Documents\\GitHub\\stability_tools\\112Msun_100ms_r200_r300_E20n",ToString[n],"_nox_test.h5"],r11]
+,{n,0,6}]
+
+
+(* ::Subsection::Closed:: *)
+(*Check via Dot Products: Subscript[\[CapitalOmega]A, m]=(-\[Omega] + Ve +Subscript[\[Phi], 0]+Subscript[\[Mu], m](k-Subscript[\[Phi], 1]))Subscript[A, m]-Subscript[\[CapitalSigma], j](1-Subscript[\[Mu], m] Subscript[\[Mu], j])(Subscript[n, j] Subscript[A, j]-Subscript[nb, j] Subscript[Ab, j])*)
+
+
+Do[realdatadispcheck2[file11,StringJoin["C:\\Users\\Sam\\Documents\\GitHub\\stability_tools\\112Msun_100ms_r200_r300_E20n",ToString[n],"_nox_test.h5"],r11,1,"check"-> 6]
+,{n,0,6}]
 
 
 
