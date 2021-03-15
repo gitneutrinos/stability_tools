@@ -114,7 +114,8 @@ kAdaptSlim::usage=
 "for running datasets and exporting them in a particular txt file form"
 averageEnergy::usage=
 "compute the average energy for a file at a single radius"
-
+buildS::usage=
+"builds the Stability matrix given [infile,r,k,En,hier,ndens]
 
 
 (* ::Subsection::Closed:: *)
@@ -133,7 +134,7 @@ ergmev=ergev/10^6; (*convert erg to MeV*)
 mp=1.6726219 10^-24; (*Proton mass in g*) 
 munits=Sqrt[2] (Gf/Geverg^2 )(hbar c)^3; (*Sqrt[2] Gf in erg cm^3*)
 \[CapitalDelta]m12sq=(7.59 10^-5) everg^2;
-\[CapitalDelta]m13sq=2.4 10^-3 everg^2;
+\[CapitalDelta]m13sq=(2.4 10^-3 )everg^2;
 \[Omega]EMev[En_]:=(\[CapitalDelta]m13sq)/(2 (En Meverg));
 Begin["`Private`"]
 
@@ -210,7 +211,7 @@ Return[{nd,ndb,ndx}]
 Options[siPotential]={"xflavor"-> True};
 siPotential[ndens_,OptionsPattern[]]:=Module[{tot,m},
 m=munits ndens;
-tot=(Tr[m[[1]]]+Tr[m[[2]]]+2 Tr[m[[3]]]);
+tot=(Tr[m[[1]]]-Tr[m[[3]]])-(Tr[m[[2]]]- Tr[m[[3]]]);
 Return[tot]
 ]
 (*This function finds the asymetry factor between the electron (anti)neutrinos and the x (anti)neutrinos *)
@@ -245,7 +246,7 @@ Returns 9 arguments with index,
 *)
 Options[buildHamiltonians]={"xflavor"-> True};
 buildHamiltonians[data_,testE_,hi_,ndens_,OptionsPattern[]]:=Module[{n,\[Theta],name11,name12,name21,name22,\[Rho],\[Rho]b,A,Ab,Hm,Hvac,\[Mu],\[Mu]b,\[Mu]x,m,Hsi,H,Hb,\[Delta]H,\[Delta]Hb,Ve,\[Omega]},(
-Ve=munits/mp *data["Yes"]  *data["matters"];
+Ve=(*munits/mp *data["Yes"]  *data["matters"];*) 0.;
 \[Omega]=\[Omega]EMev[testE];
 name11="ee";
 name12="ex";
@@ -307,7 +308,8 @@ eqnb[j]=-Com[Hb[j],Ab[j]][[1,2]]- Com[\[Delta]Hb[j],\[Rho]b[j]][[1,2]]+(k Cos[\[
 ,{j,1,n}];
 ];
 Return[{eqn,eqnb,A,Ab}]
-](*Close with*)
+]
+(*Close with*)
 ];
 
 
@@ -344,6 +346,28 @@ S4=Table[Coefficient[eqnb[l],Ab[m][[1,2]]],{l,1,n},{m,1,n}];
 S=ArrayFlatten[{{S1,S2},{S3,S4}}]/.Dispatch[rules[data,"xflavor"-> OptionValue["xflavor"]]];
 Return[S];
 ]
+];
+
+
+(* ::Subsection::Closed:: *)
+(*Stability Matrix Entry - by - Entry Method*)
+
+
+(*This function builds the stability matrix by computing each component exactly, and then building the total table.*)
+buildS[datasr_,k_,En_,hier_,ndens_]:=Module[{n,nb,Ve,\[Omega],\[Phi]0,\[Phi]1,\[Phi],cos\[Theta],nwhich,\[Omega]which,S,Smat,\[Mu]which},
+cos\[Theta]=datasr["mids"];
+\[Omega]=hier \[Omega]EMev[En];
+Ve=0. ;(*munits/mp *datasr["Yes"]*datasr["matters"];*)
+n=munits Diagonal[ndens[[1]]-ndens[[3]]];
+nb=munits Diagonal[ndens[[2]]-ndens[[3]]];
+\[Omega]which[i_]:=Which[i<= Length[cos\[Theta]], -1.,i>Length[cos\[Theta]],1.];
+nwhich[j_]:=Which[j<= Length[cos\[Theta]], n[[j]],j>Length[cos\[Theta]], -nb[[(j-Length[cos\[Theta]])]] ];
+\[Mu]which[i_]:= Which[i<= Length[cos\[Theta]],0.,i>Length[cos\[Theta]],Length[cos\[Theta]]];
+\[Phi][rank_,mu_,mubar_,cos\[Theta]_]:=Sum[(mu[[i]]-mubar[[i]])cos\[Theta][[i]]^rank,{i,1,Length[cos\[Theta]]}];
+S[i_,j_]:= (\[Omega]which[i] \[Omega] KroneckerDelta[i,j])+(Ve+\[Phi][0,n,nb,cos\[Theta]]+cos\[Theta][[i-\[Mu]which[i]]] (k-\[Phi][1,n,nb,cos\[Theta]])) KroneckerDelta[i,j]
+-(1-(cos\[Theta][[i-\[Mu]which[i]]]cos\[Theta][[j-\[Mu]which[j]]]))nwhich[j];
+Smat=Table[S[i,j],{i,1,2*Length[cos\[Theta]]},{j,1,2*Length[cos\[Theta]]}];
+Return[Smat];
 ];
 
 
