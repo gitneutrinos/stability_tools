@@ -208,8 +208,7 @@ Return[{nd,ndb,ndx}]
 ];
 
 
-Options[siPotential]={"xflavor"-> True};
-siPotential[ndens_,OptionsPattern[]]:=Module[{tot,m},
+siPotential[ndens_]:=Module[{tot,m},
 m=munits ndens;
 tot=(Tr[m[[1]]]-Tr[m[[3]]])-(Tr[m[[2]]]- Tr[m[[3]]]);
 Return[tot]
@@ -402,10 +401,10 @@ Return[as]
 
 
 (*Constructs a nstep sized log spaced k grid based on the target k associated with the infile at radial bin r.  Currently the limits are 2 orders of magnitude above and below the target value, ignoring negatives for the moment *)
-Options[buildkGrid]={"ktarget"-> 0.,"krange"-> {10.^(-3),10.},"xflavor"-> True};
+Options[buildkGrid]={"ktarget"-> 0.,"krange"-> {10.^(-3),10.}};
 buildkGrid[ndens_,nstep_,OptionsPattern[]]:=Module[{kgrid,fSpace,ktarget,kblow,kbhigh},
 If[OptionValue["ktarget"]== 0.,
-ktarget=siPotential[ndens,"xflavor"-> OptionValue["xflavor"]]
+ktarget=siPotential[ndens]
 ,
 ktarget=OptionValue["ktarget"]
 ];
