@@ -401,9 +401,9 @@ Return[as]
 
 
 (*Constructs a nstep sized log spaced k grid based on the target k associated with the infile at radial bin r.  Currently the limits are 2 orders of magnitude above and below the target value, ignoring negatives for the moment *)
-Options[buildkGrid]={"ktarget"-> 0.,"krange"-> {10.^(-3),10.}};
+Options[buildkGrid]={"ktarget"-> "auto","krange"-> {10.^(-3),10.}};
 buildkGrid[ndens_,nstep_,OptionsPattern[]]:=Module[{kgrid,fSpace,ktarget,kblow,kbhigh},
-If[OptionValue["ktarget"]== 0.,
+If[OptionValue["ktarget"]== "auto",
 ktarget=siPotential[ndens]
 ,
 ktarget=OptionValue["ktarget"]
