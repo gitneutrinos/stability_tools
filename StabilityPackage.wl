@@ -115,7 +115,7 @@ kAdaptSlim::usage=
 averageEnergy::usage=
 "compute the average energy for a file at a single radius"
 buildS::usage=
-"builds the Stability matrix given [infile,r,k,En,hier,ndens]
+"builds the Stability matrix given [infile,r,k,En,hier,ndens]"
 
 
 (* ::Subsection::Closed:: *)
