@@ -125,7 +125,7 @@ cma[k_,\[Mu]ch_,a_,w_]:=cm[k,\[Mu]ch,w]/.{rb-> 0.,l-> 0.,r-> (1+a),lb-> -(1-a)};
 (*Preliminaries for Dispersion Checks*)
 
 
-SIpotential[ndens_]:=munits{Diagonal[ndens[[1]]],Diagonal[ndens[[2]]]}
+SIpotential[ndens_]:=munits{Diagonal[ndens[[1]]-ndens[[3]]],Diagonal[ndens[[2]]-ndens[[3]]]}
 
 
 Phi[rank_,mu_,mubar_,cos\[Theta]_]:=Sum[(mu[[i]]-mubar[[i]])cos\[Theta][[i]]^rank,{i,1,Length[cos\[Theta]]}];
@@ -168,7 +168,7 @@ Return[result];
 ];
 
 
-Options[dispersionCheck]={"hier"-> 1.};
+Options[dispersionCheck]={"hier"-> -1.};
 dispersionCheck[data_,cos\[Theta]_,\[CapitalOmega]_,k_,En_,xflavor_,OptionsPattern[]]:=Module[{I0,I1,I2,ndens,mu,mubar},
 (* neutrino number densities disguised as SI potentials *)
 ndens = ndensities[data,"xflavor"->xflavor];
@@ -199,7 +199,7 @@ Return[dispersionCheck[data,cos\[Theta],\[CapitalOmega],k,En,xflavor]]
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Real data dispersion check*)
 
 
@@ -345,6 +345,9 @@ dp[k_]:=(lvec[k] . rvec[k])/(lvec[k] . lvec[k]);
 vsi=Sum[mu[[j]]-mubar[[j]],{j,1,Length[cos\[Theta]]}];
 tab=Table[{\[Omega],vsi,test\[CapitalOmega]s[[i]],dp[i]},{i,1,Length[test\[CapitalOmega]s]}];
 Grid[Prepend[tab,{"\[Omega]","\!\(\*SubscriptBox[\(V\), \(si\)]\)(\!\(\*SubscriptBox[\(a\), \(0\)]\)-\!\(\*SubscriptBox[\(ab\), \(0\)]\))","\[CapitalOmega]","dot product"}],Frame-> All]//Print
+,
+OptionValue["check"]==7, (*This prints some values for debugging*)
+Return[{testk,\[Phi]0,\[Phi]1,testAs,testAbs,\[Omega],test\[CapitalOmega]s,mu,mubar}]
 ];
 ]; 
 
@@ -479,28 +482,28 @@ Table[tr["TestResults"][i],{i,1,10}]//MatrixForm
 (*Generate Files for Checks on Results and/or Code-Paper Agreement*)
 
 
-(*
+
 (* Generate the data for the dispersion check*)
 dispersionCheckRi=250;
 (*Note, I changed this to take 2 ksteps, as otherwise there's an error from the way the formula for the log spacing is calculated (1/0 error)*)
 outevs = kAdapt[inpath <> "112Msun_100ms_DO.h5", dispersionCheckRi, dispersionCheckRi, Infinity, -1., 2, "xflavor" -> True]; 
-exportkadapt[outevs,"112Msun_100ms_r200_r300_now_nox_test" ]
+exportkadapt[outevs,"112Msun_100ms_r200_r300_now_nox_test" ];
 outevs = kAdapt[inpath <> "112Msun_100ms_DO.h5", dispersionCheckRi, dispersionCheckRi, 20., -1., 2,"xflavor" -> True];
-exportkadapt[outevs,"112Msun_100ms_r200_r300_nox_test"]
+exportkadapt[outevs,"112Msun_100ms_r200_r300_nox_test"];
 
 (*Should one want to re-run the hdf files that are used to check 15msun datasets, these can be run to get "fresh" files, or commented out*)
 outevs = kAdapt["G:\\.shortcut-targets-by-id\\1tib_pcM4sTpxj42Hb2g-kKJKo1pG_Qeq\\SamFlynn_fast_flavor\\40bin\\DO_data\\15Msun_400ms_DO_40_minerbo.h5", 255, 255, Infinity, -1., 4000, "xflavor" -> True]; 
 exportkadapt[outevs,"15Msun_400ms_r255_minerbo_now_test" ]
-outevs = kAdapt["G:\\.shortcut-targets-by-id\\1tib_pcM4sTpxj42Hb2g-kKJKo1pG_Qeq\\SamFlynn_fast_flavor\\40bin\\DO_data\\15Msun_400ms_DO_40_minerbo.h5", 255, 255, 17, -1., 4000, "xflavor" -> True]; 
+outevs = kAdapt["G:\\.shortcut-targets-by-id\\1tib_pcM4sTpxj42Hb2g-kKJKo1pG_Qeq\\SamFlynn_fast_flavor\\40bin\\DO_data\\15Msun_400ms_DO_40_minerbo.h5", 255, 255, 20., -1., 4000, "xflavor" -> True]; 
 exportkadapt[outevs,"15Msun_400ms_r255_minerbo_w/w_test" ]
 outevs = kAdapt["G:\\.shortcut-targets-by-id\\1tib_pcM4sTpxj42Hb2g-kKJKo1pG_Qeq\\SamFlynn_fast_flavor\\40bin\\DO_data\\15Msun_400ms_DO_40.h5", 255, 255, Infinity, -1., 4000, "xflavor" -> True]; 
 exportkadapt[outevs,"15Msun_400ms_r255_DO_now_test" ]
-outevs = kAdapt["G:\\.shortcut-targets-by-id\\1tib_pcM4sTpxj42Hb2g-kKJKo1pG_Qeq\\SamFlynn_fast_flavor\\40bin\\DO_data\\15Msun_400ms_DO_40.h5", 255, 255, 17, -1., 4000, "xflavor" -> True]; 
+outevs = kAdapt["G:\\.shortcut-targets-by-id\\1tib_pcM4sTpxj42Hb2g-kKJKo1pG_Qeq\\SamFlynn_fast_flavor\\40bin\\DO_data\\15Msun_400ms_DO_40.h5", 255, 255, 20., -1., 4000, "xflavor" -> True]; 
 exportkadapt[outevs,"15Msun_400ms_r255_DO_w/w_test" ]
-*)
 
 
-(* ::Section:: *)
+
+(* ::Section::Closed:: *)
 (*11.2 Msun_100ms*)
 
 
@@ -514,14 +517,14 @@ r11=250;
 (*\[Omega] = 0*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*'Dispersion Relation' Check: (Subscript[I, 0]+1)(Subscript[I, 2]-1)-Subscript[I, 1]^2=0*)
 
 
 realdatadispersioncheck[file11,hdf11now,r11]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Check via Dot Products: Subscript[\[CapitalOmega]A, m]=(-\[Omega] + Ve +Subscript[\[Phi], 0]+Subscript[\[Mu], m](k-Subscript[\[Phi], 1]))Subscript[A, m]-Subscript[\[CapitalSigma], j](1-Subscript[\[Mu], m] Subscript[\[Mu], j])(Subscript[n, j] Subscript[A, j]-Subscript[nb, j] Subscript[Ab, j])*)
 
 
@@ -543,18 +546,18 @@ realdatadispcheck2[file11,hdf11now,r11,1,"check"-> 6]
 Do[realdatadispcheck2[file11,hdf11now,r11,mi,"check"-> 3],{mi,1,20}]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*\[Omega] != 0*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*'Dispersion Relation' Check: (Subscript[I, 0]+1)(Subscript[I, 2]-1)-Subscript[I, 1]^2=0*)
 
 
 realdatadispersioncheck[file11,hdf11ww,r11]
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Check via Dot Products: Subscript[\[CapitalOmega]A, m]=(-\[Omega] + Ve +Subscript[\[Phi], 0]+Subscript[\[Mu], m](k-Subscript[\[Phi], 1]))Subscript[A, m]-Subscript[\[CapitalSigma], j](1-Subscript[\[Mu], m] Subscript[\[Mu], j])(Subscript[n, j] Subscript[A, j]-Subscript[nb, j] Subscript[Ab, j])*)
 
 
@@ -656,11 +659,12 @@ Do[realdatadispcheck2[file15,hdf15mww,r15,mi,"check"-> 3],{mi,1,20}]
 (*15 Msun_400ms (DO)*)
 
 
+file15do="G:\\.shortcut-targets-by-id\\1tib_pcM4sTpxj42Hb2g-kKJKo1pG_Qeq\\SamFlynn_fast_flavor\\40bin\\DO_data\\15Msun_400ms_DO_40.h5";
 hdf15donow="C:\\Users\\Sam\\Documents\\GitHub\\stability_tools\\15Msun_400ms_r255_DO_now_test.h5";
 hdf15doww="C:\\Users\\Sam\\Documents\\GitHub\\stability_tools\\15Msun_400ms_r255_DO_w/w_test.h5";
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*\[Omega] = 0*)
 
 
@@ -668,7 +672,7 @@ hdf15doww="C:\\Users\\Sam\\Documents\\GitHub\\stability_tools\\15Msun_400ms_r255
 (*'Dispersion Relation' Check: (Subscript[I, 0]+1)(Subscript[I, 2]-1)-Subscript[I, 1]^2=0*)
 
 
-realdatadispersioncheck[file15,hdf15donow,r15]
+realdatadispersioncheck[file15do,hdf15donow,r15]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -679,7 +683,7 @@ realdatadispersioncheck[file15,hdf15donow,r15]
 (*The dot product checks for all direction components ' m' for a single eigenvalue eigenvector pair . Passes if the dot product is 1.*)
 
 
-realdatadispcheck2[file15,hdf15donow,r15,1,"check"-> 6]
+realdatadispcheck2[file15do,hdf15donow,r15,1,"check"-> 6]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -690,7 +694,7 @@ realdatadispcheck2[file15,hdf15donow,r15,1,"check"-> 6]
 (*There is no issue of subtractive cancellation if the sum of equation 37.5 (final column) is less than a' s*)
 
 
-Do[realdatadispcheck2[file15,hdf15donow,r15,mi,"check"-> 3],{mi,1,20}]
+Do[realdatadispcheck2[file15do,hdf15donow,r15,mi,"check"-> 3],{mi,1,20}]
 
 
 (* ::Subsection::Closed:: *)
@@ -701,7 +705,7 @@ Do[realdatadispcheck2[file15,hdf15donow,r15,mi,"check"-> 3],{mi,1,20}]
 (*'Dispersion Relation' Check: (Subscript[I, 0]+1)(Subscript[I, 2]-1)-Subscript[I, 1]^2=0*)
 
 
-realdatadispersioncheck[file15,hdf15doww,r15]
+realdatadispersioncheck[file15do,hdf15doww,r15]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -712,7 +716,7 @@ realdatadispersioncheck[file15,hdf15doww,r15]
 (*The dot product checks for all direction components ' m' for a single eigenvalue eigenvector pair . Passes if the dot product is 1.*)
 
 
-realdatadispcheck2[file15,hdf15doww,r15,1,"check"-> 6]
+realdatadispcheck2[file15do,hdf15doww,r15,1,"check"-> 6]
 
 
 (* ::Subsubsection::Closed:: *)
@@ -723,51 +727,7 @@ realdatadispcheck2[file15,hdf15doww,r15,1,"check"-> 6]
 (*There is no issue of subtractive cancellation if the sum of equation 37.5 (final column) is less than a' s*)
 
 
-Do[realdatadispcheck2[file15,hdf15doww,r15,mi,"check"-> 3],{mi,1,20}]
-
-
-(* ::Section::Closed:: *)
-(*Stability Matrix Checks*)
-
-
-(*This function builds the stability matrix by computing each component exactly, and then building the total table.*)
-Options[buildS]={"xflavor"-> True};
-buildS[file_,r_,k_,En_,hier_,OptionsPattern[]]:=Module[{datasr,n,nb,ndens,Ve,\[Omega],\[Phi]0,\[Phi]1,\[Phi],cos\[Theta],nwhich,\[Omega]which,S,Smat,\[Mu]which},
-datasr=SelectSingleRadius[ImportData[file],r];
-cos\[Theta]=datasr["mids"];
-\[Omega]=hier \[Omega]EMev[En];
-Ve=0. ;(*munits/mp *datasr["Yes"]*datasr["matters"];*)
-ndens=ndensities[datasr,"xflavor"-> OptionValue["xflavor"]];
-n=munits Diagonal[ndens[[1]]-ndens[[3]]];
-nb=munits Diagonal[ndens[[2]]-ndens[[3]]];
-\[Phi][rank_,mu_,mubar_,cos\[Theta]_]:=Sum[(mu[[i]]-mubar[[i]])cos\[Theta][[i]]^rank,{i,1,Length[cos\[Theta]]}];
-\[Omega]which[i_]:=Which[i<= Length[cos\[Theta]], -1.,i>Length[cos\[Theta]],1.];
-nwhich[j_]:=Which[j<= Length[cos\[Theta]], n[[j]],j>Length[cos\[Theta]], -nb[[(j-Length[cos\[Theta]])]] ];
-\[Mu]which[i_]:= Which[i<= Length[cos\[Theta]],0.,i>Length[cos\[Theta]],Length[cos\[Theta]]];
-S[i_,j_]:= (\[Omega]which[i] \[Omega] KroneckerDelta[i,j])+(Ve+\[Phi][0,n,nb,cos\[Theta]]+cos\[Theta][[i-\[Mu]which[i]]] (k-\[Phi][1,n,nb,cos\[Theta]])) KroneckerDelta[i,j]
--(1-(cos\[Theta][[i-\[Mu]which[i]]]cos\[Theta][[j-\[Mu]which[j]]]))nwhich[j];
-Smat=Table[S[i,j],{i,1,2*Length[cos\[Theta]]},{j,1,2*Length[cos\[Theta]]}];
-Return[Smat];
-
-];
-
-
-(* ::Subsection:: *)
-(*Confirmation S from paper is S from package*)
-
-
-Stest=buildS[file11,250,1. 10^-19,20.,-1.];
-
-
-tdat=SelectSingleRadius[ImportData[file11],250];
-ndens=ndensities[tdat];
-ea=getEquations[tdat,20.,-1.,1 10^-19,ndens];
-St=stabilityMatrix[tdat,ea];
-
-
-(Stest-St)/(Abs[Stest]+Abs[St])//Max
-Abs[(Stest-St)]/(Abs[Stest]+Abs[St])//Max
-
+Do[realdatadispcheck2[file15do,hdf15doww,r15,mi,"check"-> 3],{mi,1,20}]
 
 
 (* ::Section::Closed:: *)
@@ -802,3 +762,113 @@ Do[realdatadispcheck2[file11,StringJoin["C:\\Users\\Sam\\Documents\\GitHub\\stab
 
 
 
+
+
+(* ::Section::Closed:: *)
+(*Stability Matrix Checks*)
+
+
+(*This function builds the stability matrix by computing each component exactly, and then building the total table.*)
+Options[buildS]={"xflavor"-> True};
+buildS[file_,r_,k_,En_,hier_,OptionsPattern[]]:=Module[{datasr,n,nb,ndens,Ve,\[Omega],\[Phi]0,\[Phi]1,\[Phi],cos\[Theta],nwhich,\[Omega]which,S,Smat,\[Mu]which},
+datasr=SelectSingleRadius[ImportData[file],r];
+cos\[Theta]=datasr["mids"];
+\[Omega]=hier \[Omega]EMev[En];
+Ve=0. ;(*munits/mp *datasr["Yes"]*datasr["matters"];*)
+ndens=ndensities[datasr,"xflavor"-> OptionValue["xflavor"]];
+n=munits Diagonal[ndens[[1]]-ndens[[3]]];
+nb=munits Diagonal[ndens[[2]]-ndens[[3]]];
+\[Phi][rank_,mu_,mubar_,cos\[Theta]_]:=Sum[(mu[[i]]-mubar[[i]])cos\[Theta][[i]]^rank,{i,1,Length[cos\[Theta]]}];
+\[Omega]which[i_]:=Which[i<= Length[cos\[Theta]], -1.,i>Length[cos\[Theta]],1.];
+nwhich[j_]:=Which[j<= Length[cos\[Theta]], n[[j]],j>Length[cos\[Theta]], -nb[[(j-Length[cos\[Theta]])]] ];
+\[Mu]which[i_]:= Which[i<= Length[cos\[Theta]],0.,i>Length[cos\[Theta]],Length[cos\[Theta]]];
+S[i_,j_]:= (\[Omega]which[i] \[Omega] KroneckerDelta[i,j])+(Ve+\[Phi][0,n,nb,cos\[Theta]]+cos\[Theta][[i-\[Mu]which[i]]] (k-\[Phi][1,n,nb,cos\[Theta]])) KroneckerDelta[i,j]
+-(1-(cos\[Theta][[i-\[Mu]which[i]]]cos\[Theta][[j-\[Mu]which[j]]]))nwhich[j];
+Smat=Table[S[i,j],{i,1,2*Length[cos\[Theta]]},{j,1,2*Length[cos\[Theta]]}];
+Return[Smat];
+
+];
+
+
+(* ::Subsection::Closed:: *)
+(*Confirmation S from paper is S from package*)
+
+
+ktest=6.0555782595072755`*^-21;
+
+
+Clear[St,Stest]
+
+
+(*S built entry-by entry*)
+Stest=buildS[file11,250,ktest,20.,-1.];
+
+
+(*S built by package*)
+tdat=SelectSingleRadius[ImportData[file11],250];
+ndens=ndensities[tdat];
+ea=getEquations[tdat,20.,-1.,ktest,ndens];
+St=stabilityMatrix[tdat,ea];
+
+
+(*Test that Stest and St are not different by examining the matrix of relative differences*)
+(Abs[Stest-St]/Abs[Stest+St])//Max
+((Abs[Stest]-Abs[St])/Abs[Stest+St])//Max
+
+
+(*Explicitly check that the diagonals of Stest and St are the same*)
+Row[{Stest//Diagonal//MatrixForm,
+St//Diagonal//MatrixForm}]
+
+
+(*Confirm that Stest and St agree on eigenvalues, calculated 3 different ways*)
+
+Row[
+{Sort[Eigenvalues[Stest],Greater]//MatrixForm,
+Sort[evscale[ktest,Stest,kt,"output"-> "Eigenvalues"],Greater]//MatrixForm,
+Sort[Eigenvalues[Stest*Min[Abs[Stest]]^-1],Greater]*Min[Abs[Stest]]//MatrixForm,
+Sort[Eigenvalues[St],Greater]//MatrixForm,
+Sort[evscale[ktest,St,kt,"output"-> "Eigenvalues"],Greater]//MatrixForm,
+Sort[Eigenvalues[St*Min[Abs[St]]^-1],Greater]*Min[Abs[St]]//MatrixForm,
+}]
+(*Output*)
+(*| Eigenvalues[Stest] | evscale[Stest] | Eigenvalues[(Stest scaled by Stest//Min)] |Eigenvalues[St] | evscale[St] | Eigenvalues[(St scaled by St//Min)] |  *)
+
+
+(*Calculate eigenvalues and eigenvectors of Stest*)
+{test1val,test1vec}=Eigensystem[Stest];
+{test2val,test2vec}=evscale[ktest,Stest,kt,"output"-> "Eigensystem"];
+{test3val,test3vec}=Eigensystem[Stest*Min[Abs[Stest]]^-1]*Min[Abs[Stest]];
+
+
+(*Check that the eigenvalues of Stest are the same when using scaled Stest's*)
+Row[{test1val//MatrixForm,
+test2val//MatrixForm,
+test3val//MatrixForm}]
+(*Test that the eigenvectors are the same*)
+Row[{test1vec[[1]]//Normalize//MatrixForm,
+test2vec[[1]]//Normalize//MatrixForm,
+test3vec[[1]]//Normalize//MatrixForm}]
+
+
+
+
+
+(* ::Subsection::Closed:: *)
+(*Other consistency checks*)
+
+
+(*Prints out k,\[Phi]0,\[Phi]1,As,Abs,\[Omega],\[CapitalOmega]s,mu,mubar used in debugging checks*)
+realdatadispcheck2[file15,hdf15mww,r15,1,"check"-> 7]
+
+
+(* ::Item:: *)
+(*tested that the outputs of check-> 7 match those used in building S entry by entry*)
+
+
+(* ::Item:: *)
+(*Checked that the output of kadapt gets the same eigenvectors and values when called on S*)
+
+
+(* ::Item:: *)
+(*Checked that the hdf5 output file is correctly written by taking the values directly from kadapt and comparing to those taken from the hdf5 file itself.*)
