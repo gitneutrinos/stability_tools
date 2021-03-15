@@ -424,12 +424,13 @@ evout=
 Reap[
 	Do[
 		singleRadiusData = SelectSingleRadius[data,rx];
+		
 		ndens = ndensities[singleRadiusData,"xflavor"-> OptionValue["xflavor"]];
-		ea=getEquations[singleRadiusData,testE,hi,kvar,ndens,"xflavor"-> OptionValue["xflavor"],"inverse"-> OptionValue["inverse"]];
-
-		S=stabilityMatrix[singleRadiusData,ea,"xflavor"-> OptionValue["xflavor"]];
-
-		kl=buildkGrid[ndens,nstep,"ktarget"-> OptionValue["ktarget"],"krange"-> OptionValue["krange"],"xflavor"-> OptionValue["xflavor"]];
+		
+		S=buildS[singleRadiusData,kvar,testE,hi,ndens];
+		
+		kl=buildkGrid[ndens,nstep,"ktarget"-> OptionValue["ktarget"],"krange"-> OptionValue["krange"]];
+		
 		pot=siPotential[ndens];
 		Do[
 		
