@@ -348,7 +348,7 @@ Return[S];
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Stability Matrix Entry - by - Entry Method*)
 
 
@@ -396,16 +396,16 @@ Return[as]
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*k Grid and Adaptive k Solver*)
 
 
 (*Constructs a nstep sized log spaced k grid based on the target k associated with the infile at radial bin r.  Currently the limits are 2 orders of magnitude above and below the target value, ignoring negatives for the moment *)
 Options[buildkGrid]={"ktarget"-> "auto","krange"-> {10.^(-3),10.}};
 buildkGrid[ndens_,nstep_,OptionsPattern[]]:=Module[{kgrid,fSpace,ktarget,kblow,kbhigh},
-If[OptionValue["ktarget"]== "auto",
-ktarget=siPotential[ndens]
-,
+Which[OptionValue["ktarget"]== "auto",
+ktarget=Abs[siPotential[ndens]],
+OptionValue["ktarget"]!= "auto",
 ktarget=OptionValue["ktarget"]
 ];
 fSpace[min_,max_,steps_,f_: Log]:=InverseFunction[ConditionalExpression[f[#],min<#<max]&]/@Range[f@min,f@max,(f@max-f@min)/(steps-1)];
