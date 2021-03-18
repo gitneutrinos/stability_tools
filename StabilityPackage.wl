@@ -362,7 +362,7 @@ nb=munits Diagonal[ndens[[2]]-ndens[[3]]];
 \[Omega]which[i_]:=Which[i<= Length[cos\[Theta]], -1.,i>Length[cos\[Theta]],1.];
 nwhich[j_]:=Which[j<= Length[cos\[Theta]], n[[j]],j>Length[cos\[Theta]], -nb[[(j-Length[cos\[Theta]])]] ];
 \[Mu]which[i_]:= Which[i<= Length[cos\[Theta]],0.,i>Length[cos\[Theta]],Length[cos\[Theta]]];
-\[Phi][rank_,mu_,mubar_,cos\[Theta]_]:=Sum[(mu[[i]]-mubar[[i]])cos\[Theta][[i]]^rank,{i,1,Length[cos\[Theta]]}];
+\[Phi][rank_,mu_,mubar_,cos\[Theta]_]:=\[Phi][rank,mu,mubar,cos\[Theta]]=Sum[(mu[[i]]-mubar[[i]])cos\[Theta][[i]]^rank,{i,1,Length[cos\[Theta]]}];
 S[i_,j_]:= (\[Omega]which[i] \[Omega] KroneckerDelta[i,j])+(Ve+\[Phi][0,n,nb,cos\[Theta]]+cos\[Theta][[i-\[Mu]which[i]]] (k-\[Phi][1,n,nb,cos\[Theta]])) KroneckerDelta[i,j]
 -(1-(cos\[Theta][[i-\[Mu]which[i]]]cos\[Theta][[j-\[Mu]which[j]]]))nwhich[j];
 Smat=Table[S[i,j],{i,1,2*Length[cos\[Theta]]},{j,1,2*Length[cos\[Theta]]}];
@@ -370,7 +370,7 @@ Return[Smat];
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Machine Scaled Eigensystem (evscale)*)
 
 
@@ -453,7 +453,7 @@ totaltime=stimes[10]-stimes[1];
 dtime[i_,j_]:=stimes[j]-stimes[i];
 dptime[i_,j_]:=100 (dtime[i,j]/totaltime);
 
-pc=PieChart[{dtime[1,2],dtime[3,4],dtime[4,5],dtime[5,6],dtime[6,7],dtime[7,8],dtime[8,9]/Length[kl]},ChartLegends-> {"Import Data","Select Single Radius","ndensities","buildS","buildkgrid","siPotential","evscales"}
+pc=PieChart[{dtime[1,2],dtime[3,4],dtime[4,5],dtime[5,6],dtime[6,7],dtime[7,8],dtime[8,9]},ChartLegends-> {"Import Data","Select Single Radius","ndensities","buildS","buildkgrid","siPotential","evscale loop"}
 ,ChartLabels->Placed[ {dptime[1,2] ,dptime[3,4],dptime[4,5],dptime[5,6], dptime[6,7],dptime[7,8],(dptime[8,9])},"RadialCallout"],ImageSize-> Scaled[0.25],ImagePadding-> All];
 
 ttab=Grid[{{"Total Time (s)",totaltime,""},{"Function Call","Time Taken (s)","Percent of Total Time"},{"Import Data",dtime[1,2],dptime[1,2]},{"Select Single Radius",dtime[3,4],dptime[3,4]},{"ndensities",dtime[4,5],dptime[4,5]},
