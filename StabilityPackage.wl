@@ -348,7 +348,7 @@ Return[S];
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Stability Matrix Entry - by - Entry Method*)
 
 
@@ -370,7 +370,7 @@ Return[Smat];
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Machine Scaled Eigensystem (evscale)*)
 
 
@@ -396,7 +396,7 @@ Return[as]
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*k Grid and Adaptive k Solver*)
 
 
@@ -418,10 +418,11 @@ Return[kgrid];
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
 Options[kAdapt]={"xflavor"-> True,"ktarget"-> "auto","krange"-> {10.^(-3),10.},"koutput"-> "Eigensystem","inverse"-> False,"timing"-> False};
-kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,OptionsPattern[]]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,eout,pot,S,ndens,stimes,totaltime,dtime,dptime,pc,ttab},
+kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,OptionsPattern[]]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,eout,pot,S,ndens,stimes,totaltime,dtime,dptime,pc,ttab,Sks,Sk},
 stimes[1]=SessionTime[];
 data=ImportData[infile];
 stimes[2]=SessionTime[];
+
 evout=
 Reap[
 	Do[
@@ -437,8 +438,14 @@ Reap[
 		pot=siPotential[ndens];
 		stimes[8]=SessionTime[];
 		Do[
-			eout=evscale[kl[[kx]],S,kvar,"output"->OptionValue["koutput"]];
-			
+		Sk=S/.kvar-> kl[[kx]];
+	Sks=Sk/Min[Sk];
+		Which[OptionValue["koutput"]== "Eigensystem",
+	eout=Eigensystem[Sks]*Min[Sk];
+	,
+	OptionValue["koutput"]== "RankedEigenvalues",
+	eout=Max[Im[Eigenvalues[Sks]*Min[Sk]]];
+			];
 			Sow[{rx,data["radius"][[rx]],kl[[kx]],eout,pot}]; 
 		,{kx,1,Length[kl]}]; (*close do over ktargets*)
 		stimes[9]=SessionTime[];
@@ -446,7 +453,7 @@ Reap[
 ][[2,1]];
 stimes[10]=SessionTime[];
 Which[OptionValue["timing"]== False,
-Return[{evout,{OptionValue["xflavor"],OptionValue["inverse"],OptionValue["krange"]},{infile,rstr,rend,testE,hi,nstep}}]; (*Close reap over r*)
+Return[{evout,{OptionValue["xflavor"],OptionValue["inverse"],OptionValue["krange"]//N},{infile,rstr,rend,testE,hi,nstep}}]; (*Close reap over r*)
 ,
 OptionValue["timing"]==True,
 totaltime=stimes[10]-stimes[1];
@@ -454,10 +461,10 @@ dtime[i_,j_]:=stimes[j]-stimes[i];
 dptime[i_,j_]:=100 (dtime[i,j]/totaltime);
 
 pc=PieChart[{dtime[1,2],dtime[3,4],dtime[4,5],dtime[5,6],dtime[6,7],dtime[7,8],dtime[8,9]},ChartLegends-> {"Import Data","Select Single Radius","ndensities","buildS","buildkgrid","siPotential","evscale loop"}
-,ChartLabels->Placed[ {dptime[1,2] ,dptime[3,4],dptime[4,5],dptime[5,6], dptime[6,7],dptime[7,8],(dptime[8,9])},"RadialCallout"],ImageSize-> Scaled[0.25],ImagePadding-> All];
+,ChartLabels->Placed[ {dptime[1,2] ,dptime[3,4],dptime[4,5],dptime[5,6], dptime[6,7],dptime[7,8],(dptime[8,9]),dptime[9,10]},"RadialCallout"],ImageSize-> Scaled[0.25],ImagePadding-> All];
 
 ttab=Grid[{{"Total Time (s)",totaltime,""},{"Function Call","Time Taken (s)","Percent of Total Time"},{"Import Data",dtime[1,2],dptime[1,2]},{"Select Single Radius",dtime[3,4],dptime[3,4]},{"ndensities",dtime[4,5],dptime[4,5]},
-{"build S",dtime[5,6],dptime[5,6]},{"Build k Grid",dtime[6,7],dptime[6,7]},{"siPotential",dtime[7,8],dptime[7,8]},{"evscale total",dtime[8,9],dptime[8,9]},{"Average evscale per k",dtime[8,9]/Length[kl],dptime[8,9]/Length[kl]}},Frame-> All];
+{"build S",dtime[5,6],dptime[5,6]},{"Build k Grid",dtime[6,7],dptime[6,7]},{"siPotential",dtime[7,8],dptime[7,8]},{"k loop",dtime[8,9],dptime[8,9]},{"Average evscale per k",dtime[9,10]/Length[kl],dptime[9,10]/Length[kl]}},Frame-> All];
 
 Return[Row[{ttab,pc}]];
 ];
