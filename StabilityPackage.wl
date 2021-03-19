@@ -418,7 +418,7 @@ Return[kgrid];
 
 (*Run buildkGrid and SCalcScale for several radial bins.*)
 Options[kAdapt]={"xflavor"-> True,"ktarget"-> "auto","krange"-> {10.^(-3),10.},"koutput"-> "Eigensystem","inverse"-> False,"timing"-> False};
-kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,OptionsPattern[]]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,eout,pot,S,ndens,stimes,totaltime,dtime,dptime,pc,ttab,Sks,Sk},
+kAdapt[infile_,rstr_,rend_,testE_,hi_,nstep_,OptionsPattern[]]:= Module[{kl,evout,data,singleRadiusData,ea,kvar,eout,pot,S,ndens,stimes,totaltime,dtime,dptime,pc,ttab,Sks,Sk,Skl},
 stimes[1]=SessionTime[];
 data=ImportData[infile];
 stimes[2]=SessionTime[];
@@ -437,8 +437,10 @@ Reap[
 		stimes[7]=SessionTime[];
 		pot=siPotential[ndens];
 		stimes[8]=SessionTime[];
+		Skl=S/.Thread[{kvar}->#]&/@kl;
 		Do[
-		Sk=S/.kvar-> kl[[kx]];
+	(*Sk=S/.kvar\[Rule] kl[[kx]];*)
+	Sk=Skl[[kx]];
 	Sks=Sk/Min[Sk];
 		Which[OptionValue["koutput"]== "Eigensystem",
 	eout=Eigensystem[Sks]*Min[Sk];
