@@ -396,7 +396,7 @@ Return[as]
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*k Grid and Adaptive k Solver*)
 
 
@@ -440,13 +440,13 @@ Reap[
 		Skl=S/.Thread[{kvar}->#]&/@kl;
 		Do[
 	(*Sk=S/.kvar\[Rule] kl[[kx]];*)
-	Sk=Skl[[kx]];
+	Sk=N[Skl[[kx]]];
 	Sks=Sk/Min[Sk];
 		Which[OptionValue["koutput"]== "Eigensystem",
-	eout=Eigensystem[Sks]*Min[Sk];
+	eout=Eigensystem[N[Sks]]*Min[Sk];
 	,
 	OptionValue["koutput"]== "RankedEigenvalues",
-	eout=Max[Im[Eigenvalues[Sks]*Min[Sk]]];
+	eout=Max[Im[Eigenvalues[N[Sks]]*Min[Sk]]];
 			];
 			Sow[{rx,data["radius"][[rx]],kl[[kx]],eout,pot}]; 
 		,{kx,1,Length[kl]}]; (*close do over ktargets*)
