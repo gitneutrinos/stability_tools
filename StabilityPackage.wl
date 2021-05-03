@@ -396,7 +396,7 @@ Return[as]
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*k Grid and Adaptive k Solver*)
 
 
@@ -411,7 +411,12 @@ ktarget=OptionValue["ktarget"]
 fSpace[min_,max_,steps_,f_: Log]:=InverseFunction[ConditionalExpression[f[#],min<#<max]&]/@Range[f@min,f@max,(f@max-f@min)/(steps-1)];
 kblow=OptionValue["krange"][[1]];
 kbhigh=OptionValue["krange"][[2]];
+Which[OptionValue["ktarget"!= 0.,
 kgrid=Join[fSpace[ktarget*kblow,ktarget*kbhigh,nstep],-fSpace[ktarget*kblow,ktarget*kbhigh,nstep]];
+,
+OptionValue["ktarget"== 0.],
+kgrid={0.};
+];
 Return[kgrid];
 ];
 
