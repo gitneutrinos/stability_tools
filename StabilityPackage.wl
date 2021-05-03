@@ -412,10 +412,10 @@ fSpace[min_,max_,steps_,f_: Log]:=InverseFunction[ConditionalExpression[f[#],min
 kblow=OptionValue["krange"][[1]];
 kbhigh=OptionValue["krange"][[2]];
 
-Which[OptionValue["ktarget"]!=  0.,
+Which[OptionValue["ktarget"]!= 0.,
 kgrid=Join[fSpace[ktarget*kblow,ktarget*kbhigh,nstep],-fSpace[ktarget*kblow,ktarget*kbhigh,nstep]];
 ,
-OptionValue["ktarget"== 0.],
+OptionValue["ktarget"]== 0.,
 kgrid={0.};
 ];
 Return[kgrid];
