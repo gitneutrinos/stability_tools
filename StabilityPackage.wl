@@ -411,7 +411,8 @@ ktarget=OptionValue["ktarget"]
 fSpace[min_,max_,steps_,f_: Log]:=InverseFunction[ConditionalExpression[f[#],min<#<max]&]/@Range[f@min,f@max,(f@max-f@min)/(steps-1)];
 kblow=OptionValue["krange"][[1]];
 kbhigh=OptionValue["krange"][[2]];
-Which[OptionValue["ktarget"!= 0.,
+
+Which[OptionValue["ktarget"]!=  0.,
 kgrid=Join[fSpace[ktarget*kblow,ktarget*kbhigh,nstep],-fSpace[ktarget*kblow,ktarget*kbhigh,nstep]];
 ,
 OptionValue["ktarget"== 0.],
@@ -528,6 +529,8 @@ To pick out just the first (or last) 10 entries of each eigenvector (the neutrin
 Finally, to export outputs we jsut take the second list, and for the inputs the third.
 *)
 (*This currently outputs several datasets, each containing the unique elements from a run of kadapt, belonging to the group unique_elements.  Will add in groups that are, for instance, sorted by r. i.e. all k and omega combinations for a given radial index.*)
+
+
 
 
 (* ::Subsection::Closed:: *)
