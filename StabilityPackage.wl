@@ -116,6 +116,12 @@ averageEnergy::usage=
 "compute the average energy for a file at a single radius"
 buildS::usage=
 "builds the Stability matrix given [infile,r,k,En,hier,ndens]"
+netdensities::usage=
+"finds the net neutrino densities at each angular bin center"
+findcross::usage=
+"Finds crossings in the net neutrino number densities, and returns a list of the crossings at each radius"
+finddepth::usage=
+"calculates the depths of a crossing by integrating the ELNs on either side of the crossing and returns the absoluate value of the product"
 
 
 (* ::Subsection::Closed:: *)
@@ -188,7 +194,7 @@ ImportCalcInputs[infile_]:=Association[
 
 
 (* ::Subsection::Closed:: *)
-(*Neutrino Densities and Potentials*)
+(*Neutrino Densities, Distributions, and Potentials*)
 
 
 Options[ndensities]={"xflavor"-> True};
@@ -230,6 +236,94 @@ nuendensity= Sum[Sum[Sum[srdata["Endensity"][[1,f,dt,dp]] ,{f,1,Length[srdata["f
 nubarendensity= Sum[Sum[Sum[srdata["Endensity"][[2,f,dt,dp]],{f,1,Length[srdata["freqs"]]-1}],{dp,1,Length[srdata["phis"]]-1}],{dt,1,Length[srdata["mids"]]}];
 Eav=(nuendensity+nubarendensity)/((ndensities[srdata][[1]]//Tr)+(ndensities[srdata][[2]]//Tr));
 Return[Eav]
+]
+
+
+(*caluclates the net neutrino densities in each angular bin*)
+netdensities[file_]:=Module[{data,rs,mids,srdata,ns,nbs,snet,out,snetsort,snetpos,ends,ints},
+data=ImportData[file];
+rs=data[["radius"]]/10^5;
+mids=data[["mids"]];
+ends=data[["muss"]];
+out=Reap[
+Do[
+srdata=SelectSingleRadius[data,r];
+ns=(ndensities[srdata][[1]]//Diagonal)-(ndensities[srdata][[3]]//Diagonal);
+nbs=(ndensities[srdata][[2]]//Diagonal)-(ndensities[srdata][[3]]//Diagonal);
+snet=ns-nbs;
+Sow[snet];
+,{r,1,384}]
+][[2,1]];
+Return[out];
+];
+
+
+(*find ELN crossings by determining the bin on the "left" of the ELN crossing *)
+findcross[file_,netds_]:=Module[{out,signs,signseg,mids,rs},
+mids=ImportData[file]["mids"];
+rs=ImportData[file]["radius"]/10^5;
+out=Reap[
+Do[
+signs=Sign[netds[[ri]]]; (*calculates the sign of the ELNS *)
+Do[
+If[
+signs[[i]]!=signs[[i+1]], (*If the sign of the ELN changes from one bin to the next, record the bin and radius*)
+Sow[{rs[[ri]],mids[[i]]}];
+]
+,{i,1,Length[signs]-1}]
+,{ri,1,384}]
+][[2,1]];
+Return[out]
+];
+
+
+(*Integrates Subscript[n, net]\[CapitalDelta]\[Mu] in in segments of the same ELN sign*)
+intsegments[netds_,lengths_,nseg_,muss_,ri_]:=Module[{l1,l2,seg1,seg2,seg3},
+Which[
+nseg==2,
+l1=lengths[[1]];
+seg1=Sum[netds[[ri,i]]*Abs[(muss[[i+1]]-muss[[i]])],{i,1,lengths[[1]]}];
+seg2=Sum[netds[[ri,i]]*Abs[(muss[[i+1]]-muss[[i]])],{i,l1+1,Length[muss]-1}];
+Return[{Abs[seg1*seg2]}];
+,
+nseg==3,
+l1=lengths[[1]];
+l2=lengths[[2]];
+seg1=Sum[netds[[ri,i]]*Abs[(muss[[i+1]]-muss[[i]])],{i,1,lengths[[1]]}];
+seg2=Sum[netds[[ri,i]]*Abs[(muss[[i+1]]-muss[[i]])],{i,l1+1,l1+l2}];
+seg3=Sum[netds[[ri,i]]*Abs[(muss[[i+1]]-muss[[i]])],{i,l1+l2+1,Length[muss]-1}];
+Return[{Abs[seg1*seg2],Abs[seg2*seg3]}];
+,
+nseg==1,
+Return[0];
+,
+nseg!= 1 \[And]nseg!= 2 \[And] nseg!= 3,
+Return[{}];
+]
+];
+
+
+(*Finds the depth by of a crossing by calling intsegmnets, and recording the products along with the radius. Some logic is done here to account for single and ddouble crossings*)
+finddepth[file_,netds_]:=Module[{rs,streaks,signs,totals,out,muss,lengths,nseg,products},
+rs=ImportData[file]["radius"]/10^5;
+muss=ImportData[file]["muss"];
+out=Reap[
+Do[
+signs=SplitBy[netds[[ri]],Sign ]; (*split each continuous sequence of net densities with the same sign into sublists*)
+lengths=Length/@signs; (*the length of each run of continuous sign *)
+nseg=Length[signs] ;(*total number of continuous segments. Crossings = nseg-1 *)
+products=intsegments[netds,lengths,nseg,muss,ri];
+Which[
+Length[products]== 1,
+Sow[{rs[[ri]],products[[1]]}];
+,
+Length[products]==2,
+Sow[{rs[[ri]],products[[1]]}];
+Sow[{rs[[ri]],products[[2]]}];
+];
+,{ri,1,384}]
+][[2,1]];
+Return[out];
 ]
 
 
