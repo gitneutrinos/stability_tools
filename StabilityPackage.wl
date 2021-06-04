@@ -284,7 +284,7 @@ nseg==2,
 l1=lengths[[1]];
 seg1=Sum[netds[[ri,i]]*Abs[(muss[[i+1]]-muss[[i]])],{i,1,lengths[[1]]}];
 seg2=Sum[netds[[ri,i]]*Abs[(muss[[i+1]]-muss[[i]])],{i,l1+1,Length[muss]-1}];
-Return[{Abs[seg1*seg2]}];
+Return[{Sqrt[Abs[seg1*seg2]]}];
 ,
 nseg==3,
 l1=lengths[[1]];
@@ -292,7 +292,7 @@ l2=lengths[[2]];
 seg1=Sum[netds[[ri,i]]*Abs[(muss[[i+1]]-muss[[i]])],{i,1,lengths[[1]]}];
 seg2=Sum[netds[[ri,i]]*Abs[(muss[[i+1]]-muss[[i]])],{i,l1+1,l1+l2}];
 seg3=Sum[netds[[ri,i]]*Abs[(muss[[i+1]]-muss[[i]])],{i,l1+l2+1,Length[muss]-1}];
-Return[{Abs[seg1*seg2],Abs[seg2*seg3]}];
+Return[{Sqrt[Abs[seg1*seg2]],Sqrt[Abs[seg2*seg3]]}];
 ,
 nseg==1,
 Return[0];
